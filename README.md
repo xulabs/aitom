@@ -1,3 +1,3 @@
-# aitom
+# AITom
 
-Aitom is a library for developping AI algorithms for cellular electron cryo-tomography analysis.
+AITom is a library for developping AI algorithms for cellular electron cryo-tomography analysis.
