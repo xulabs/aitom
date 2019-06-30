@@ -7,7 +7,7 @@ Please cite: Xu et al. De novo visual proteomics of single cells through pattern
 
 
 
-import SocketServer
+import socketserver
 import pickle
 import time
 import sys
@@ -16,7 +16,7 @@ import os
 import psutil
 
 
-class RPCHandler(SocketServer.StreamRequestHandler):
+class RPCHandler(socketserver.StreamRequestHandler):
 
     def handle(self):
         self.server.active_connections += 1
@@ -38,14 +38,14 @@ class RPCHandler(SocketServer.StreamRequestHandler):
         self.server.active_connections -= 1
 
 
-class RPCServer(SocketServer.ThreadingTCPServer):
+class RPCServer(socketserver.ThreadingTCPServer):
     daemon_threads = True
     allow_reuse_address = True
     active_connections = 0
 
     def __init__(self, addr, requestHandler=RPCHandler, bind_and_activate=True):
         self.instance = None
-        SocketServer.ThreadingTCPServer.__init__(self, addr, requestHandler, bind_and_activate)
+        socketserver.ThreadingTCPServer.__init__(self, addr, requestHandler, bind_and_activate)
         self.previous_method = None
         self.same_method_call_count = 0
         self.process = psutil.Process(os.getpid())
@@ -86,9 +86,9 @@ class RPCServer(SocketServer.ThreadingTCPServer):
 
     def handle_error(self, request, client_address):
         return
-        print ('-' * 40)
-        print 'Exception happened during processing of request from',
-        print client_address
+        print(('-' * 40))
+        print('Exception happened during processing of request from', end=' ')
+        print(client_address)
         import traceback
         traceback.print_exc()
-        print ('-' * 40)
+        print(('-' * 40))

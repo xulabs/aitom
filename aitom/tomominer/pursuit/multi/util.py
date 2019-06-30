@@ -14,7 +14,7 @@ import time
 import traceback
 import warnings
 import uuid
-import cPickle as pickle
+import pickle as pickle
 import shutil
 from collections import defaultdict
 import scipy.stats as SCS
@@ -129,7 +129,7 @@ def impute_aligned_vols(t, v, vm, normalize=None):
     if N.all(N.isfinite(v_f_if)):
         return v_f_if
     else:
-        print 'warning: imputation failed'
+        print('warning: imputation failed')
         return v
 
 def impute_vols(v, vm, ang, loc, t=None, align_to_template=True, normalize=None):
@@ -170,7 +170,7 @@ def impute_vol_keys(vk, ang, loc, normalize, tk=None, align_to_template=True, ca
 def neighbor_covariance_avg__parallel(self, data_json, segmentation_tg_op, normalize, n_chunk):
     start_time = time.time()
     data_json_copy = [_ for _ in data_json]
-    inds = range(len(data_json_copy))
+    inds = list(range(len(data_json_copy)))
     tasks = []
     while data_json_copy:
         data_json_copy_part = data_json_copy[:n_chunk]
@@ -201,7 +201,7 @@ def neighbor_covariance_avg__parallel(self, data_json, segmentation_tg_op, norma
     for i in range(shift.shape[0]):
         cov[:, :, :, i] = (neighbor_prod_avg[:, :, :, i] - (avg_global * UV.roll(avg_global, shift[(i, 0)], shift[(i, 1)], shift[(i, 2)])))
     cov_avg = N.mean(cov, axis=3)
-    print 'Calculated neighbor covariance for', len(data_json), 'subtomograms', (' : %2.6f sec' % (time.time() - start_time))
+    print('Calculated neighbor covariance for', len(data_json), 'subtomograms', (' : %2.6f sec' % (time.time() - start_time)))
     return cov_avg
 
 def neighbor_covariance__collect_info(self, data_json, segmentation_tg_op, normalize):
@@ -250,7 +250,7 @@ def neighbor_covariance__collect_info(self, data_json, segmentation_tg_op, norma
 def data_matrix_collect__parallel(self, data_json, segmentation_tg_op, normalize, n_chunk, voxel_mask_inds=None):
     start_time = time.time()
     data_json_copy = [_ for _ in data_json]
-    inds = range(len(data_json_copy))
+    inds = list(range(len(data_json_copy)))
     tasks = []
     while data_json_copy:
         data_json_copy_t = data_json_copy[:n_chunk]
@@ -266,7 +266,7 @@ def data_matrix_collect__parallel(self, data_json, segmentation_tg_op, normalize
         if (red is None):
             red = N.zeros([len(data_json), re['mat'].shape[1]])
         red[re['inds'], :] = re['mat']
-    print 'Calculated matrix of', len(data_json), 'subtomograms', ('%2.6f sec' % (time.time() - start_time))
+    print('Calculated matrix of', len(data_json), 'subtomograms', ('%2.6f sec' % (time.time() - start_time)))
     return red
 
 def data_matrix_collect__local(self, data_json, inds, segmentation_tg_op, normalize, voxel_mask_inds=None):
@@ -307,7 +307,7 @@ def data_matrix_collect__local(self, data_json, inds, segmentation_tg_op, normal
     return re_key
 
 def covariance_filtered_pca(self, data_json_model=None, data_json_embed=None, normalize=None, segmentation_tg_op=None, n_chunk=100, max_feature_num=None, pca_op=None):
-    print 'Dimension reduction'
+    print('Dimension reduction')
     start_time = time.time()
     if (data_json_model is None):
         assert (data_json_embed is not None)
@@ -343,7 +343,7 @@ def covariance_filtered_pca(self, data_json_model=None, data_json_embed=None, no
     else:
         mat_embed = data_matrix_collect__parallel(self=self, data_json=data_json_embed, segmentation_tg_op=segmentation_tg_op, normalize=normalize, n_chunk=n_chunk, voxel_mask_inds=voxel_mask_inds)
         red = N.dot(mat_embed, pca.eigvec.T)
-    print ('PCA with covariange thresholding  : %2.6f sec' % (time.time() - start_time))
+    print(('PCA with covariange thresholding  : %2.6f sec' % (time.time() - start_time)))
     return {'red': red, 'cov_avg': cov_avg, 'cov_avg__feature_num_cutoff': cov_avg__feature_num_cutoff, 'voxel_mask_inds': voxel_mask_inds, }
 
 def labels_to_clusters(data_json, labels, cluster_mode=None, ignore_negative_labels=True):
@@ -477,7 +477,7 @@ def cluster_averaging_vols(self, clusters, op={}):
             cluster_mask_avg = (cluster_mask_sums[c] / cluster_sizes[c])
         cluster_avg_dict[c] = {'vol': cluster_avg, 'mask': cluster_mask_avg, }
     if ('smooth' in op):
-        print 'smoothing', op['smooth']['mode'],
+        print('smoothing', op['smooth']['mode'], end=' ')
         for c in cluster_avg_dict:
             if (c not in op['smooth']['fsc']):
                 continue
@@ -486,8 +486,8 @@ def cluster_averaging_vols(self, clusters, op={}):
             cluster_avg_dict[c]['vol'] = s['v']
             if ('fit' in s):
                 cluster_avg_dict[c]['smooth']['fit'] = s['fit']
-                print 'average', c, 'sigma ', cluster_avg_dict[c]['smooth']['fit']['c'], '    ',
-        print 
+                print('average', c, 'sigma ', cluster_avg_dict[c]['smooth']['fit']['c'], '    ', end=' ')
+        print() 
     return {'cluster_avg_dict': cluster_avg_dict, 'cluster_sums': cluster_sums, 'cluster_mask_sums': cluster_mask_sums, 'cluster_sizes': cluster_sizes, }
 
 def cluster_averaging_vols__smooth(v, fsc, mode):
@@ -499,7 +499,7 @@ def cluster_averaging_vols__smooth(v, fsc, mode):
         band_pass_curve = fsc
     elif (mode == 'fsc_gaussian'):
         import tomominer.fitting.gaussian.one_dim as FGO
-        bands = N.array(range(len(fsc)))
+        bands = N.array(list(range(len(fsc))))
         fit = FGO.fit__zero_mean__multi_start(x=bands, y=fsc)
         if (fit['c'] < bands.max()):
             re['fit'] = fit
@@ -563,9 +563,9 @@ def cluster_average_select_fsc(self, cluster_info, cluster_info_stat, op=None, d
             ci_cover.append(ci_t)
             covered_set.update(subtomograms_t)
         if debug:
-            print ci_t['pass_i'], ci_t['cluster'], len(ci_t['data_json']), ci_t['fsc'].sum(), overlap_ratio_t
+            print(ci_t['pass_i'], ci_t['cluster'], len(ci_t['data_json']), ci_t['fsc'].sum(), overlap_ratio_t)
     del ci
-    print 'Set sizes', sorted([len(_['data_json']) for _ in ci_cover])
+    print('Set sizes', sorted([len(_['data_json']) for _ in ci_cover]))
     tk = {}
     for (i, cc) in enumerate(ci_cover):
         tk[i] = copy.deepcopy(cc['template_key'])
@@ -583,7 +583,7 @@ def cluster_average_select_fsc(self, cluster_info, cluster_info_stat, op=None, d
                 continue
             tk_info[tk_subtomogram] = cluster_info[i][c]
     if op['keep_non_specific_clusters']:
-        for (i, tkt) in tk.iteritems():
+        for (i, tkt) in tk.items():
             cluster_info_stat[tkt['pass_i']][tkt['cluster']]['is_specific'] = None
     assert (len(tk) > 0)
     return {'selected_templates': tk, 'tk_info': tk_info, }
@@ -659,7 +659,7 @@ def cluster_removal_according_to_center_matching_specificity(ci, cis, al, tk, si
                     non_specific_clusters.append(ci0)
                     break
     none_specific_cluster_ids = []
-    for c in tk.keys():
+    for c in list(tk.keys()):
         if (tk[c]['subtomogram'] in tkd):
             continue
         del tk[c]
@@ -678,7 +678,7 @@ def cluster_removal_according_to_center_matching_specificity(ci, cis, al, tk, si
                 best['loc'] = al_c['loc']
                 best['template_id'] = c
         al_['best'] = best
-    print len(non_specific_clusters), 'redundant averages detected', none_specific_cluster_ids
+    print(len(non_specific_clusters), 'redundant averages detected', none_specific_cluster_ids)
     sys.stdout.flush()
     return {'non_specific_clusters': non_specific_clusters, 'wilcoxion_stat': wilcoxion_stat, }
 
@@ -703,11 +703,11 @@ def cluster_average_align_common_frame__pairwise_alignment(self, template_keys, 
         (ang_rev, loc_rev) = AAL.reverse_transform_ang_loc(ang=res['angle'], loc_r=res['loc'])
         pair_align[c1][c0].update({'angle': ang_rev, 'loc': loc_rev, 'c0': c1, 'c1': c0, })
         if (res['err'] is not None):
-            print ('cluster_average_align_common_frame__pairwise() alignment error ' + repr(res['err']))
+            print(('cluster_average_align_common_frame__pairwise() alignment error ' + repr(res['err'])))
     return pair_align
 
 def cluster_average_align_common_frame__multi_pair(self, tk, align_op, loc_r_max, pass_dir):
-    print 'align averages to common frames'
+    print('align averages to common frames')
     out_dir = os.path.join(pass_dir, 'common_frame')
     if (not os.path.isdir(out_dir)):
         os.mkdir(out_dir)
@@ -736,7 +736,7 @@ def cluster_average_align_common_frame__multi_pair(self, tk, align_op, loc_r_max
             continue
         unrotated_clus.add(c0)
         align_to_clus[c1] = c0
-    assert (len(unrotated_clus.intersection(align_to_clus.keys())) == 0)
+    assert (len(unrotated_clus.intersection(list(align_to_clus.keys()))) == 0)
     tka = {}
     for c in tk:
         tka[c] = {}
@@ -747,12 +747,12 @@ def cluster_average_align_common_frame__multi_pair(self, tk, align_op, loc_r_max
         tka[c]['mask'] = os.path.join(out_dir, ('clus_mask_avg_%03d.mrc' % (c,)))
         if (c in align_to_clus):
             rotate_key(self=self, vk=tk[c], vk_out=tka[c], angle=pa[align_to_clus[c]][c]['angle'], loc=pa[align_to_clus[c]][c]['loc'])
-            print align_to_clus[c], '-', c, ':', ('%0.3f' % (pa[align_to_clus[c]][c]['score'],)), N.linalg.norm(pa[align_to_clus[c]][c]['loc']), '\t',
+            print(align_to_clus[c], '-', c, ':', ('%0.3f' % (pa[align_to_clus[c]][c]['score'],)), N.linalg.norm(pa[align_to_clus[c]][c]['loc']), '\t', end=' ')
         else:
             shutil.copyfile(tk[c]['subtomogram'], tka[c]['subtomogram'])
             shutil.copyfile(tk[c]['mask'], tka[c]['mask'])
-            print ('copy(%d)' % (c,)), '\t',
-    print 
+            print(('copy(%d)' % (c,)), '\t', end=' ')
+    print() 
     sys.stdout.flush()
     return {'tka': tka, 'unrotated_clus': unrotated_clus, 'align_to_clus': align_to_clus, 'pa': pa, 'pal': pal, }
 
@@ -915,7 +915,7 @@ def align_to_templates__batch(self, op, data_json, segmentation_tg_op, tmp_dir, 
         task_priority = op['template']['match']['priority']
     else:
         task_priority = (2000 + N.random.randint(100))
-    print 'align against templates', 'segmentation_tg_op', (segmentation_tg_op if op['template']['match']['use_segmentation_mask'] else None), 'task priority', task_priority
+    print('align against templates', 'segmentation_tg_op', (segmentation_tg_op if op['template']['match']['use_segmentation_mask'] else None), 'task priority', task_priority)
     sys.stdout.flush()
     at_ress = []
     for f in os.listdir(tmp_dir):
@@ -928,7 +928,7 @@ def align_to_templates__batch(self, op, data_json, segmentation_tg_op, tmp_dir, 
             at_ress_t = pickle.load(f)
         at_ress.append(at_ress_t)
     if (len(at_ress) > 0):
-        print 'loaded previous', len(at_ress), ' resutlts'
+        print('loaded previous', len(at_ress), ' resutlts')
         sys.stdout.flush()
     completed_subtomogram_set = set([_.result['vol_key']['subtomogram'] for _ in at_ress])
     tasks = []
@@ -970,7 +970,7 @@ def cluster_formation_alignment_fsc__by_global_maximum(self, dj, op=None):
         for k in fsc_sum:
             fsc_sum[k] = SDF.gaussian_filter1d(fsc_sum[k], op['gaussian_smooth_sigma'])
     if ('min_expansion_size' in op):
-        for k in copy.deepcopy(fsc_sum.keys()):
+        for k in copy.deepcopy(list(fsc_sum.keys())):
             if (len(fsc_sum[k]) < op['min_expansion_size']):
                 del fsc_sum[k]
                 continue
@@ -979,6 +979,6 @@ def cluster_formation_alignment_fsc__by_global_maximum(self, dj, op=None):
     for k in fsc_sum:
         i = N.argmax(fsc_sum[k])
         if op['debug']:
-            print 'template', k, 'original subtomogram num', len(djm_org[k]), 'global maximum', i
+            print('template', k, 'original subtomogram num', len(djm_org[k]), 'global maximum', i)
         dj_gm[k] = {'k': k, 'i': i, 'data_json': copy.deepcopy(djm[k][:(i + 1)]), 'fsc': ssnr_s[k]['fsc'][i], 'fsc_sum': fsc_sum[k][i], }
     return {'dj_gm': dj_gm, 'djm': djm, 'ssnr_s': ssnr_s, }

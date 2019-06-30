@@ -25,7 +25,7 @@ def fit__zero_mean(x, y, a0=None, c0=None, tolerance=0.001, lambda_t=10.0, max_i
     a = a0
     c = c0
     if verbose:
-        print 'a0', a0, '   ', 'c0', c0
+        print('a0', a0, '   ', 'c0', c0)
     iter_n = 0
     e = None
     e0 = None
@@ -49,7 +49,7 @@ def fit__zero_mean(x, y, a0=None, c0=None, tolerance=0.001, lambda_t=10.0, max_i
         Jq = N.dot(J.T, J)
         d = N.linalg.solve((Jq + (lambda_t * N.diag(Jq))), N.dot(J.T, (y - yp)))
         if (verbose and (e_old is not None)):
-            print '\r', 'd', d, '    ', 'a', a, '    ', 'c', c, '    ', 'e', e, '    ', 'e_old', e_old, '    ', 'e0', e0, '    ', 'e_rate', e_rate, '           ',
+            print('\r', 'd', d, '    ', 'a', a, '    ', 'c', c, '    ', 'e', e, '    ', 'e_old', e_old, '    ', 'e0', e0, '    ', 'e_rate', e_rate, '           ', end=' ')
         a += d[0]
         c += d[1]
         if (N.abs(c) > (x_abs_max * c_bound_max)):

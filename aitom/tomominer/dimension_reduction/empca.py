@@ -298,7 +298,7 @@ def empca(data, weights=None, niter=25, nvec=5, smooth=0, randseed=1):
     model.solve_coeffs()
     
     # print "       iter    chi2/dof     drchi_E     drchi_M   drchi_tot       R2            rchi2"
-    print "       iter        R2             rchi2"
+    print("       iter        R2             rchi2")
     
     for k in range(niter):
         model.solve_coeffs()
@@ -309,7 +309,7 @@ def empca(data, weights=None, niter=25, nvec=5, smooth=0, randseed=1):
     #- One last time with latest coefficients
     model.solve_coeffs()
                 
-    print "R2:", model.R2()
+    print("R2:", model.R2())
 
     r2_vec = [model.R2vec(_) for _ in range(model.nvec)]
     #print "R2 cummulative", [sum(r2_vec[:_]) for _ in range(1, model.nvec + 1)]
@@ -355,7 +355,7 @@ def lower_rank(data, weights=None, niter=25, nvec=5, randseed=1):
     ii = N.where(weights > 0)
     dof = data[ii].size - P.size - nvec*nobs 
 
-    print "iter     dchi2       R2             chi2/dof"
+    print("iter     dchi2       R2             chi2/dof")
 
     oldchi2 = 1e6*dof
     for blat in range(niter):
@@ -382,7 +382,7 @@ def lower_rank(data, weights=None, niter=25, nvec=5, randseed=1):
         R2 = 1.0 - N.var(diff[ii]) / N.var(data[ii])
         dchi2 = (chi2-oldchi2)/oldchi2   #- fractional improvement in chi2
         flag = '-' if chi2<oldchi2 else '+'
-        print '%3d  %9.3g  %15.8f %15.8f %s' % (blat, dchi2, R2, chi2/dof, flag)
+        print('%3d  %9.3g  %15.8f %15.8f %s' % (blat, dchi2, R2, chi2/dof, flag))
         oldchi2 = chi2
 
     #- normalize vectors
@@ -390,7 +390,7 @@ def lower_rank(data, weights=None, niter=25, nvec=5, randseed=1):
         P[k] /= N.linalg.norm(P[k])
 
     m = Model(P, data, weights)
-    print "R2:", m.R2()
+    print("R2:", m.R2())
 
     #- Rotate basis to maximize power in lower eigenvectors
     #--> Doesn't work; wrong rotation
@@ -492,20 +492,20 @@ def _main():
     weights = 1.0 / sigma**2    
     noisy_data = data + N.random.normal(scale=sigma)
 
-    print "Testing empca"
+    print("Testing empca")
     m0 = empca(noisy_data, weights, niter=20)
     
-    print "Testing lower rank matrix approximation"
+    print("Testing lower rank matrix approximation")
     m1 = lower_rank(noisy_data, weights, niter=20)
     
-    print "Testing classic PCA"
+    print("Testing classic PCA")
     m2 = classic_pca(noisy_data)
-    print "R2", m2.R2()
+    print("R2", m2.R2())
     
     try:
         import pylab as P
     except ImportError:
-        print >> sys.stderr, "pylab not installed; not making plots"
+        print("pylab not installed; not making plots", file=sys.stderr)
         sys.exit(0)
         
     P.subplot(311)

@@ -3,4 +3,5 @@
 build
 .vscode
 aitom/tomominer/core/cython/core.cpp
+__pycache__
 

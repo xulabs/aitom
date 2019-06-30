@@ -10,7 +10,7 @@ Please cite: Xu et al. De novo visual proteomics of single cells through pattern
 import os
 import sys
 import time
-import cPickle as pickle
+import pickle as pickle
 import copy
 import numpy as N
 import numpy.fft as NF
@@ -126,7 +126,7 @@ def ssnr__given_stat(sum_v, prod_sum, mask_sum, rad=None, op=None):
     if ('debug' not in op):
         op['debug'] = False
     if op['debug']:
-        print 'ssnr__given_stat()', op
+        print('ssnr__given_stat()', op)
     siz = N.array(sum_v.shape)
     subtomogram_num = mask_sum.max()
     avg = (N.zeros(sum_v.shape, dtype=N.complex) + N.nan)
@@ -244,7 +244,7 @@ def ssnr_sequential_parallel(self, data_json_dict, op):
     if ('verbose' not in op):
         op['verbose'] = False
     if op['verbose']:
-        print 'ssnr_sequential_parallel()'
+        print('ssnr_sequential_parallel()')
     if ('mask_cutoff' not in op):
         op['mask_cutoff'] = 0.5
     if ('band_width_radius' not in op):
@@ -316,7 +316,7 @@ def ssnr_sequential_parallel(self, data_json_dict, op):
                 assert (ssnr_s[c]['fsc'][ind] is None)
                 ssnr_s[c]['fsc'][ind] = ssnr_re['fsc']
                 del ssnr_re
-                print '\r', ('%d   %0.3f   ' % (ind, (float(ind) / len(data_json_dict[c])))), '     ', ssnr_s[c]['fsc'][ind].sum(), '       ',
+                print('\r', ('%d   %0.3f   ' % (ind, (float(ind) / len(data_json_dict[c])))), '     ', ssnr_s[c]['fsc'][ind].sum(), '       ', end=' ')
                 sys.stdout.flush()
     for c in ssnr_s:
         for t in ssnr_s[c]['ssnr']:
