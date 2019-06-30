@@ -7,11 +7,18 @@ The tomominer module was adapted from an [extended version](http://web.cmb.usc.e
 # Build Tomominer
 ## Ubuntu
 
+1. install dependencies and build tomominer
 ```bash
 sudo apt-get install python fftw3-dev cython libblas3 liblapack3 python-numpy python-scipy libarmadillo-dev python-sklearn
 pip install cython
 cd aitom
 python setup.py build
+```
+
+2. add tomominer in python path.
+
+```bash
+export PYTHONPATH=$PYTHONPATH:%aitom_dir%/aitom/build/lib.linux-x86_64-2.7/
 ```
 
 ## Mac OS X
@@ -38,6 +45,12 @@ pip install cython numpy scipy
 ```bash
 cd aitom
 python setup.py build
+```
+
+4. add tomominer in python path.
+
+```bash
+export PYTHONPATH=$PYTHONPATH:%aitom_dir%/aitom/build/lib.macosx-10.7-x86_64-2.7/
 ```
 
 
