@@ -9,8 +9,9 @@ The tomominer module was adapted from an [extended version](http://web.cmb.usc.e
 
 1. install dependencies and build tomominer
 ```bash
-sudo apt-get install python fftw3-dev cython libblas3 liblapack3 python-numpy python-scipy libarmadillo-dev python-sklearn
-pip install cython
+sudo apt-get install python fftw3-dev libblas3 liblapack3 libarmadillo-dev
+pip install -r requirements.txt
+
 cd aitom
 python setup.py build
 ```
@@ -37,7 +38,7 @@ sudo make install
 2. install other dependencies using brew and pip.
 ```bash
 brew install armadillo openblas lapack
-pip install cython numpy scipy
+pip install -r requirements.txt
 ```
 
 3. build tomominer
