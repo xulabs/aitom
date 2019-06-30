@@ -60,7 +60,7 @@ class RPCClient(object):
 
     def __getattr__(self, name):
         if name.startswith('_'):
-            print 'Warning:', ("Cannot call method (%s) with leading '_'" % name)
+            print('Warning:', ("Cannot call method (%s) with leading '_'" % name))
             return
 
         def proxy(*args, **kwargs):

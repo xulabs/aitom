@@ -8,7 +8,7 @@ Please cite: Xu et al. De novo visual proteomics of single cells through pattern
 
 
 import os, json, copy
-import cPickle as pickle
+import pickle as pickle
 import numpy as N
 import numpy.fft as NF
 import tomominer.io.file as IF
@@ -55,7 +55,7 @@ def main():
             d['mask'] = os.path.abspath(os.path.join(os.path.dirname(op['data_file']), d['mask']))
     pmpg_file = os.path.join(out_dir, 'pmpg.pickle')
     if os.path.isfile(pmpg_file):
-        print 'loading existing result file', pmpg_file
+        print('loading existing result file', pmpg_file)
         with open(pmpg_file, 'rb') as f:
             pmpg = pickle.load(f)
     else:
@@ -73,9 +73,9 @@ def main():
         del pmpg['dp']
         with open(pmpg_file, 'wb') as f:
             pickle.dump(pmpg, f, protocol=(-1))
-        print pmpg['full_set']['evaluate'][0]['score']
-    print 'score for the full set of', len(dj), 'subtomograms:', pmpg['full_set']['evaluate'][0]['score']
-    print 'score for the', pmpg['best']['p'][0, :].sum(), 'selected subtomograms:', pmpg['best']['e'][0]['score']
+        print(pmpg['full_set']['evaluate'][0]['score'])
+    print('score for the full set of', len(dj), 'subtomograms:', pmpg['full_set']['evaluate'][0]['score'])
+    print('score for the', pmpg['best']['p'][0, :].sum(), 'selected subtomograms:', pmpg['best']['e'][0]['score'])
     avg_re = average(dj=pmpg['dj'], mask_count_threshold=op['min_sample_num'])
     avg_dir = os.path.join(op['out_dir'], 'avg')
     if (not os.path.isdir(avg_dir)):

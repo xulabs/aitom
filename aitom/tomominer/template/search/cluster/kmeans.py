@@ -19,11 +19,11 @@ def process(op):
         dj = json.load(f)
     if ('test' in op):
         if (('sample_num' in op['test']) and (op['test']['sample_num'] > 0) and (len(dj) > op['test']['sample_num'])):
-            print ('testing the procedure using a subsample of %d subtomograms' % op['test']['sample_num'])
+            print(('testing the procedure using a subsample of %d subtomograms' % op['test']['sample_num']))
             dj = random.sample(dj, op['test']['sample_num'])
     mat = None
     for (i, d) in enumerate(dj):
-        print '\rloading', i, '            ',
+        print('\rloading', i, '            ', end=' ')
         sys.stdout.flush()
         v = IF.read_mrc_vol(d['subtomogram'])
         if (op['mode'] == 'pose'):

@@ -112,13 +112,13 @@ def read_mrc(path, read_data=True, show_progress=False):
                     extended['magnification'][lauf] = struct.unpack('f', f.read(4))[0]
                     f.seek(offset=(128 - 52), whence=1)
                 else:
-                    f.seek(offset=MRC.next, whence=1)
+                    f.seek(offset=MRC.__next__, whence=1)
         if read_data:
             slice_voxel_num = (mrc['nx'] * mrc['ny'])
             v = None
             for i in range(mrc['nz']):
                 if show_progress:
-                    print '\r', i, '   ',
+                    print('\r', i, '   ', end=' ')
                     sys.stdout.flush()
                 if (mrc['mode'] == 0):
                     if (v is None):

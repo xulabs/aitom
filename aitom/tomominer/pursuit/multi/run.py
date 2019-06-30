@@ -20,7 +20,7 @@ def main():
     self.pool = None
     self.cache = Cache(tmp_dir=op['options']['tmp_dir'])
     self.runner = QueueMaster(op['options']['network']['qhost'], op['options']['network']['qport'])
-    print 'loading ', op['data_file']
+    print('loading ', op['data_file'])
     with open(op['data_file']) as f:
         data_json = json.load(f)
     for d in data_json:

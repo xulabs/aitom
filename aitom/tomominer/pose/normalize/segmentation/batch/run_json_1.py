@@ -73,7 +73,7 @@ def main(op, pool=None, n_chunk=1000):
         with open(op['data_config out']) as f:
             data_new = json.load(f)
         subtomograms_processed = set([_['subtomogram'] for _ in data_new])
-        print 'loaded', len(subtomograms_processed), 'processed subtomograms'
+        print('loaded', len(subtomograms_processed), 'processed subtomograms')
     else:
         data_new = []
         subtomograms_processed = set()
@@ -97,7 +97,7 @@ def main(op, pool=None, n_chunk=1000):
             r = pa.get(99999999)
             if (r is None):
                 continue
-            print '\rprocessing subtomogram', r['record']['i'], '             ', 'successfully processed', len(data_new), '                             ',
+            print('\rprocessing subtomogram', r['record']['i'], '             ', 'successfully processed', len(data_new), '                             ', end=' ')
             sys.stdout.flush()
             del r['record']['i']
             if False:
@@ -123,11 +123,11 @@ def main(op, pool=None, n_chunk=1000):
             if (nr is None):
                 continue
             data_new.append(nr['record'])
-            print '\rprocessing subtomogram', i, '                    ', 'successfully processed', len(data_new), '                             ',
+            print('\rprocessing subtomogram', i, '                    ', 'successfully processed', len(data_new), '                             ', end=' ')
             sys.stdout.flush()
             if ((len(data_new) % n_chunk) == 0):
                 with open(op['data_config out'], 'w') as f:
                     json.dump(data_new, f, indent=2)
-    print 'successfully pose normalized subtomograms in totoal:', len(data_new)
+    print('successfully pose normalized subtomograms in totoal:', len(data_new))
     with open(op['data_config out'], 'w') as f:
         json.dump(data_new, f, indent=2)

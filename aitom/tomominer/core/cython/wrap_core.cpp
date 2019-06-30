@@ -219,10 +219,10 @@ int wrap_watershed_segmentation(unsigned int n_r, unsigned int n_c, unsigned int
 {
     
     arma::cube   vol(vol__data, n_r, n_c, n_s,    false, true);
-    arma::icube  lbl(lbl__data, n_r, n_c, n_s,    false, true);
-    arma::icube  vol_seg_lbl(vol_seg_lbl__data, n_r, n_c, n_s,    false, true);
-    arma::ucube  vol_num(vol_num__data, n_r, n_c, n_s,    false, true);
-    arma::ucube  overall_num(overall_num__data, n_r, n_c, n_s,    false, true);
+    arma::s32_cube  lbl(lbl__data, n_r, n_c, n_s,    false, true);
+    arma::s32_cube  vol_seg_lbl(vol_seg_lbl__data, n_r, n_c, n_s,    false, true);
+    arma::u32_cube  vol_num(vol_num__data, n_r, n_c, n_s,    false, true);
+    arma::u32_cube  overall_num(overall_num__data, n_r, n_c, n_s,    false, true);
 
 
     int res = watershed_segmentation(vol, lbl, max_overall_voxel_num, max_segment_voxel_num, queue_label, conflict_lbl, vol_seg_lbl, vol_num, overall_num);
@@ -232,8 +232,8 @@ int wrap_watershed_segmentation(unsigned int n_r, unsigned int n_c, unsigned int
 
 int wrap_segment_boundary(unsigned int n_r, unsigned int n_c, unsigned int n_s, int *lbl__data, int *bdry__data)
 {
-    arma::icube lbl(lbl__data, n_r, n_c, n_s,    false, true);
-    arma::icube bdry(bdry__data, n_r, n_c, n_s,    false, true);
+    arma::s32_cube lbl(lbl__data, n_r, n_c, n_s,    false, true);
+    arma::s32_cube bdry(bdry__data, n_r, n_c, n_s,    false, true);
 
     int count = segment_boundary(lbl, bdry);
 
@@ -243,8 +243,8 @@ int wrap_segment_boundary(unsigned int n_r, unsigned int n_c, unsigned int n_s, 
 
 int wrap_connected_regions(unsigned int n_r, unsigned int n_c, unsigned int n_s, int *msk__data, int *lbl__data)
 {
-    arma::icube msk(msk__data, n_r, n_c, n_s,    false, true);
-    arma::icube lbl(lbl__data, n_r, n_c, n_s,    false, true);
+    arma::s32_cube msk(msk__data, n_r, n_c, n_s,    false, true);
+    arma::s32_cube lbl(lbl__data, n_r, n_c, n_s,    false, true);
 
     int max_lbl = connected_regions(msk, lbl);
     return max_lbl;

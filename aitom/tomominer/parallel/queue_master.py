@@ -12,7 +12,7 @@ import os
 import sys
 import uuid
 import pickle
-import thread
+import _thread
 import numpy as N
 from tomominer.parallel.RPCClient import RPCClient
 from tomominer.parallel.RPCLoggingHandler import RPCLoggingHandler
@@ -31,7 +31,7 @@ class QueueMaster:
         self.logger = logging.LoggerAdapter(logging.getLogger(), {'host': os.environ.get('HOSTNAME', 'unknown'), 'job_id': os.environ.get('PBS_JOBID', 'N/A').split('.')[0], 'source_type': 'queue_master', })
         self.proj_id = str(uuid.uuid4())
         self.work_queue.new_project(self.proj_id)
-        thread.start_new_thread(QueueMaster.keep_alive, (self, RPCClient(host, port)))
+        _thread.start_new_thread(QueueMaster.keep_alive, (self, RPCClient(host, port)))
 
     def task(self, priority=1000, module=None, method=None, args=[], kwargs={}):
         return Task(priority=priority, proj_id=self.proj_id, module=module, method=method, args=args, kwargs=kwargs)
@@ -77,7 +77,7 @@ class QueueMaster:
                 yield res
             if ((self.work_queue.task_queue_size() == 0) and (len(state) > 0)):
                 undone_tasks = []
-                for task_id in state.keys():
+                for task_id in list(state.keys()):
                     if (state[task_id] <= 0):
                         continue
                     undone_tasks.append(task_id)
@@ -96,13 +96,13 @@ class QueueMaster:
             sys.stdout.write(('%d   %0.3f    \r' % (count, (count / task_num))))
             sys.stdout.flush()
             if res.error:
-                print 'Computation Failed!'
-                print res
-                print 'task_id      :', res.task_id
-                print 'method       :', res.method
-                print 'args         :', res.args
-                print 'kwargs       :', res.kwargs
-                print 'error_msg    :', res.error_msg
+                print('Computation Failed!')
+                print(res)
+                print('task_id      :', res.task_id)
+                print('method       :', res.method)
+                print('args         :', res.args)
+                print('kwargs       :', res.kwargs)
+                print('error_msg    :', res.error_msg)
                 raise Exception
             yield res
 
@@ -143,12 +143,12 @@ class QueueMaster:
             sys.stdout.write(('%d   %0.3f    \r' % (count, (count / task_num))))
             sys.stdout.flush()
             if res.error:
-                print 'Computation Failed!'
-                print res
-                print 'task_id      :', res.task_id
-                print 'method       :', res.method
-                print 'args         :', res.args
-                print 'kwargs       :', res.kwargs
-                print 'error_msg    :', res.error_msg
+                print('Computation Failed!')
+                print(res)
+                print('task_id      :', res.task_id)
+                print('method       :', res.method)
+                print('args         :', res.args)
+                print('kwargs       :', res.kwargs)
+                print('error_msg    :', res.error_msg)
                 raise Exception
             yield res

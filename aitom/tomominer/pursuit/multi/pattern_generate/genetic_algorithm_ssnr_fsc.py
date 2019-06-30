@@ -13,14 +13,14 @@ import tomominer.statistics.ssnr as SS
 import socket
 
 def data_prepare(dj, op):
-    print 'data_prepare()'
+    print('data_prepare()')
     if ('segmentation_tg_op' not in op):
         op['segmentation_tg_op'] = None
     s_sum = None
     s_prod_sum = None
     s_mask_sum = None
     for (i, d) in enumerate(dj):
-        print i, '      ', '\r',
+        print(i, '      ', '\r', end=' ')
         sys.stdout.flush()
         r = SS.var__local(self=None, data_json=[d], return_key=False, segmentation_tg_op=op['segmentation_tg_op'])
         if (s_sum is None):
@@ -66,13 +66,13 @@ def ga(self=None, stat=None, initial_population=None, op=None):
         else:
             best_score['repeat'] += 1
         sel_nums = [N.sum(_) for _ in combined['p']]
-        print '\r', '\t\t', ('iter_i %4d' % (iter_i,)), ('score %3.4f' % (best_score_t,)), '        ', ('best_rep %3d' % (best_score['repeat'],)), '        ', ('subtomogram num %6d' % (int(N.sum(combined['p'][max_i, :])),)), '        ', 'min', N.min(sel_nums), 'max', N.max(sel_nums),
+        print('\r', '\t\t', ('iter_i %4d' % (iter_i,)), ('score %3.4f' % (best_score_t,)), '        ', ('best_rep %3d' % (best_score['repeat'],)), '        ', ('subtomogram num %6d' % (int(N.sum(combined['p'][max_i, :])),)), '        ', 'min', N.min(sel_nums), 'max', N.max(sel_nums), end=' ')
         sys.stdout.flush()
         if (best_score['repeat'] >= op['best_score_max_repeat']):
             break
     if ('parallel' in op):
         ga__parallel__stat_cleanup(self=self, stat_keys_key=stat_keys_key)
-    print 
+    print() 
     return best
 
 def ga_evaluate__single(l, stat, op):

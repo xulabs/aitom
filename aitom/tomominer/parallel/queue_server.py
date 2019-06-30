@@ -13,9 +13,9 @@ import time
 import copy
 import json
 import uuid
-import thread
+import _thread
 import threading
-import Queue
+import queue
 import logging
 import logging.handlers
 import psutil
@@ -26,7 +26,7 @@ from tomominer.parallel.RPCServer import RPCServer
 class QueueServer:
 
     def __init__(self):
-        self.todo_queue = Queue.PriorityQueue()
+        self.todo_queue = queue.PriorityQueue()
         self.done_queues = {}
         self.done_tasks_time = dict()
         self.done_tasks_time_max = (60.0 * 20)
@@ -48,19 +48,19 @@ class QueueServer:
         self.pub_logger.addHandler(h)
         self.logger = logging.LoggerAdapter(logging.getLogger(), {'host': os.environ.get('HOSTNAME', 'unknown'), 'job_id': os.environ.get('PBS_JOBID', 'N/A').split('.')[0], 'source_type': 'queue_server', })
         self.process = psutil.Process(os.getpid())
-        thread.start_new_thread(QueueServer.remove_dead_projects_daemon, (self,))
+        _thread.start_new_thread(QueueServer.remove_dead_projects_daemon, (self,))
 
     def log_queue_stats(self):
-        self.logger.debug('TODO_QUEUE: %6d    IN_PROGRESS: %6d    DONE_QUEUE: %6d', self.todo_queue.qsize(), len(self.out_tasks), sum((_.qsize() for _ in self.done_queues.values())))
+        self.logger.debug('TODO_QUEUE: %6d    IN_PROGRESS: %6d    DONE_QUEUE: %6d', self.todo_queue.qsize(), len(self.out_tasks), sum((_.qsize() for _ in list(self.done_queues.values()))))
 
     def queue_stats_string(self):
-        return ('CPU %3.0f  PROJ %2d  WORKER %4d    TODO_QUEUE: %6d  IN_PROGRESS: %4d  DONE_QUEUE: %3d ' % (self.process.cpu_percent(interval=1), len(self.done_queues), self.get_worker_number(), self.todo_queue.qsize(), len(self.out_tasks), sum((_.qsize() for _ in self.done_queues.values()))))
+        return ('CPU %3.0f  PROJ %2d  WORKER %4d    TODO_QUEUE: %6d  IN_PROGRESS: %4d  DONE_QUEUE: %3d ' % (self.process.cpu_percent(interval=1), len(self.done_queues), self.get_worker_number(), self.todo_queue.qsize(), len(self.out_tasks), sum((_.qsize() for _ in list(self.done_queues.values())))))
 
     def new_project(self, proj_id, max_queue_size=0):
         lock = threading.Lock()
         with lock:
             if (proj_id not in self.done_queues):
-                self.done_queues[proj_id] = Queue.Queue(maxsize=max_queue_size)
+                self.done_queues[proj_id] = queue.Queue(maxsize=max_queue_size)
         self.project_keep_alive(proj_id)
         return True
 
@@ -83,7 +83,7 @@ class QueueServer:
                 continue
             done_queues_to_delete.append(proj_id)
         cur_time = time.time()
-        for task_id in copy.deepcopy(self.done_tasks_time.keys()):
+        for task_id in copy.deepcopy(list(self.done_tasks_time.keys())):
             if ((task_id in self.done_tasks_time) and ((cur_time - self.done_tasks_time[task_id]) > self.done_tasks_time_max)):
                 try:
                     del self.done_tasks_time[task_id]
@@ -123,7 +123,7 @@ class QueueServer:
 
     def get_worker_number(self):
         cur_time = time.time()
-        worker_ids = copy.copy(self.worker_alive_time.keys())
+        worker_ids = copy.copy(list(self.worker_alive_time.keys()))
         c = 0
         for _ in worker_ids:
             if (_ not in self.worker_alive_time):
@@ -140,13 +140,13 @@ class QueueServer:
         return len(self.out_tasks)
 
     def put_tasks(self, tasks):
-        print ('\r' + self.queue_stats_string()),
+        print(('\r' + self.queue_stats_string()), end=' ')
         for task in tasks:
             self.todo_queue.put((task.priority, task))
             self.logger.debug('put_task %s', task)
 
     def put_task(self, task):
-        print ('\r' + self.queue_stats_string()),
+        print(('\r' + self.queue_stats_string()), end=' ')
         self.todo_queue.put((task.priority, task))
         self.logger.debug('put_task %s', task)
 
@@ -154,7 +154,7 @@ class QueueServer:
         raise NotImplementedError
 
     def get_task(self, worker_id=None, interval=5, timeout=10):
-        print ('\r' + self.queue_stats_string()),
+        print(('\r' + self.queue_stats_string()), end=' ')
         self.worker_alive_time[worker_id] = time.time()
         start_time = time.time()
         while ((time.time() - start_time) < timeout):
@@ -165,7 +165,7 @@ class QueueServer:
                 self.start_calc[task.task_id] = time.time()
                 self.out_tasks[task.task_id] = task
                 return task
-            except Queue.Empty:
+            except queue.Empty:
                 time.sleep(interval)
         return None
 
@@ -181,7 +181,7 @@ class QueueServer:
         return task_ids_t
 
     def put_result(self, worker_id, task_id, error, error_msg, result):
-        print ('\r' + self.queue_stats_string()),
+        print(('\r' + self.queue_stats_string()), end=' ')
         self.worker_alive_time[worker_id] = time.time()
         if (task_id in self.done_tasks_time):
             return True
@@ -205,20 +205,20 @@ class QueueServer:
         if (proj_id not in self.done_queues):
             self.new_project(proj_id)
         self.log_queue_stats()
-        print ('\r' + self.queue_stats_string()),
+        print(('\r' + self.queue_stats_string()), end=' ')
         results = []
         while True:
             try:
                 task = self.done_queues[proj_id].get_nowait()
                 results.append(task)
-            except Queue.Empty:
+            except queue.Empty:
                 if (len(results) > 0):
                     self.logger.debug('get_results: (%s)', len(results))
                 else:
                     time.sleep(1)
                 break
         now = time.time()
-        for (task_id, start_time) in self.start_calc.items():
+        for (task_id, start_time) in list(self.start_calc.items()):
             if (task_id in self.out_tasks):
                 task = self.out_tasks[task_id]
                 if (task.proj_id not in self.done_queues):
@@ -229,7 +229,7 @@ class QueueServer:
         return results
 
     def put_broadcast_task(self, task):
-        print ('\r' + self.queue_stats_string()),
+        print(('\r' + self.queue_stats_string()), end=' ')
         task_worker_id = {}
         for worker_id in self.broadcast_todo_queue:
             if ((time.time() - self.worker_alive_time[worker_id]) > self.worker_alive_time_max):
@@ -245,14 +245,14 @@ class QueueServer:
     def get_broadcast_task(self, worker_id):
         self.worker_alive_time[worker_id] = time.time()
         if (worker_id not in self.broadcast_todo_queue):
-            self.broadcast_todo_queue[worker_id] = Queue.PriorityQueue()
+            self.broadcast_todo_queue[worker_id] = queue.PriorityQueue()
             return None
         try:
             (priority, task) = self.broadcast_todo_queue[worker_id].get_nowait()
             self.out_tasks[task.task_id] = task
             self.start_calc[task.task_id] = time.time()
             return task
-        except Queue.Empty:
+        except queue.Empty:
             pass
         return None
 
