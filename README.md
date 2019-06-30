@@ -4,22 +4,17 @@ AITom is a library for developping AI algorithms for cellular electron cryo-tomo
 
 The tomominer module was adapted from an [extended version](http://web.cmb.usc.edu/people/alber/Software/mpp/) of the [tomominer library](https://github.com/alberlab/tomominer).
 
-# Build Tomominer
+# Build library
 ## Ubuntu
 
-1. install dependencies and build tomominer
+1. install dependencies and build
 ```bash
 sudo apt-get install python fftw3-dev libblas3 liblapack3 libarmadillo-dev
 pip install -r requirements.txt
 
-cd aitom
 python setup.py build
 ```
 
-2. add tomominer in python path.
-
-```bash
-export PYTHONPATH=$PYTHONPATH:%aitom_dir%/aitom/build/lib.linux-x86_64-2.7/
 ```
 
 ## Mac OS X
@@ -41,17 +36,9 @@ brew install armadillo openblas lapack
 pip install -r requirements.txt
 ```
 
-3. build tomominer
+3. build library
 
 ```bash
-cd aitom
 python setup.py build
 ```
-
-4. add tomominer in python path.
-
-```bash
-export PYTHONPATH=$PYTHONPATH:%aitom_dir%/aitom/build/lib.macosx-10.7-x86_64-2.7/
-```
-
 
