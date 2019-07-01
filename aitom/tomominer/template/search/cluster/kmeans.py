@@ -10,8 +10,8 @@ Please cite: Xu et al. De novo visual proteomics of single cells through pattern
 import os, sys, json, random
 import numpy as N
 import sklearn.cluster as SC
-import tomominer.io.file as IF
-import tomominer.geometry.rotate as GR
+import aitom.tomominer.io.file as IF
+import aitom.tomominer.geometry.rotate as GR
 import warnings
 
 def process(op):
@@ -36,7 +36,7 @@ def process(op):
             mat = N.zeros((len(dj), vr.size))
         mat[i, :] = vr.flatten()
     if ('PCA' in op):
-        import tomominer.dimension_reduction.empca as drempca
+        import aitom.tomominer.dimension_reduction.empca as drempca
         pca = drempca.empca(data=mat, weights=N.ones(mat.shape), nvec=op['PCA']['n_dims'], niter=op['PCA']['n_iter'])
         mat_km = pca.coeff
     else:

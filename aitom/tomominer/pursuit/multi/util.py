@@ -21,22 +21,22 @@ import scipy.stats as SCS
 from multiprocessing.pool import Pool as Pool
 import numpy as N
 import numpy.fft as NF
-from tomominer.io.cache import Cache
-from tomominer.common.obj import Object
-import tomominer.dimension_reduction.util as DU
-import tomominer.image.vol.util as UV
-import tomominer.io.file as IV
-import tomominer.geometry.ang_loc as AAL
-import tomominer.geometry.rotate as GR
-import tomominer.align.fast.full as AFF
-import tomominer.align.refine.gradient_refine as AFGF
-import tomominer.align.util as AU
-import tomominer.statistics.ssnr as SS
-import tomominer.segmentation.watershed as SW
-import tomominer.segmentation.active_contour.chan_vese.segment as SACS
-import tomominer.filter.gaussian as FG
-import tomominer.model.util as MU
-import tomominer.core as core
+from aitom.tomominer.io.cache import Cache
+from aitom.tomominer.common.obj import Object
+import aitom.tomominer.dimension_reduction.util as DU
+import aitom.tomominer.image.vol.util as UV
+import aitom.tomominer.io.file as IV
+import aitom.tomominer.geometry.ang_loc as AAL
+import aitom.tomominer.geometry.rotate as GR
+import aitom.tomominer.align.fast.full as AFF
+import aitom.tomominer.align.refine.gradient_refine as AFGF
+import aitom.tomominer.align.util as AU
+import aitom.tomominer.statistics.ssnr as SS
+import aitom.tomominer.segmentation.watershed as SW
+import aitom.tomominer.segmentation.active_contour.chan_vese.segment as SACS
+import aitom.tomominer.filter.gaussian as FG
+import aitom.tomominer.model.util as MU
+import aitom.tomominer.core as core
 
 def align_vols_with_wedge(v1, m1, v2, m2, op=None, logger=None):
     err = None
@@ -336,7 +336,7 @@ def covariance_filtered_pca(self, data_json_model=None, data_json_embed=None, no
         cov_avg_v = cov_avg.flatten()
         for (i, ind_t) in enumerate(voxel_mask_inds):
             empca_weight[:, i] *= cov_avg_v[ind_t]
-    import tomominer.dimension_reduction.empca as drempca
+    import aitom.tomominer.dimension_reduction.empca as drempca
     pca = drempca.empca(data=mat, weights=empca_weight, nvec=pca_op['n_dims'], niter=pca_op['n_iter'])
     if ((data_json_embed is None) or ()):
         red = pca.coeff
@@ -498,7 +498,7 @@ def cluster_averaging_vols__smooth(v, fsc, mode):
     if (mode == 'fsc_direct'):
         band_pass_curve = fsc
     elif (mode == 'fsc_gaussian'):
-        import tomominer.fitting.gaussian.one_dim as FGO
+        import aitom.tomominer.fitting.gaussian.one_dim as FGO
         bands = N.array(list(range(len(fsc))))
         fit = FGO.fit__zero_mean__multi_start(x=bands, y=fsc)
         if (fit['c'] < bands.max()):
@@ -509,7 +509,7 @@ def cluster_averaging_vols__smooth(v, fsc, mode):
             return re
     else:
         raise Exception('mode')
-    import tomominer.filter.band_pass as IB
+    import aitom.tomominer.filter.band_pass as IB
     re['v'] = IB.filter_given_curve(v=v, curve=band_pass_curve)
     return re
 

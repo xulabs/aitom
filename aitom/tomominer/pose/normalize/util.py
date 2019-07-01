@@ -8,7 +8,7 @@ Please cite: Xu et al. De novo visual proteomics of single cells through pattern
 
 
 import numpy as N
-import tomominer.geometry.rotate as GR
+import aitom.tomominer.geometry.rotate as GR
 
 def center_mass(v):
     assert N.all((v >= 0))

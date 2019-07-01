@@ -40,9 +40,9 @@ def peak__partition(v, s1, s2, find_maxima=True, partition_op=None, multiprocess
         siz_max = max(v.shape)
         partition_op = {   'nonoverlap_width': siz_max*2,    'overlap_width': siz_max*2    }
 
-    import tomominer.image.vol.partition as IVP
+    import aitom.tomominer.image.vol.partition as IVP
     b = IVP.gen_bases(v.shape, nonoverlap_width=partition_op['nonoverlap_width'], overlap_width=partition_op['overlap_width'])
-    print 'partition num', b.shape
+    print('partition num', b.shape)
 
     ps = []
 
@@ -58,7 +58,7 @@ def peak__partition(v, s1, s2, find_maxima=True, partition_op=None, multiprocess
         for pool_re_t in pool_re:
             ppsj = pool_re_t.get(9999999)
             ps.extend(  ppsj['ps']  )
-            print '\r', ppsj['partition_id'], '                     '     ;       sys.stdout.flush()
+            print('\r', ppsj['partition_id'], '                     ')     ;       sys.stdout.flush()
 
         pool.close()
         pool.join()
@@ -72,7 +72,7 @@ def peak__partition(v, s1, s2, find_maxima=True, partition_op=None, multiprocess
                     bp = N.squeeze(b[i0,i1,i2,:,:])
                     ppsj = peak__partition__single_job(v=v[bp[0,0]:bp[0,1], bp[1,0]:bp[1,1], bp[2,0]:bp[2,1]], s1=s1, s2=s2, base=bp, find_maxima=find_maxima, partition_id=(i0,i1,i2), save_vg=(partition_op['save_vg'] if 'save_vg' in partition_op else False))
                     ps.extend(      ppsj['ps']   )
-                    print '\r', ppsj['partition_id'], '                     '    ;       sys.stdout.flush()
+                    print('\r', ppsj['partition_id'], '                     ')    ;       sys.stdout.flush()
 
 
     # order peaks in ps according to values

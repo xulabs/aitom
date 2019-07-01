@@ -10,11 +10,11 @@ Please cite: Xu et al. De novo visual proteomics of single cells through pattern
 import os, sys, json, copy
 from multiprocessing.pool import Pool
 import numpy as N
-import tomominer.pose.normalize.util as PNU
-import tomominer.geometry.rotate as GR
-import tomominer.io.file as IF
-import tomominer.filter.gaussian as FG
-import tomominer.segmentation.active_contour.chan_vese.segment as SA
+import aitom.tomominer.pose.normalize.util as PNU
+import aitom.tomominer.geometry.rotate as GR
+import aitom.tomominer.io.file as IF
+import aitom.tomominer.filter.gaussian as FG
+import aitom.tomominer.segmentation.active_contour.chan_vese.segment as SA
 import traceback
 
 def level_set(record, op):

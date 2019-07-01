@@ -13,9 +13,9 @@ import time
 import random
 import numpy as np
 from numpy.fft import fftn, ifftn, fftshift, ifftshift
-import tomominer.io.file as iv
-import tomominer.average.util as avgu
-import tomominer.image.vol.util as uv
+import aitom.tomominer.io.file as iv
+import aitom.tomominer.average.util as avgu
+import aitom.tomominer.image.vol.util as uv
 
 def neighbor_product(v):
     siz = list(v.shape)

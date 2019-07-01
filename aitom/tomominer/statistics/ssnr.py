@@ -15,10 +15,10 @@ import copy
 import numpy as N
 import numpy.fft as NF
 from multiprocessing.pool import Pool as Pool
-import tomominer.image.vol.util as GV
-import tomominer.io.file as IV
-import tomominer.geometry.rotate as GR
-import tomominer.geometry.ang_loc as AAL
+import aitom.tomominer.image.vol.util as GV
+import aitom.tomominer.io.file as IV
+import aitom.tomominer.geometry.rotate as GR
+import aitom.tomominer.geometry.ang_loc as AAL
 
 def ssnr_to_fsc(ssnr):
     fsc = (ssnr / (2.0 + ssnr))
@@ -39,7 +39,7 @@ def var__local(self, data_json, labels=None, mask_cutoff=0.5, return_key=True, s
         m = GR.rotate_mask(m, N.array(r['angle'], dtype=N.float))
         if ((segmentation_tg_op is not None) and ('template' in r) and ('segmentation' in r['template'])):
             phi = IV.read_mrc(r['template']['segmentation'])['value']
-            import tomominer.pursuit.multi.util as PMU
+            import aitom.tomominer.pursuit.multi.util as PMU
             v_s = PMU.template_guided_segmentation(v=v, m=(phi > 0.5), op=segmentation_tg_op)
             if (v_s is not None):
                 v = v_s
@@ -224,7 +224,7 @@ def ssnr_sequential___individual_data_collect(self, r, op):
         phi_mr = GR.rotate(phi_m, angle=ang_inv, loc_r=loc_inv, default_val=0)
         del phi_m
         del ang_inv, loc_inv
-        import tomominer.pursuit.multi.util as PMU
+        import aitom.tomominer.pursuit.multi.util as PMU
         v_s = PMU.template_guided_segmentation(v=v, m=phi_mr, op=op['segmentation_tg'])
         del phi_mr
         if (v_s is not None):

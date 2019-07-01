@@ -8,7 +8,7 @@ Please cite: Xu et al. De novo visual proteomics of single cells through pattern
 
 
 import numpy as np
-import tomominer.core as core
+import aitom.tomominer.core as core
 
 def segmentation_cpp(vol_map, vol_lbl, max_overall_voxel_num=None, max_segment_voxel_num=None, queue_label=(-1), conflict_lbl=(-2)):
     vol_map = np.array(vol_map, dtype=np.double, order='F')

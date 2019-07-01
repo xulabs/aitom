@@ -16,10 +16,10 @@ import warnings
 import uuid
 from multiprocessing.pool import Pool
 import importlib
-from tomominer.parallel.RPCClient import RPCClient
-from tomominer.parallel.RPCLoggingHandler import RPCLoggingHandler
-from tomominer.parallel.Task import Task
-from tomominer.io.cache import Cache
+from aitom.tomominer.parallel.RPCClient import RPCClient
+from aitom.tomominer.parallel.RPCLoggingHandler import RPCLoggingHandler
+from aitom.tomominer.parallel.Task import Task
+from aitom.tomominer.io.cache import Cache
 
 
 class QueueWorker:

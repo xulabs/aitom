@@ -2,7 +2,7 @@
 Functions for reading and writing common files
 '''
 
-import aitom.tomominer.io.mrcfile_proxy as TIM
+import aitom.io.mrcfile_proxy as TIM
 
 def read_mrc_data(path, show_progress=False):
     #return read_mrc(path=path, show_progress=show_progress)['value']

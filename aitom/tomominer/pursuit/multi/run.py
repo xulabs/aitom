@@ -8,9 +8,9 @@ Please cite: Xu et al. De novo visual proteomics of single cells through pattern
 
 
 import os, sys, json, warnings
-from tomominer.parallel.queue_master import QueueMaster
-import tomominer.common.obj as CO
-from tomominer.io.cache import Cache
+from aitom.tomominer.parallel.queue_master import QueueMaster
+import aitom.tomominer.common.obj as CO
+from aitom.tomominer.io.cache import Cache
 
 def main():
     warnings.filterwarnings('error')
@@ -29,5 +29,5 @@ def main():
         if (not os.path.isabs(d['mask'])):
             d['mask'] = os.path.abspath(os.path.join(os.path.dirname(op['data_file']), d['mask']))
     del op['data_file']
-    from tomominer.pursuit.multi.main import pursuit
+    from aitom.tomominer.pursuit.multi.main import pursuit
     pursuit(self=self, op=op, data_json=data_json)

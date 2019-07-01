@@ -19,8 +19,8 @@ import queue
 import logging
 import logging.handlers
 import psutil
-from tomominer.parallel.Task import Task
-from tomominer.parallel.RPCServer import RPCServer
+from aitom.tomominer.parallel.Task import Task
+from aitom.tomominer.parallel.RPCServer import RPCServer
 
 
 class QueueServer:

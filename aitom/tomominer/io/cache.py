@@ -14,7 +14,7 @@ import time
 import uuid
 import pickle
 import numpy as N
-import tomominer.io.file as IF
+import aitom.tomominer.io.file as IF
 
 
 class Cache:

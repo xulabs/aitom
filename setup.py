@@ -6,6 +6,7 @@ import platform
 from distutils.core import setup
 from distutils.extension import Extension
 from Cython.Distutils import build_ext
+from Cython.Build import cythonize
 from numpy import get_include
 
 compile_extra_args = ['-std=c++11']
@@ -16,21 +17,21 @@ if platform.system() == "Darwin":
 
 cpp_core = Extension('aitom.tomominer.core.core',
                      sources=[
-                         'aitom.tomominer/core/cython/wrap_core.cpp',
-                         'aitom.tomominer/core/cython/core.pyx',
-                         'aitom.tomominer/core/src/affine_transform.cpp',
-                         'aitom.tomominer/core/src/align.cpp',
-                         'aitom.tomominer/core/src/arma_extend.cpp',
-                         'aitom.tomominer/core/src/dilate.cpp',
-                         'aitom.tomominer/core/src/fft.cpp',
-                         'aitom.tomominer/core/src/geometry.cpp',
-                         'aitom.tomominer/core/src/interpolation.cpp',
-                         'aitom.tomominer/core/src/io.cpp',
-                         'aitom.tomominer/core/src/legendre.cpp',
-                         'aitom.tomominer/core/src/rotate.cpp',
-                         'aitom.tomominer/core/src/sht.cpp',
-                         'aitom.tomominer/core/src/wigner.cpp',
-                         'aitom.tomominer/core/src/segmentation/watershed/watershed_segmentation.cpp'],
+                         'aitom/tomominer/core/cython/wrap_core.cpp',
+                         'aitom/tomominer/core/cython/core.pyx',
+                         'aitom/tomominer/core/src/affine_transform.cpp',
+                         'aitom/tomominer/core/src/align.cpp',
+                         'aitom/tomominer/core/src/arma_extend.cpp',
+                         'aitom/tomominer/core/src/dilate.cpp',
+                         'aitom/tomominer/core/src/fft.cpp',
+                         'aitom/tomominer/core/src/geometry.cpp',
+                         'aitom/tomominer/core/src/interpolation.cpp',
+                         'aitom/tomominer/core/src/io.cpp',
+                         'aitom/tomominer/core/src/legendre.cpp',
+                         'aitom/tomominer/core/src/rotate.cpp',
+                         'aitom/tomominer/core/src/sht.cpp',
+                         'aitom/tomominer/core/src/wigner.cpp',
+                         'aitom/tomominer/core/src/segmentation/watershed/watershed_segmentation.cpp'],
                      libraries=['m', 'fftw3', 'armadillo', 'blas', 'lapack'],
                      include_dirs=[get_include(), '/usr/include',
                                    '/usr/local/include', 'aitom/tomominer/core/src/'],
@@ -56,11 +57,12 @@ def get_packages(root_dir='aitom', exclude_dir_roots=['aitom/tomominer/core/src'
 setup(name='aitom',
       version='0.0.1',
       author='Xu Lab (CMU) and collaborators',
+      author_email='mxu1@cs.cmu.edu',
       description='AI software for tomogram analysis',
       license='GPLv3',
-      url='',
+      url='https://github.com/xulabs/aitom',
       platforms=['x86_64'],
-      ext_modules=[cpp_core],
+      ext_modules=cythonize(cpp_core),
       packages=get_packages(),
       package_dir={'aitom': 'aitom',
                    'aitom.tomominer.core': 'aitom/tomominer/core/cython/', },

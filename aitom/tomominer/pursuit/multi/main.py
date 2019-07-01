@@ -11,8 +11,8 @@ import os, sys, shutil, time, copy, random, json, uuid
 from collections import defaultdict
 import pickle as pickle
 import numpy as N
-import tomominer.pursuit.multi.util as CU
-import tomominer.io.file as IV
+import aitom.tomominer.pursuit.multi.util as CU
+import aitom.tomominer.io.file as IV
 
 def fsc_stat_json_convert(fsc_stat):
     fsc_stat_t = {}
@@ -277,7 +277,7 @@ def pursuit(self, op, data_json):
                     print('Generate subtomogram sets through sequential expansion')
                     al_t = [_['align'] for _ in at_ress]
                     if (('filtering__second_largest_cut' in op['cluster']['sequential_expansion']) and (len(al_t[0]) > 1)):
-                        import tomominer.pursuit.multi.recursive.filtering.second_largest_cut as PMRFS
+                        import aitom.tomominer.pursuit.multi.recursive.filtering.second_largest_cut as PMRFS
                         data_json_sp = PMRFS.do_filter(al=al_t, dj=data_json)
                     else:
                         data_json_sp = data_json

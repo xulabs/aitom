@@ -10,9 +10,9 @@ Please cite: Xu et al. De novo visual proteomics of single cells through pattern
 import sys, copy
 import numpy as N
 import traceback
-import tomominer.core as tomo
-import tomominer.model.util as MU
-import tomominer.io.file as iv
+import aitom.tomominer.core as tomo
+import aitom.tomominer.model.util as MU
+import aitom.tomominer.io.file as iv
 
 def align_vols(v1, m1, v2, m2, L):
     fail = False

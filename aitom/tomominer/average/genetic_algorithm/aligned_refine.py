@@ -11,9 +11,9 @@ import os, json, copy
 import pickle as pickle
 import numpy as N
 import numpy.fft as NF
-import tomominer.io.file as IF
-import tomominer.geometry.rotate as GR
-import tomominer.pursuit.multi.pattern_generate.genetic_algorithm_ssnr_fsc as PMPG
+import aitom.tomominer.io.file as IF
+import aitom.tomominer.geometry.rotate as GR
+import aitom.tomominer.pursuit.multi.pattern_generate.genetic_algorithm_ssnr_fsc as PMPG
 
 def average(dj, mask_count_threshold):
     vol_sum = None

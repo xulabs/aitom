@@ -19,7 +19,7 @@ import numpy as N
 
 def get_mrc(path, retry_interval=1.0, max_retry=5):
     path = os.path.realpath(str(path))
-    import tomominer.core as tomo
+    import aitom.tomominer.core as tomo
     v = None
     retry = 0
     while (retry < max_retry):
@@ -186,5 +186,5 @@ def put_mrc(mrc, path, overwrite=True):
     path = str(path)
     if ((overwrite == False) and os.path.isfile(path)):
         return
-    import tomominer.core as core
+    import aitom.tomominer.core as core
     core.write_mrc(mrc, path)

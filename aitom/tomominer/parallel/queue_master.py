@@ -14,9 +14,9 @@ import uuid
 import pickle
 import _thread
 import numpy as N
-from tomominer.parallel.RPCClient import RPCClient
-from tomominer.parallel.RPCLoggingHandler import RPCLoggingHandler
-from tomominer.parallel.Task import Task
+from aitom.tomominer.parallel.RPCClient import RPCClient
+from aitom.tomominer.parallel.RPCLoggingHandler import RPCLoggingHandler
+from aitom.tomominer.parallel.Task import Task
 import logging
 
 

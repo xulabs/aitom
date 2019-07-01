@@ -9,7 +9,7 @@ Please cite: Xu et al. De novo visual proteomics of single cells through pattern
 
 import os, sys, copy, uuid, time
 import numpy as N
-import tomominer.statistics.ssnr as SS
+import aitom.tomominer.statistics.ssnr as SS
 import socket
 
 def data_prepare(dj, op):
