@@ -66,4 +66,84 @@ def highlight_xy_axis(v, dim_siz=64, model_id=0, copy=True):
 
 
 
+#-----------------------------------------------------------------------------------
+
+# roughly add a small vol to a big whole map, so that the center of vol is roughly centered at c
+def add_to_whole_map(whole_map, vol, c=None):
+
+    if c is None:   c = N.array(whole_map.shape) / 2
+
+    c = N.round(c)
+
+    siz = N.array(vol.shape)
+
+    se = subvolume_center_start_end(c, map_siz=N.array(whole_map.shape), subvol_siz=siz)
+    if se is None:       return None
+
+    
+    # we also handle NaN in the whole map, and replace them with valid values in local map (if any)
+    local_map = whole_map[se[0,0]:se[0,1], se[1,0]:se[1,1], se[2,0]:se[2,1]]
+    local_map[N.isnan(local_map)] = 0
+    local_map += vol
+
+    whole_map[se[0,0]:se[0,1], se[1,0]:se[1,1], se[2,0]:se[2,1]] = local_map
+
+    return se
+
+
+# roughly paste a small vol to a big whole map, so that the center of vol is roughly centered at c
+def paste_to_whole_map(whole_map, vol, c=None):
+
+    if c is None:   c = N.array(whole_map.shape) / 2
+
+    c = N.round(c)
+
+    siz = N.array(vol.shape)
+
+    se = subvolume_center_start_end(c, map_siz=whole_map.shape, subvol_siz=siz)
+    if se is None:       return None
+
+    paste_to_whole_map__se(whole_map, vol, se)
+
+    return se
+
+
+# paste to a map given start and end coordinates
+def paste_to_whole_map__se(whole_map, vol, se):
+    whole_map[se[0,0]:se[0,1], se[1,0]:se[1,1], se[2,0]:se[2,1]] = vol
+
+
+def cut_from_whole_map(whole_map, c, siz):
+
+    se = subvolume_center_start_end(c, map_siz=whole_map.shape, subvol_siz=siz)
+    return          cut_from_whole_map__se(whole_map, se)
+
+
+# cut a map given start and end coordinates
+def cut_from_whole_map__se(whole_map, se):
+    if se is None:       return None
+    return          whole_map[se[0,0]:se[0,1], se[1,0]:se[1,1], se[2,0]:se[2,1]]
+
+
+
+# given a center c, get the relative start and end position of a subvolume with size subvol_siz
+def subvolume_center_start_end(c, map_siz, subvol_siz):
+    map_siz = N.array(map_siz)
+    subvol_siz = N.array(subvol_siz)
+
+    siz_h = N.ceil( subvol_siz / 2.0 )
+
+    start = c - siz_h;      start.astype(int)
+    end = start + subvol_siz;      end.astype(int)
+
+    if any(start < 0):  return None
+    if any(end >= map_siz):    return None
+
+    se = N.zeros( (3,2), dtype=N.int )
+    se[:,0] = start
+    se[:,1] = end
+
+    return se
+
+
 
