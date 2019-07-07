@@ -4,6 +4,8 @@ Functions for subtomogram alignment
 
 
 import aitom.tomominer.core as tomo
+import traceback
+import sys
 
 def align_vols(v1, m1, v2, m2, L=36):
 
@@ -17,8 +19,8 @@ def align_vols(v1, m1, v2, m2, L=36):
         loc = al[0]['loc']
         angle = al[0]['angle']
 
-    except Exception, err:
-        print >>sys.stderr, traceback.format_exc()
+    except Exception as err:
+        print(traceback.format_exc(), file=sys.stderr)
 
         score = N.nan
         loc = N.zeros(3) + N.nan
@@ -44,8 +46,8 @@ def align_vols__multiple_rotations(v1, m1, v2, m2, L):
     assert(v1.shape == m1.shape)
     assert(v2.shape == m2.shape)
     if v1.shape != v2.shape:
-        print v1.shape
-        print v2.shape
+        print(v1.shape)
+        print(v2.shape)
         assert(v1.shape == v2.shape)
 
     cs = tomo.combined_search(v1.astype(N.float64), m1.astype(N.float64), v2.astype(N.float64), m2.astype(N.float64), L)
