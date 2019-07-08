@@ -37,7 +37,7 @@ def cub_img(v, view_dir=2):
 
 # display an image
 def dsp_img(v, new_figure=True):
-    import tomominer.image.util as TIU
+    import aitom.tomominer.image.util as TIU
     TIU.dsp_img(v, new_figure=new_figure)
 
 

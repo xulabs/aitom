@@ -16,7 +16,7 @@ def wedge_mask(size, ang1, ang2=None, tilt_axis=1, sphere_mask=True, verbose=Fal
         assert      ang2 > 0
 
 
-    if verbose:     print 'image.vol.wedge.util.wedge_mask()', 'ang1', ang1, 'ang2', ang2, 'tilt_axis', tilt_axis, 'sphere_mask', sphere_mask
+    if verbose:     print('image.vol.wedge.util.wedge_mask()', 'ang1', ang1, 'ang2', ang2, 'tilt_axis', tilt_axis, 'sphere_mask', sphere_mask)
 
     ang1 = (ang1 / 180.0) * N.pi
     ang2 = (ang2 / 180.0) * N.pi

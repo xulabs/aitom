@@ -50,7 +50,7 @@ def create(Dz, size, pix_size=0.72, voltage=300.0, Cs=2.0, sigma=None, display_i
     Ny = 1.0 / (2.0 * pix_size)
     nyqvist = 2.0 * pix_size * (1e9)
 
-    if display_info:        print 'CTF is calculated for: Defocus', Dzn, '\mum Voltage = ', voltagen, 'kV, Nyqvist = ', nyqvist, 'nm'
+    if display_info:        print('CTF is calculated for: Defocus', Dzn, '\mum Voltage = ', voltagen, 'kV, Nyqvist = ', nyqvist, 'nm')
 
 
     if len(size) == 2:

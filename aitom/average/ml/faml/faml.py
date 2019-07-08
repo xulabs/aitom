@@ -7,17 +7,17 @@ from numpy.fft import fftn, ifftn, fftshift, ifftshift
 import mrcfile as mrc
 import pickle
 
-import tomominer.io.file as TIF
-import tomominer.io.db.lsm_db as TIDL
-import tomominer.parallel.multiprocessing.util as TPMU
+import aitom.tomominer.io.file as TIF
+import aitom.tomominer.io.db.lsm_db as TIDL
+import aitom.tomominer.parallel.multiprocessing.util as TPMU
 
 import tomominer_mbc
-import tomominer.align.fast.util as align
-import tomominer.geometry.rotate as rotate
-import tomominer.geometry.ang_loc as ang_loc
-import tomominer.statistics.vol as stats
-import tomominer.image.io as TIIO
-import tomominer.image.vol.util as TIVU
+import aitom.tomominer.align.fast.util as align
+import aitom.tomominer.geometry.rotate as rotate
+import aitom.tomominer.geometry.ang_loc as ang_loc
+import aitom.tomominer.statistics.vol as stats
+import aitom.tomominer.image.io as TIIO
+import aitom.tomominer.image.vol.util as TIVU
 
 MULTIPROCESSING_WORKER_NUM = 44
 
@@ -628,15 +628,15 @@ def EM(img_data, K, iteration, path, snapshot_interval=5, reg=False, use_voronoi
     theta['predictions'] = np.zeros([N])
 
     # Print relavent information
-    print "Running model based alignment: N=%d, K=%d, dimensions=(%d,%d,%d)" % (N, K, n_x, n_y, n_z)
+    print("Running model based alignment: N=%d, K=%d, dimensions=(%d,%d,%d)" % (N, K, n_x, n_y, n_z))
     if reg:
-        print "With regularization"
+        print("With regularization")
     else:
-        print "Without regularization"
+        print("Without regularization")
     if use_voronoi:
-        print "With voronoi weights"
+        print("With voronoi weights")
     else:
-        print "Without voronoi weights"
+        print("Without voronoi weights")
 
     # Regularization
     reg_step = (float(N) / K ** 2) / 2
@@ -660,7 +660,7 @@ def EM(img_data, K, iteration, path, snapshot_interval=5, reg=False, use_voronoi
     i = np.random.randint(N)
     sum_j = np.sum(np.square(np.absolute(theta['A'][k] - X[dj[i]['v']]) * X[dj[i]['m']]))
     theta['sigma_sq'] = sum_j / theta['J']
-    print "Sigma_sq initialized to %d" % theta['sigma_sq']
+    print("Sigma_sq initialized to %d" % theta['sigma_sq'])
 
     checkpoint_dir = os.path.join(path, 'checkpoints')
     if not os.path.exists(checkpoint_dir):
@@ -677,25 +677,25 @@ def EM(img_data, K, iteration, path, snapshot_interval=5, reg=False, use_voronoi
         if (i % interval == 0):
             output_images(theta, i, path=path)
 
-        print "Running iteration %d" % (i+1)
+        print("Running iteration %d" % (i+1))
         # Update alpha before updating A
         compute_trans_list(theta=theta, img_data=img_data, use_voronoi=use_voronoi)
 
         alpha = update_alpha(img_data=img_data, theta=theta, use_voronoi=use_voronoi)
-        print "Alpha updated! Alpha = ",
-        print alpha.tolist()
+        print("Alpha updated! Alpha = ", end=' ')
+        print(alpha.tolist())
 
         sigma_sq = update_sigma(img_data=img_data, theta=theta, reg=reg, use_voronoi=use_voronoi)
-        print "Sigma updated! Sigma^2 = ",
-        print sigma_sq
+        print("Sigma updated! Sigma^2 = ", end=' ')
+        print(sigma_sq)
 
         xi = update_xi(img_data=img_data, theta=theta, use_voronoi=use_voronoi)
-        print "Xi updated! Xi = ",
-        print xi
+        print("Xi updated! Xi = ", end=' ')
+        print(xi)
 
         A = update_a(img_data = img_data, theta=theta, alpha=alpha, reg=reg, use_voronoi=use_voronoi)
-        print "A updated! Average intensity of A = ",
-        print np.average(A, (1, 2, 3))
+        print("A updated! Average intensity of A = ", end=' ')
+        print(np.average(A, (1, 2, 3)))
 
         theta['alpha'] = alpha
         theta['sigma_sq'] = sigma_sq
@@ -719,8 +719,8 @@ def EM(img_data, K, iteration, path, snapshot_interval=5, reg=False, use_voronoi
     
     print_prediction_results(theta, img_data) 
     output_images(theta, iteration, path=path)
-    print "Prediction from model: ",
-    print theta['predictions']
+    print("Prediction from model: ", end=' ')
+    print(theta['predictions'])
     return theta
 
 def test_EM_real_data(img_data, iteration, K, snapshot_interval, path, 
@@ -792,13 +792,13 @@ def print_prediction_results(theta, img_data, print_all=False):
     X = get_image_db(img_data['db_path'])
     dj = img_data['dj']
     N = len(dj)
-    print "Prediction by fourier shell correlation:"
+    print("Prediction by fourier shell correlation:")
     for i in range(N):
         if print_all:
             for k in range(theta['K']):
-                print get_correlation_score(theta, X, i, k)
+                print(get_correlation_score(theta, X, i, k))
         else:
-            print get_correlation_score(theta, X, i)
+            print(get_correlation_score(theta, X, i))
 
 '''
 Returns FSC score between the kth average and the given subtomogram
