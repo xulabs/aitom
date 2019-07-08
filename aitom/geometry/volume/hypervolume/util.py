@@ -42,7 +42,7 @@ def voronoi_weights_6d(phis):
     return result
 
 
-import tomominer_mbc.geometry.ang_loc as TGA
+import tomominer.geometry.ang_loc as TGA
 '''
 square of the distance defined on the manifold of the 6D rigid transformation parameter space, the distance between rotations are calculated using Frobenius norm
 '''
