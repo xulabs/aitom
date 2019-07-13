@@ -40,7 +40,7 @@ def cub_img(v, view_dir=2):
 
 
 def dsp_img(v, new_figure=True):
-    import aitom.tomominer.image.util as TIU
+    import aitom.image.util as TIU
     TIU.dsp_img(v, new_figure=new_figure)
 
 
