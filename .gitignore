@@ -5,4 +5,5 @@ build
 aitom/tomominer/core/cython/core.cpp
 __pycache__
 data
+.pynb_checkpoints
 
