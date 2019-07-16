@@ -24,5 +24,11 @@ model_generation_imp__op.json: configuration file for packing macromolecules,
     ['packing']['param']['box']: defines the size of the volume to pack the macromolecules
     
 
+model_generation_imp__out.json: Output of geometrical packing for all models. It is a dictionary indexed by model id. 
+    For each model, 'instances' contain the spatial information of all macromolecules. 
+    'pdb_id' is the structural class of the macromolecule.
+    'x': center of the minimal bounding sphere that encloses the macromolecule.
+    'redius': redius of the minimal bounding sphere.
+    'angle': orientation of the macromolecule.    
 
 '''
