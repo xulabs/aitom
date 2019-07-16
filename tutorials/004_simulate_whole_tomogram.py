@@ -17,7 +17,8 @@ doit
 
 To clean up generated files run:
 doit clean
-
+rm -rf ./density_map
+rm -rf ./tomogram
 
 File contents
 
