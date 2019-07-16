@@ -13,7 +13,7 @@ pdb2vol can be found under one of the following locations. Set situs_pdb2vol_pro
 
 spacing_s: is the voxel spacing in Anstron
 resolution_s: the image resolution in Anstron
-pdb_dir: the directory that contains pdb files
+pdb_dir: the directory that contains pdb files. Could be your own directory or /shared/shared/data/pdb or /shared/data/pdb
 out_file: the output file that contains converted density maps
 '''
 op = {'situs_pdb2vol_program':'/shared/opt/local/img/em/et/util/situs/Situs_2.7.2/bin/pdb2vol', 'spacing_s': [10.0], 'resolution_s':[10.0], 'pdb_dir':'/shared/data/pdb', 'out_file':'situs_maps.pickle'}
