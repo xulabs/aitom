@@ -11,6 +11,15 @@ The example configuration and output files can be found at:
 The simulation pipeline is automated using following package
 https://pypi.org/project/doit/
 
+
+To generate data run:
+doit
+
+To clean up generated files run:
+doit clean
+
+
+
 dodo.py: this file defines how the simulation modules are organized, and their file dependencies
 
 density_map: this folder contains simulated density maps, in npy (numpy array), and mac format. 
@@ -30,5 +39,8 @@ model_generation_imp__out.json: Output of geometrical packing for all models. It
     'x': center of the minimal bounding sphere that encloses the macromolecule.
     'redius': redius of the minimal bounding sphere.
     'angle': orientation of the macromolecule.    
+
+IMPORTANT: generating density maps and tomograms consume large amount of harddisk storage. Make sure to clean up useless generated data to save space.
+Also make sure to tune model number and volume size parameters to generate just the amount of data you need.
 
 '''
