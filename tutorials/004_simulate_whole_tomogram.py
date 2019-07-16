@@ -19,6 +19,7 @@ To clean up generated files run:
 doit clean
 
 
+File contents
 
 dodo.py: this file defines how the simulation modules are organized, and their file dependencies
 
@@ -29,6 +30,11 @@ tomogram: this folder contains simulated tomograms in npy format
 density_map_to_tomogram__out_stat.json: information about which tomogram is generated from which density map, corresponding SNR and missing wedge angle etc
 
 model_generation_imp__op.json: configuration file for packing macromolecules, 
+    ['copy_number']['total']: number of macromolecules to try to be packed into the volume, 
+        in most of cases, we want to have it to be large so that the volume can contain as many macromolecules as possible
+        on the other hand, not too large to cost too much computation
+        so as long as we see in the packing result (model_generation_imp__out.json), large number of macromolecules are outside the volume, 
+        this means the volume is too crowded to insert any additional macromolecules
     ['model_number']: number of packing models to be generated
     ['packing']['param']['box']: defines the size of the volume to pack the macromolecules
     
