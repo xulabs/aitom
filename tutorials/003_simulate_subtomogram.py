@@ -4,6 +4,9 @@ This script shows an example of how to
 2. randomly rotate and translate the map
 3. convert the map to subtomogram
 
+IMPORTANT: If you are going to use this simulated data for deep learning, please do not save the simulated data to disk.
+Because simated data will consume large amount of storage. Please construct a generator to directly feed the simulated data to your model from memory.
+
 '''
 
 
