@@ -9,7 +9,7 @@ op contains parameters for the pdb2vol probgram:
 situs_pdb2vol_program: the location of pdb2vol program
 pdb2vol can be found under one of the following locations. Set situs_pdb2vol_program accordingly
 /shared/opt/local/img/em/et/util/situs/Situs_2.7.2/bin/pdb2vol
-/opt/local/img/em/et/util/situs/Situs_2.3/bin/pdb2vol
+/opt/local/img/em/et/util/situs/Situs_2.7.2/bin/pdb2vol
 
 spacing_s: is the voxel spacing in Anstron
 resolution_s: the image resolution in Anstron
