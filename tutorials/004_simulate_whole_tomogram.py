@@ -17,8 +17,7 @@ doit
 
 To clean up generated files run:
 doit clean
-rm -rf ./density_map
-rm -rf ./tomogram
+rm -rf ./density_map ./tomogram
 
 File contents
 
@@ -29,6 +28,9 @@ density_map: this folder contains simulated density maps, in npy (numpy array), 
 
 tomogram: this folder contains simulated tomograms in npy format
 density_map_to_tomogram__out_stat.json: information about which tomogram is generated from which density map, corresponding SNR and missing wedge angle etc
+
+template_select__op.json: this file can be used to select a subset of classes by changing:
+    ['pdb_ids']
 
 model_generation_imp__op.json: configuration file for packing macromolecules, 
     ['copy_number']['total']: number of macromolecules to try to be packed into the volume, 
