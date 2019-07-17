@@ -1,8 +1,10 @@
 # AITom
 
-AITom is a library for developping AI algorithms for cellular electron cryo-tomography analysis. Developped and maintained by [Xu lab](https://cs.cmu.edu/~mxu1) and collaborators, particularly [Yang lab](http://www.lcecb.org/index.html). 
+## Introduction
+AITom is a library for developping AI algorithms for cellular electron cryo-tomography analysis. Developped and maintained by [Xu Lab](https://cs.cmu.edu/~mxu1) and collaborators, particularly [Yang Lab](http://www.lcecb.org/index.html). 
 
-The tomominer module was adapted from an [extended version](http://web.cmb.usc.edu/people/alber/Software/mpp/) of the [tomominer library](https://github.com/alberlab/tomominer).
+The tomominer module was adapted from an [extended version](http://web.cmb.usc.edu/people/alber/Software/mpp/) of the [tomominer library](https://github.com/alberlab/tomominer), developed at [Alber Lab](http://web.cmb.usc.edu/people/alber/).
+
 
 # Build library
 ## Ubuntu
