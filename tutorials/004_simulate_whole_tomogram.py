@@ -6,7 +6,7 @@ Simulating Cryo-Electron Tomograms of Crowded Mixtures of Macromolecular Complex
 BMC Bioinformatics. 2016; 17: 405.
 
 The example configuration and output files can be found at:
-/shared/proj/190309-rl-detection/tomogram-simulation/190331-0
+/shared/proj/190309-detection/tomogram-simulation/190331-0
 
 The simulation pipeline is automated using following package
 https://pypi.org/project/doit/
@@ -48,6 +48,16 @@ model_generation_imp__out.json: Output of geometrical packing for all models. It
     'x': center of the minimal bounding sphere that encloses the macromolecule.
     'redius': redius of the minimal bounding sphere.
     'angle': orientation of the macromolecule.    
+
+back_projection_reconstruction__op.json: parameters for simulating tomograms from density maps.
+    ['model']
+        ['SNR_s']: a list of SNR levels to be simulated
+        ['missing_wedge_angle_s']: a list of missing wedge angles, we normally set to 30
+    ['ctf'] parameters for CTF function
+        ['Dz']: defocus
+        ['CS']: spherical abberivation
+        
+
 
 IMPORTANT: generating density maps and tomograms consume large amount of harddisk storage. Make sure to clean up useless generated data to save space.
 Also make sure to tune model number and volume size parameters to generate just the amount of data you need.
