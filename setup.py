@@ -7,13 +7,17 @@ from distutils.core import setup
 from distutils.extension import Extension
 from Cython.Distutils import build_ext
 from Cython.Build import cythonize
-from numpy import get_include
+import numpy as N
 
 compile_extra_args = ['-std=c++11']
 link_extra_args = []
 if platform.system() == "Darwin":
     compile_extra_args = ['-std=c++11', "-mmacosx-version-min=10.9"]
     link_extra_args = ["-stdlib=libc++", "-mmacosx-version-min=10.9"]
+
+
+import os
+script_dir = os.path.dirname(os.path.realpath(__file__))
 
 cpp_core = Extension('aitom.tomominer.core.core',
                      sources=[
@@ -33,9 +37,9 @@ cpp_core = Extension('aitom.tomominer.core.core',
                          'aitom/tomominer/core/src/wigner.cpp',
                          'aitom/tomominer/core/src/segmentation/watershed/watershed_segmentation.cpp'],
                      libraries=['m', 'fftw3', 'armadillo', 'blas', 'lapack'],
-                     include_dirs=[get_include(), '/usr/include',
-                                   '/usr/local/include', 'aitom/tomominer/core/src/'],
-                     library_dirs=[],
+                     include_dirs=[N.get_include(), '/usr/include',
+                                   '/usr/local/include', 'aitom/tomominer/core/src/', os.path.join(script_dir, 'ext', 'include')],      # use script_dir/ext/include to include header files that cannot be installed without root privilege
+                     library_dirs=[os.path.join(script_dir, 'ext', 'lib')],     # use script_dir/ext/lib to include library files that cannot be installed without root privilege
                      extra_compile_args=compile_extra_args,
                      extra_link_args=link_extra_args,
                      language='c++')
