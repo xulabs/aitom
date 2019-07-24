@@ -1,11 +1,5 @@
 
 
-'''
-Code automatically generated with cleaning of non-relevant contents
-Please cite: Xu et al. De novo visual proteomics of single cells through pattern mining
-'''
-
-
 
 import numpy as N
 import scipy.ndimage.interpolation as SNI
@@ -48,6 +42,14 @@ def rotate_pad_mean(v, angle=None, rm=None, c1=None, c2=None, loc_r=None, siz2=N
     else:
         vr[N.logical_not(N.isfinite(vr))] = v.mean()
     return vr
+
+def rotate_pad_zero(v, angle=None, rm=None, c1=None, c2=None, loc_r=None, siz2=None):
+    vr = rotate(v, angle=angle, rm=rm, c1=c1, c2=c2, loc_r=loc_r, siz2=siz2, default_val=float('NaN'))
+
+    vr[N.logical_not(N.isfinite(vr))] = 0.0
+
+    return vr
+
 
 def rotate_mask(v, angle=None, rm=None):
     c1 = IVU.fft_mid_co(v.shape)
