@@ -3,4 +3,4 @@ numpy
 scipy
 sklearn
 mrcfile
-
+matplotlib
