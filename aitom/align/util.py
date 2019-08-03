@@ -60,3 +60,9 @@ def align_vols__multiple_rotations(v1, m1, v2, m2, L):
     return al
 
 
+def align_vols_no_mask(v1, v2, L=36):
+    m = MU.sphere_mask(v1.shape)
+    return align_vols(v1=v1, m1=m, v2=v2, m2=m, L=L)
+
+
+
