@@ -46,6 +46,7 @@ cpp_core = Extension('aitom.tomominer.core.core',
 
 
 def get_packages(root_dir='aitom', exclude_dir_roots=['aitom/tomominer/core/src', 'aitom/tomominer/core/cython']):
+# def get_packages(root_dir='aitom', exclude_dir_roots=['aitom/tomominer/core']):
     pkg = []
     for (root, dirs, files) in os.walk(root_dir):
         exclude = False
@@ -69,5 +70,5 @@ setup(name='aitom',
       ext_modules=cythonize(cpp_core),
       packages=get_packages(),
       package_dir={'aitom': 'aitom',
-                   'aitom.tomominer.core': 'aitom/tomominer/core/cython/', },
+                   'aitom.tomominer.core': 'aitom/tomominer/core/', },
       cmdclass={'build_ext': build_ext, })

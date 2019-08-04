@@ -9,7 +9,7 @@ Please cite: Xu et al. De novo visual proteomics of single cells through pattern
 
 import sys
 import numpy as N
-import aitom.tomominer.core as core
+import aitom.tomominer.core.core as core
 
 def segment(I, phi, smooth_weight, image_weight, delta_t=1.0, n_iters=20, mean_values=None, print_progress=False):
     if (not I.flags.f_contiguous):

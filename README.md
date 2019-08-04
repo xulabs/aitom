@@ -13,7 +13,8 @@ The tomominer module was adapted from an [extended version](http://web.cmb.usc.e
 ```bash
 sudo apt-get install python fftw3-dev libblas3 liblapack3 libarmadillo-dev
 pip install -r requirements.txt
-python setup.py build
+sh clean.sh
+sh build.sh
 ```
 
 ## Mac OS X
@@ -36,9 +37,10 @@ brew install armadillo openblas lapack
 pip install -r requirements.txt
 ```
 
-3. build library
+3. clean && build library
 
 ```bash
-python setup.py build
+sh clean.sh
+sh build.sh
 ```
 

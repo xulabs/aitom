@@ -10,7 +10,7 @@ Please cite: Xu et al. De novo visual proteomics of single cells through pattern
 import sys, copy
 import numpy as N
 import traceback
-import aitom.tomominer.core as tomo
+import aitom.tomominer.core.core as tomo
 import aitom.tomominer.model.util as MU
 import aitom.tomominer.io.file as iv
 

@@ -1,14 +1,14 @@
-
+import numpy as N
 
 def rotation_matrix_zyz(ang):
     phi = ang[0];       theta = ang[1];     psi_t = ang[2];
-    
+
     a1 = rotation_matrix_axis(2, psi_t)       # first rotate about z axis for angle psi_t
     a2 = rotation_matrix_axis(1, theta)
     a3 = rotation_matrix_axis(2, phi)
-    
+
     rm = a3.dot(a2).dot(a1)      # for matrix left multiplication
-    
+
     rm = rm.transpose()       # note: transform because tformarray use right matrix multiplication
 
     return rm
@@ -25,8 +25,8 @@ def rotation_matrix_axis(dim, theta):
     elif dim == 2:        # z-axis
         rm = N.array(  [[math.cos(theta), -math.sin(theta), 0.0], [math.sin(theta), math.cos(theta), 0.0], [0.0, 0.0, 1.0]]  )
     else:
-        raise    
-    
+        raise
+
     return rm
 
 
@@ -46,14 +46,14 @@ def random_rotation_angle_zyz():
 def rotation_matrix_zyz_normalized_angle(rm):
 
     assert(all(N.isreal(rm.flatten())));     assert(rm.shape == (3,3));
-    
+
     cos_theta = rm[2, 2]
     if N.abs(cos_theta) > 1.0:
         # warning(sprintf('cos_theta %g', cos_theta));
         cos_theta = N.sign(cos_theta);
-    
+
     theta = N.arctan2(N.sqrt(1.0 - (cos_theta*cos_theta) ), cos_theta);
-    
+
     if N.abs(cos_theta) < (1.0 - (1e-10)) :          # use a small epslon to increase numerical stability when abs(cos_theta) is very close to 1!!!!
         phi = N.arctan2(rm[2,1], rm[2,0]);
         psi_t = N.arctan2(rm[1,2], -rm[0,2]);
@@ -61,7 +61,7 @@ def rotation_matrix_zyz_normalized_angle(rm):
         theta = 0.0
         phi = 0.0
         psi_t = N.arctan2(rm[0,1], rm[1,1])
-    
+
     ang = N.array([phi, theta, psi_t], dtype=N.float)
 
     return ang

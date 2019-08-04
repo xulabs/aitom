@@ -36,7 +36,7 @@ import aitom.tomominer.segmentation.watershed as SW
 import aitom.tomominer.segmentation.active_contour.chan_vese.segment as SACS
 import aitom.tomominer.filter.gaussian as FG
 import aitom.tomominer.model.util as MU
-import aitom.tomominer.core as core
+import aitom.tomominer.core.core as core
 
 def align_vols_with_wedge(v1, m1, v2, m2, op=None, logger=None):
     err = None

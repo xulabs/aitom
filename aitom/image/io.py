@@ -32,8 +32,8 @@ def format_png_array(m, normalize=True):
 
 def save_png(m, name, normalize=True, verbose=False):
     if verbose:
-        print 'save_png()'
-        print 'unique values', sorted(set(m.flatten()))
+        print('save_png()')
+        print('unique values', sorted(set(m.flatten())))
 
     m = format_png_array(m, normalize=normalize)
 

@@ -3,9 +3,11 @@ Functions for subtomogram alignment
 '''
 
 
-import aitom.tomominer.core as tomo
+import aitom.tomominer.core.core as tomo
 import traceback
 import sys
+import numpy as N
+import aitom.model.util as MU
 
 def align_vols(v1, m1, v2, m2, L=36):
 

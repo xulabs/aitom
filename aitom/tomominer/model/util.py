@@ -9,7 +9,6 @@ Please cite: Xu et al. De novo visual proteomics of single cells through pattern
 
 import numpy as N
 import aitom.tomominer.image.vol.util as gv
-import aitom.tomominer.geometry.rotate as GR
 
 def boundary_mask(shape):
     shape = N.array(shape)

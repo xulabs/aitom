@@ -1,5 +1,5 @@
 '''
-This script shows an example of how to 
+This script shows an example of how to
 1. generate a density map containing a toy structure
 2. randomly rotate and translate the map
 3. convert the map to subtomogram
@@ -10,13 +10,13 @@ Because simated data will consume large amount of storage. Please construct a ge
 '''
 
 
-import tomominer.io.file as TIF
+import aitom.tomominer.io.file as TIF
 import numpy as N
 import pickle
-import tomominer.simulation.reconstruction__simple_convolution as TSRSC
-import tomominer.model.util as TMU
-import tomominer.geometry.ang_loc as TGAL
-import tomominer.geometry.rotate as TGR
+import aitom.tomominer.simulation.reconstruction__simple_convolution as TSRSC
+import aitom.tomominer.model.util as TMU
+import aitom.tomominer.geometry.ang_loc as TGAL
+import aitom.tomominer.geometry.rotate as TGR
 
 
 # set parameters for the simulation
@@ -25,7 +25,7 @@ op = {'model':{'missing_wedge_angle':30, 'SNR':0.05}, 'ctf':{'pix_size':1.0, 'Dz
 
 # generate a density map v that contains a toy structure
 v = TMU.generate_toy_model(dim_siz=64)  # generate a pseudo density map
-print v.shape
+print(v.shape)
 
 
 # randomly rotate and translate v
@@ -37,15 +37,15 @@ vr = TGR.rotate(v, angle=angle, loc_r=loc_r, default_val=0.0)
 
 # generate simulated subtomogram vb from v
 vb = TSRSC.do_reconstruction(vr, op, verbose=True)
-print 'vb', 'mean', vb.mean(), 'std', vb.std(), 'var', vb.var()
+print('vb', 'mean', vb.mean(), 'std', vb.std(), 'var', vb.var())
 
 # save v and vb as 3D grey scale images
 TIF.put_mrc(vb, '/tmp/vb.mrc', overwrite=True)
 TIF.put_mrc(v, '/tmp/v.mrc', overwrite=True)
 
 # save images of the slices of the corresponding 3D iamges for visual inspection
-import tomominer.image.io as TIIO
-import tomominer.image.vol.util as TIVU
+import aitom.tomominer.image.io as TIIO
+import aitom.tomominer.image.vol.util as TIVU
 TIIO.save_png(TIVU.cub_img(vb)['im'], "/tmp/vb.png")
 TIIO.save_png(TIVU.cub_img(v)['im'], "/tmp/v.png")
 
@@ -60,5 +60,5 @@ if True:
     # calculate SNR
     vb_corr = SS.pearsonr(vb.flatten(), vb_rep.flatten())[0]
     vb_snr = 2*vb_corr / (1 - vb_corr)
-    print 'SNR', 'parameter', op['model']['SNR'], 'estimated', vb_snr          # fsc = ssnr / (2.0 + ssnr)
+    print('SNR', 'parameter', op['model']['SNR'], 'estimated', vb_snr)          # fsc = ssnr / (2.0 + ssnr)
 
