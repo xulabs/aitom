@@ -72,6 +72,54 @@ def highlight_xy_axis(v, dim_siz=64, model_id=0, copy=True):
     return v
 
 
+
+#-------------------------------------------------------------------
+# grid functions
+
+def grid_displacement_to_center(size, mid_co=None):
+
+    size = N.array(size, dtype=N.float)
+    assert size.ndim == 1
+
+    if mid_co is None:            mid_co = (N.array(size) - 1) / 2          # IMPORTANT: following python convension, in index starts from 0 to size-1!!! So (siz-1)/2 is real symmetry center of the volume
+ 
+    if size.size == 3:
+        # construct a gauss function whose center is at center of volume
+        grid = N.mgrid[0:size[0], 0:size[1], 0:size[2]]
+
+        for dim in range(3):
+            grid[dim, :, :, :] -= mid_co[dim]
+
+    elif size.size == 2:
+        # construct a gauss function whose center is at center of volume
+        grid = N.mgrid[0:size[0], 0:size[1]]
+
+        for dim in range(2):
+            grid[dim, :, :] -= mid_co[dim]
+
+    else:
+        assert False
+
+    return grid
+
+def grid_distance_sq_to_center(grid):
+    dist_sq = N.zeros(grid.shape[1:])
+    if grid.ndim == 4:
+        for dim in range(3):
+            dist_sq += N.squeeze(grid[dim, :, :, :]) ** 2
+    elif grid.ndim == 3:
+        for dim in range(2):
+            dist_sq += N.squeeze(grid[dim, :, :]) ** 2
+    else:
+        assert False
+
+    return dist_sq
+
+def grid_distance_to_center(grid):
+    dist_sq = grid_distance_sq_to_center(grid)
+    return N.sqrt(dist_sq)
+
+
 # -----------------------------------------------------------------------------------
 
 # roughly add a small vol to a big whole map, so that the center of vol is roughly centered at c

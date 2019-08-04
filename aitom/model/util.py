@@ -55,3 +55,33 @@ def generate_toy_model__gaussian(dim_siz, xg, xm, dias):
 
     return e
 
+
+
+def sphere_mask(shape, center=None, radius=None, smooth_sigma=None):
+
+    shape = N.array(shape)
+
+    v = N.zeros(shape)
+
+    if center is None:          center = (shape-1) / 2.0              # IMPORTANT: following python convension, in index starts from 0 to size-1 !!! So (siz-1)/2 is real symmetry center of the volume
+
+    center = N.array(center)
+
+    if radius is None:          radius = N.min(shape/2.0)
+
+    
+    grid = gv.grid_displacement_to_center(shape, mid_co=center)
+    dist = gv.grid_distance_to_center(grid)
+
+    v[dist <= radius] = 1.0
+
+    if smooth_sigma is not None:
+
+        assert smooth_sigma > 0
+        v_s = N.exp(-((dist -radius)/smooth_sigma) ** 2)
+        v_s[v_s < N.exp(-3)] = 0.0      # use a cutoff of -3 looks nicer, although the tom toolbox uses -2
+        v[dist >= radius] = v_s[dist >= radius]
+
+    return v
+
+
