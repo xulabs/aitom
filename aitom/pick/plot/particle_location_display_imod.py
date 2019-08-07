@@ -7,17 +7,6 @@
 
 use imod to display location of a set of particles
 
-
-
-~/ln/tomominer/tomominer/pursuit/multi/analysis/localization/particle_location_display_imod.py
-
-written according to
-
-~/ln/tomominer/tomominer/pick/particle_picking_dog__display__imod.py
-
-
-todo: move some codes in ~/ln/tomominer/tomominer/pick/particle_picking_dog__display__imod.py into this file as a function
-
 '''
 
 import os, json, uuid, subprocess
@@ -95,7 +84,19 @@ def display_map_with_lines(l, map_file, clip_file=None, remove_intermediate_file
 
 def main():
 
-    with open('particle_location_display_imod__op.json') as f:      op = json.load(f)
+    
+    op = {"particle_picking_dog__config_file" : "particle_picking_dog__op.json",
+        "peak_file" : "./out/particle_picking_dog__filter__out.pickle",
+        "tomogram_id" : 0,
+        "top_num bak" : 100,
+        "radius_factor bak" : 1,
+        "view_direction" : 0,
+        "clip bak" : {
+            "start": [627, 976, 131],
+            "end": [1091, 1412, 295]
+            }
+        }
+
 
     with open(op['data_json_file']) as f:       dj = json.load(f)
 
