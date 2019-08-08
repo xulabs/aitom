@@ -46,9 +46,9 @@ def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessin
     return res
     
 def main():
-    #'/ldap_shared/home/v_zhenxi_zhu/aitom-master/data/14nov13a__001.mrc'
-    #'/ldap_shared/home/v_zhenxi_zhu/14nov13a__001_bin2.mrc'
-    result=picking('/ldap_shared/home/v_zhenxi_zhu/aitom-master/data/14nov13a__001.mrc', s1=7, s2=7.7, t=3, find_maxima=True, partition_op=None, multiprocessing_process_num=0)
+    # Download from: http://ftp.ebi.ac.uk/pub/databases/empiar/archive/10227/data/US1363_G1/14nov13a_tilt/14nov13a__001.mrc.bz2
+    # Can first reduce its size through bining
+    result=picking('/ldap_shared/home/v_zhenxi_zhu/14nov13a__001_bin2.mrc', s1=7, s2=7.7, t=3, find_maxima=True, partition_op=None, multiprocessing_process_num=100)
     print("%d particles deteced" %len(result))
     print(result[0])
     
