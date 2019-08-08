@@ -40,7 +40,7 @@ def peak__partition(v, s1, s2, find_maxima=True, partition_op=None, multiprocess
         siz_max = max(v.shape)
         partition_op = {   'nonoverlap_width': siz_max*2,    'overlap_width': siz_max*2    }
 
-    import aitom.tomominer.image.vol.partition as IVP
+    import aitom.image.vol.partition as IVP
     b = IVP.gen_bases(v.shape, nonoverlap_width=partition_op['nonoverlap_width'], overlap_width=partition_op['overlap_width'])
     print('partition num', b.shape)
 
