@@ -5,3 +5,6 @@ sklearn
 mrcfile
 matplotlib
 pypng
+tensorflow
+keras
+keras_contrib
