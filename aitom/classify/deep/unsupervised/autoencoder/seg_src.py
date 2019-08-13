@@ -8,8 +8,12 @@ Zeng X, Leung M, Zeev-Ben-Mordehai T, Xu M. A convolutional autoencoder approach
 Please cite the above paper when this code is used or adapted for your research.
 '''
 
-
+import os
+import pickle
+import numpy as N
 '''
+#For this file, use keras version:2.1.0. There's some bugs with the latest version when using (model.load).
+
 #EDSS3D
 import os
 import pickle
@@ -50,15 +54,21 @@ pickle.dump(vs_p, op_join(prediction_dir,'vs_p.pickle'))
 '''
 
 
+
 def decode_all_images(d, data_dir):
     import keras.models as KM
+    from os.path import join as op_join
     autoencoder = KM.load_model(op_join(data_dir, 'model', 'model-autoencoder.h5'))
+
+
     vs_p = decode_images(autoencoder, d['vs'])
 
     out_dir = op_join(data_dir, 'decoded')
     if not os.path.isdir(out_dir):   os.makedirs(out_dir)
 
-    pickle.dump(vs_p, op_join(out_dir, 'decoded.pickle'))
+    with open(op_join(out_dir, 'decoded.pickle'), 'wb') as f:
+        pickle.dump(vs_p, f, protocol=-1)
+
 
 def decode_images(autoencoder, vs):
     vs_k = [_ for _ in vs if vs[_]['v'] is not None]
@@ -121,7 +131,7 @@ def train_label_prepare(vs_lbl, vs_dec, iso_value):
     all_patch_k = set(background_k) | set(vs_lbl.keys())
     vs_seg_t = convert_labels_to_image_channels(vs_lbl=vs_lbl, vs_dec=vs_dec, iso_value=iso_value, all_patch_k=all_patch_k)
     
-    n_class = max([vs_lbl[_] for _ in vs_lbl]) + 1
+    n_class = max([vs_lbl[_] for _ in vs_lbl],default=0) + 1#There is not default = 0 before
     vs_seg = {}
     for k in vs_seg_t:
         seg_t = vs_seg_t[k]
@@ -175,8 +185,8 @@ def model_simple_upsampling__reshape(img_shape, class_n=None):
 
 def train_validate__reshape(vs_lbl, vs, vs_seg, model_checkpoint_file, model_file):
     x_keys = vs_seg.keys()
-    img_shape = vs[x_keys[0]]['v'].shape
-
+    #img_shape = vs[x_keys[0]]['v'].shape
+    img_shape = vs[list(x_keys)[0]]['v'].shape
     x = [N.expand_dims(vs[_]['v'], -1) for _ in x_keys]
     x = N.array(x)
 
@@ -302,3 +312,62 @@ def predict__keep_max(vs):
         vs_m[k] = vm
     return vs_m
 
+
+
+if __name__ == "__main__":
+    sel_clus = {1: [3, 21, 28, 34, 38, 39, 43, 62, 63, 81, 86, 88],
+                2: [15, 25, 29, 33, 35, 66, 79, 90, 92, 98]}  # an example of selected clusters for segmentation
+    # sel_clus is the selected clusters for segmentation, which can be multiple classes.
+    import os
+    from os.path import join as op_join
+
+    data_dir = os.getcwd()
+    data_file = op_join(data_dir, 'data.pickle')#here's the name of pickle data file of CECT small subvolumes
+
+    with open(data_file, 'rb') as f:
+        d = pickle.load(f, encoding='iso-8859-1')
+
+    decode_all_images(d, data_dir)
+    # The following files come from the previous Autoencoder3D results
+
+    with open(op_join(data_dir, 'clus-center', 'kmeans.pickle'), 'rb') as f:
+        km = pickle.load(f, encoding='iso-8859-1')
+    with open(op_join(data_dir, 'clus-center', 'ccents.pickle'), 'rb') as f:
+        cc = pickle.load(f, encoding='iso-8859-1')
+    with open(op_join(data_dir, 'decoded', 'decoded.pickle'), 'rb') as f:
+        vs_dec = pickle.load(f, encoding='iso-8859-1')
+
+    # km = pickle.load(op_join(data_dir, 'clus-center', 'kmeans.pickle'))
+    # cc = pickle.load(op_join(data_dir, 'clus-center', 'ccents.pickle'))
+    # vs_dec = pickle.load(op_join(data_dir, 'decoded', 'decoded.pickle'))
+
+    vs_lbl = image_label_prepare(sel_clus, km)
+    vs_seg = train_label_prepare(vs_lbl=vs_lbl, vs_dec=vs_dec,
+                                 iso_value=0.5)  # iso_value is the mask threshold for segmentation
+    model_dir = op_join(data_dir, 'model-seg')
+    if not os.path.isdir(model_dir):    os.makedirs(model_dir)
+    model_checkpoint_file = op_join(model_dir, 'model-seg--weights--best.h5')
+    model_file = op_join(model_dir, 'model-seg.h5')
+    if os.path.isfile(model_file):
+        print('use existing', model_file)
+        import keras.models as KM
+
+        model = KM.load_model(model_file)
+    else:
+        model = train_validate__reshape(vs_lbl=vs_lbl, vs=d['vs'], vs_seg=vs_seg, model_file=model_file,
+                                        model_checkpoint_file=model_checkpoint_file)
+        model.save(model_file)
+    # Segmentation prediction on new data
+    data_dir = os.getcwd()  # This should be the new data for prediction
+    data_file = op_join(data_dir, 'data.pickle')
+    with open(data_file, 'rb') as f:
+        d = pickle.load(f, encoding='iso-8859-1')
+    # d = pickle.load(data_file)
+
+    prediction_dir = op_join(data_dir, 'prediction')
+    if not os.path.isdir(prediction_dir):    os.makedirs(prediction_dir)
+    vs_p = predict__reshape(model, vs={_: d['vs'][_]['v'] for _ in vs_seg})
+
+    with open(op_join(prediction_dir, 'vs_p.pickle'), 'wb') as f:
+        pickle.dump(vs_p, f, protocol=-1)
+    # pickle.dump(vs_p, op_join(prediction_dir,'vs_p.pickle'))
