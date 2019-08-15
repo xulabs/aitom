@@ -11,7 +11,7 @@ import aitom.tomominer.io.file as TIF
 import aitom.tomominer.io.db.lsm_db as TIDL
 import aitom.tomominer.parallel.multiprocessing.util as TPMU
 
-import tomominer_mbc
+
 import aitom.tomominer.align.fast.util as align
 import aitom.tomominer.geometry.rotate as rotate
 import aitom.tomominer.geometry.ang_loc as ang_loc
@@ -81,7 +81,7 @@ def compute_trans_list(theta, img_data, use_voronoi):
         for j,d in enumerate(img_data['dj']):
             t = {}
             t['uuid'] = str(uuid.uuid4())
-            t['module'] = 'tomominer_mbc.classify.model_based_clustering.model_based_clustering'
+            t['module'] = 'aitom.average.ml.faml.faml'
             t['method'] = 'model_based_align_help'
             t['kwargs'] = {'img_db_path':img_data['db_path'], 'd':d, 'A_k':A_k, 'n':n, 'i':j, 'k':k_}
             tasks[t['uuid']] = t
@@ -147,7 +147,7 @@ def compute_voronoi_weights(theta):
 
             t = {}
             t['uuid'] = str(uuid.uuid4())
-            t['module'] = 'tomominer_mbc.hypervolume.utils'
+            t['module'] = 'aitom.tomominer.hypervolume.utils'
             t['method'] = 'voronoi_weights_6d'
             t['kwargs'] = {'phis':trans_list}
             t['i'] = i
@@ -189,7 +189,7 @@ def compute_prob(img_data, theta):
             trans_list = theta['trans_list'][i][k]
             t = {}
             t['uuid'] = str(uuid.uuid4())
-            t['module'] = 'tomominer_mbc.classify.model_based_clustering.model_based_clustering'
+            t['module'] = 'aitom.average.ml.faml.faml'
             t['method'] = 'model_based_prob_help'
             t['kwargs'] = {'img_db_path':img_data['db_path'], 'd':d, 'A_k':A_k, 'n':n, 'i':i, 'k':k, 'J': theta['J'], 'trans_list':trans_list, 'sigma_sq': theta['sigma_sq'], 'xi': theta['xi'], 'alpha': theta['alpha']}
             tasks[t['uuid']] = t
@@ -343,7 +343,7 @@ def update_a(img_data, theta, alpha, use_voronoi, reg=True):
         for i,d in enumerate(img_data['dj']):
             t = {}
             t['uuid'] = str(uuid.uuid4())
-            t['module'] = 'tomominer_mbc.classify.model_based_clustering.model_based_clustering'
+            t['module'] = 'aitom.average.ml.faml.faml'
             t['method'] = 'update_a_help'
             t['kwargs'] = {'img_db_path':img_data['db_path'], 'd':d, 'i': i, 'theta':theta, 'k':k, 'use_voronoi':use_voronoi}
             tasks[t['uuid']] = t
@@ -429,7 +429,7 @@ def update_sigma(img_data, theta, use_voronoi, reg=True):
     for i,d in enumerate(img_data['dj']):
         t = {}
         t['uuid'] = str(uuid.uuid4())
-        t['module'] = 'tomominer_mbc.classify.model_based_clustering.model_based_clustering'
+        t['module'] = 'aitom.average.ml.faml.faml'
         t['method'] = 'update_sigma_help'
         t['kwargs'] = {'img_db_path':img_data['db_path'], 'i': i, 'theta':theta, 'd':d, 'use_voronoi':use_voronoi}
         tasks[t['uuid']] = t
@@ -503,7 +503,7 @@ def update_alpha(img_data, theta, use_voronoi):
         for i,d in enumerate(img_data['dj']):
             t = {}
             t['uuid'] = str(uuid.uuid4())
-            t['module'] = 'tomominer_mbc.classify.model_based_clustering.model_based_clustering'
+            t['module'] = 'aitom.average.ml.faml.faml'
             t['method'] = 'update_alpha_help'
             t['kwargs'] = {'i': i, 'theta':theta, 'k':k, 'use_voronoi':use_voronoi}
             tasks[t['uuid']] = t
@@ -559,7 +559,7 @@ def update_xi(img_data, theta, use_voronoi):
     for i in range(N):
         t = {}
         t['uuid'] = str(uuid.uuid4())
-        t['module'] = 'tomominer_mbc.classify.model_based_clustering.model_based_clustering'
+        t['module'] = 'aitom.average.ml.faml.faml'
         t['method'] = 'update_xi_help'
         t['kwargs'] = {'i': i, 'theta':theta, 'use_voronoi':use_voronoi}
         tasks[t['uuid']] = t
@@ -751,7 +751,7 @@ def get_image_db(img_db_path):
 Read subtomograms from mrc files
 '''
 def read_model(i, path, wedge_ang1, wedge_ang2, wedge_dir):
-    import tomominer_mbc.image.vol.wedge.util as W
+    import aitom.image.vol.wedge.util as W
     result = {'i':i}
     f = mrc.open(path)
     size = f.data.shape[0]
