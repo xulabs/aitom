@@ -3,6 +3,8 @@ Tutorial on autoencoder
 '''
 
 '''
+Keras need to be 2.1.x for autoencoder
+
 Step1:Prepare input dataset
 
 You can download the example dataset from {this will be added in the future}, extract it into your present working directory.
@@ -69,6 +71,7 @@ The picture name such as '035--47.png' refers to cluster 35 which consists 47 sm
 Step 4. Optional Encoder-decoder Semantic Segmentation 3D network training.
 
 Based on the manual selection results, Encoder-decoder Semantic Segmentation 3D (EDSS3D) network can be trained and applied for another tomogram dataset.
+
 '''
 
 import aitom.classify.deep.unsupervised.autoencoder.seg_src as SEG
