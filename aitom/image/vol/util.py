@@ -145,7 +145,7 @@ def add_to_whole_map(whole_map, vol, c=None):
 
     whole_map[se[0, 0]:se[0, 1], se[1, 0]              :se[1, 1], se[2, 0]:se[2, 1]] = local_map
 
-    return se
+    return whole_map
 
 
 # roughly paste a small vol to a big whole map, so that the center of vol is roughly centered at c
@@ -164,7 +164,7 @@ def paste_to_whole_map(whole_map, vol, c=None):
 
     paste_to_whole_map__se(whole_map, vol, se)
 
-    return se
+    return whole_map
 
 
 # paste to a map given start and end coordinates
