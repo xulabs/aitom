@@ -6,7 +6,7 @@ pip install lsm-db
 
 '''
 
-import cPickle as pickle
+import pickle as pickle
 
 class LSM:
     def __init__(self, filename, readonly=False):
@@ -26,11 +26,11 @@ class LSM:
         del self.db[self.__keytransform__(key)]
 
     def __iter__(self):
-        return iter(self.db.keys())
+        return iter(list(self.db.keys()))
 
     def __len__(self):
         # get the length by retriving all keys, this is a slow operation, need to find a faster way
-        return len([_ for _ in self.db.keys()])
+        return len([_ for _ in list(self.db.keys())])
 
     def __contains__(self, key):
         return key in self.db
@@ -39,5 +39,5 @@ class LSM:
         return key
 
     def keys(self):
-        return iter(self.db.keys())
+        return iter(list(self.db.keys()))
 

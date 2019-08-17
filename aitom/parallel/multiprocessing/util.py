@@ -12,11 +12,11 @@ given a list of tasks, using multiprocessing to run and collect results
 if worker_num <= 1, just go for single processing
 '''
 def run_iterator(tasks, worker_num=multiprocessing.cpu_count(), verbose=False):
-    if verbose:		print 'tomominer.parallel.multiprocessing.util.run_iterator()', 'start', time.time()
+    if verbose:		print('tomominer.parallel.multiprocessing.util.run_iterator()', 'start', time.time())
 
     worker_num = min(worker_num, multiprocessing.cpu_count())
 
-    for i,t in tasks.iteritems():
+    for i,t in tasks.items():
         if 'args' not in t:     t['args'] = ()
         if 'kwargs' not in t:     t['kwargs'] = {}
         if 'id' not in t:   t['id'] = i
@@ -27,7 +27,7 @@ def run_iterator(tasks, worker_num=multiprocessing.cpu_count(), verbose=False):
 
         pool = Pool(processes = worker_num)
         pool_apply = []
-        for i,t in tasks.iteritems():
+        for i,t in tasks.items():
             #aa = pool.apply_async(func=t['func'], args=t['args'], kwds=t['kwargs'])
             aa = pool.apply_async(func=call_func, kwds={'t':t})
 
@@ -39,7 +39,7 @@ def run_iterator(tasks, worker_num=multiprocessing.cpu_count(), verbose=False):
             completed_count += 1
 
             if verbose:
-                print  '\r', completed_count, '/', len(tasks),
+                print('\r', completed_count, '/', len(tasks), end=' ')
                 sys.stdout.flush()
 
         pool.close()
@@ -48,15 +48,15 @@ def run_iterator(tasks, worker_num=multiprocessing.cpu_count(), verbose=False):
 
     else:
 
-        for i,t in tasks.iteritems():
+        for i,t in tasks.items():
             yield call_func(t)
             completed_count += 1
 
             if verbose:
-                print  '\r', completed_count, '/', len(tasks),
+                print('\r', completed_count, '/', len(tasks), end=' ')
                 sys.stdout.flush()
 	
-    if verbose:		print 'tomominer.parallel.multiprocessing.util.run_iterator()', 'end', time.time()
+    if verbose:		print('tomominer.parallel.multiprocessing.util.run_iterator()', 'end', time.time())
 
 
 run_batch = run_iterator #alias
@@ -84,7 +84,7 @@ def run_batch_test():
     
     import tomominer.parallel.multiprocessing.util as TPMU
     rs = TPMU.run_batch(ts, worker_num=2)
-    print [_ for _ in rs]
+    print([_ for _ in rs])
 
 
 

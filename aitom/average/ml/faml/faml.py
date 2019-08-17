@@ -8,15 +8,15 @@ import mrcfile as mrc
 import pickle
 
 import aitom.tomominer.io.file as TIF
-import aitom.tomominer.io.db.lsm_db as TIDL
-import aitom.tomominer.parallel.multiprocessing.util as TPMU
+import aitom.io.db.lsm_db as TIDL
+import aitom.parallel.multiprocessing.util as TPMU
 
 
 import aitom.tomominer.align.fast.util as align
-import aitom.tomominer.geometry.rotate as rotate
+import aitom.geometry.rotate as rotate
 import aitom.tomominer.geometry.ang_loc as ang_loc
-import aitom.tomominer.statistics.vol as stats
-import aitom.tomominer.image.io as TIIO
+import aitom.statistics.vol as stats
+import aitom.image.io as TIIO
 import aitom.tomominer.image.vol.util as TIVU
 
 MULTIPROCESSING_WORKER_NUM = 44
@@ -27,7 +27,7 @@ theta : {N : int,
          J : int,
          n : int,
          sigma_sq : float
-         xi : float, 
+         xi : float,
          alpha : 1*K nparray,
          A : K*J nparray,
          C : float
@@ -55,7 +55,7 @@ def inv_fourier_transform(v):
 '''
 Generates a list of possible tranformations for the purpose of integration
 In the Scheres paper the list is sampled from all possible transformations
-using adaptive sampling, but in our paper we only generate a small set 
+using adaptive sampling, but in our paper we only generate a small set
 corresponding to the best correlation scores in the Xu paper.
 '''
 def get_trans_list(k, i, theta):
@@ -66,7 +66,7 @@ def get_trans_list(k, i, theta):
 '''
 Compute the list of optimal transformations for all (i, k) pairs using
 parallelism
-'''   
+'''
 def compute_trans_list(theta, img_data, use_voronoi):
 
     N = theta['N']
@@ -219,7 +219,7 @@ def model_based_prob_help(A_k, trans_list, img_db_path, d, J, sigma_sq, n, i, k,
         ln_result = (ln_p_xo(A_k = A_k, phi = phi, X_i = X_i,
             w_i = w_i, J = J, sigma_sq = sigma_sq, n = n, k = k, i = i) +
                 ln_p_k_phi(phi = phi, alpha = alpha, xi = xi))
-               
+
         result[j] = ln_result
 
     return {'ln_prob': result, 'i': i, 'k': k}
@@ -245,7 +245,7 @@ def transform(phi, A_fourier, n, inv=False):
     ang = [phi['q_rot'], phi['q_tilt'], phi['q_psi']]
     loc = [phi['q_x'], phi['q_y'], phi['q_z']]
 
-    if inv: 
+    if inv:
         ang, loc = ang_loc.reverse_transform_ang_loc(ang, loc)
 
     A_real_rot = rotate.rotate_pad_mean(A_real, angle=ang, loc_r=loc)
@@ -254,7 +254,7 @@ def transform(phi, A_fourier, n, inv=False):
     return result
 
 '''
-Generates the tomogram transformed by the rigid transformations specified by the 
+Generates the tomogram transformed by the rigid transformations specified by the
 inverse of phi
 '''
 def inv_transform(phi, A_fourier, n):
@@ -276,9 +276,9 @@ This is kind of tricky to compute
 '''
 def p_k_phi_given_xo(k, phi_id, theta, i, use_voronoi):
     K = theta['K']
-    
+
     ln_num = theta['ln_prob'][i][k][phi_id]
-    
+
     denom = 0.0
     for _k in range(K):
         phis = get_trans_list(k = _k, i = i, theta = theta)
@@ -302,7 +302,7 @@ note that some terms are omitted because they are canceled in the computation of
 '''
 def ln_p_xo(A_k, phi, X_i, w_i, J, sigma_sq, n, i, k):
     RA = transform(phi, A_k, n)
- 
+
     sum_j = np.sum(np.square(np.absolute(RA - X_i) * w_i))
     ln_result = - (sum_j/(2*sigma_sq))
     return ln_result
@@ -356,7 +356,7 @@ def update_a(img_data, theta, alpha, use_voronoi, reg=True):
     for rt in rt_s:
         k = rt['result']['k']
         A_new[k] += rt['result']['result']
-  
+
     for k in range(K):
         if reg and theta['theta_reg'] > 0:
             A_new[k] += reg_num
@@ -390,17 +390,17 @@ def update_a_help(img_db_path, i, theta, k, d, use_voronoi):
         else:
             dphi = 1.0 / len(phis)
 
-        prob = p_k_phi_given_xo(k = k, phi_id = j, 
-                                        theta = theta, i = i, 
+        prob = p_k_phi_given_xo(k = k, phi_id = j,
+                                        theta = theta, i = i,
                                         use_voronoi=use_voronoi)
         inv_mask = inv_transform_mask(phi, w_i, n)
         R_inv_X = inv_transform(phi, X_i, n)
-        temp = (inv_mask * R_inv_X 
+        temp = (inv_mask * R_inv_X
             + (np.ones(inv_mask.shape) - inv_mask) * A_old[k])
         temp_sum += prob * temp * dphi
 
     result = temp_sum
-    
+
     return {'result': result, 'k': k}
 
 '''
@@ -416,7 +416,7 @@ def update_sigma(img_data, theta, use_voronoi, reg=True):
     A = theta['A']
     n = theta['n']
     sigma_sq_old = theta['sigma_sq']
-    
+
     # Regularization term
     reg_term = 0
     if reg and theta['theta_reg'] > 0:
@@ -442,11 +442,11 @@ def update_sigma(img_data, theta, use_voronoi, reg=True):
     sigma_sq_new = 0
 
     for rt in rt_s:
-        sigma_sq_new += rt['result']['result']  
+        sigma_sq_new += rt['result']['result']
 
-    if reg: 
+    if reg:
         sigma_sq_new += reg_term
-   
+
     return sigma_sq_new / (N * J)
 
 '''
@@ -476,7 +476,7 @@ def update_sigma_help(img_db_path, i, theta, d, use_voronoi):
             else:
                 dphi = 1.0 / len(phis)
 
-            prob = p_k_phi_given_xo(k = k, phi_id = j, 
+            prob = p_k_phi_given_xo(k = k, phi_id = j,
                                             theta = theta, i = i,
                                             use_voronoi=use_voronoi)
             RA = transform(phi, A_k, n)
@@ -514,14 +514,14 @@ def update_alpha(img_data, theta, use_voronoi):
         rt_s = [_ for _ in TPMU.run_iterator(tasks, worker_num = MULTIPROCESSING_WORKER_NUM)]
 
     for rt in rt_s:
-        k = rt['result']['k']         
+        k = rt['result']['k']
         i = rt['result']['i']
         probs[i][k] = rt['result']['result']
-    
+
     alpha_new = np.sum(probs, axis=0) / N
-    
+
     theta['predictions'] = np.argmax(probs, axis=1)
-    
+
     return alpha_new
 
 '''
@@ -537,7 +537,7 @@ def update_alpha_help(i, theta, k, use_voronoi):
         else:
             dphi = 1.0 / len(phis)
 
-        prob = p_k_phi_given_xo(k = k, phi_id = j, 
+        prob = p_k_phi_given_xo(k = k, phi_id = j,
                                 theta = theta, i = i,
                                 use_voronoi=use_voronoi)
         temp_sum += prob * dphi
@@ -573,7 +573,7 @@ def update_xi(img_data, theta, use_voronoi):
         xi_sq_new += rt['result']['result']
 
     return max(eps, (xi_sq_new / (3 * N)) ** 0.5)
-  
+
 '''
 Kernel function for updating xi
 '''
@@ -597,12 +597,12 @@ def update_xi_help(i, theta, use_voronoi):
             q_y = phi['q_y']
             q_z = phi['q_z']
             r_sq = q_x ** 2 + q_y ** 2 + q_z ** 2
-            prob = p_k_phi_given_xo(k = k, phi_id = j, 
+            prob = p_k_phi_given_xo(k = k, phi_id = j,
                                     theta = theta, i = i,
                                     use_voronoi = use_voronoi)
             temp_sum += prob * r_sq * dphi
         result += temp_sum
-    return {'result': result}  
+    return {'result': result}
 
 '''
 The main estimation-maximization algorithm
@@ -612,10 +612,10 @@ def EM(img_data, K, iteration, path, snapshot_interval=5, reg=False, use_voronoi
     np.seterr(all='ignore')
     X = get_image_db(img_data['db_path'])
     dj = img_data['dj']
-    
+
     N = len(dj)
     n_x, n_y, n_z = X[dj[0]['v']].shape
-    
+
     theta = dict()
     theta['N'] = N
     theta['J'] = n_x * n_y * n_z
@@ -701,7 +701,7 @@ def EM(img_data, K, iteration, path, snapshot_interval=5, reg=False, use_voronoi
         theta['sigma_sq'] = sigma_sq
         theta['xi'] = xi
         theta['A'] = A
-        # Since we changed the models A, the list of optimal transforms 
+        # Since we changed the models A, the list of optimal transforms
         # needs to be re-calculated
         theta['trans_list'] = None
         theta['pred'] = None
@@ -716,27 +716,27 @@ def EM(img_data, K, iteration, path, snapshot_interval=5, reg=False, use_voronoi
         except:
             raise Exception("Checkpoint file already exists!")
         TIF.pickle_dump({'theta':theta}, checkpoint_file)
-    
-    print_prediction_results(theta, img_data) 
+
+    print_prediction_results(theta, img_data)
     output_images(theta, iteration, path=path)
     print("Prediction from model: ", end=' ')
     print(theta['predictions'])
     return theta
 
-def test_EM_real_data(img_data, iteration, K, snapshot_interval, path, 
+def test_EM_real_data(img_data, iteration, K, snapshot_interval, path,
         reg=False, use_voronoi=True):
     dj = img_data['dj']
-    
+
     observed = []
     masks = []
     i = 0
     save_interval = 50
-    
+
     X = get_image_db(img_data['db_path'])
-     
+
     N = len(dj)
     size = X[dj[0]['v']].shape[0]
-    
+
 
     EM(img_data=img_data, K=K, iteration=iteration, snapshot_interval=snapshot_interval, path = path, reg=reg, use_voronoi=use_voronoi)
 
@@ -746,7 +746,7 @@ Retrive image from the datebase path
 def get_image_db(img_db_path):
     X = TIDL.LSM(img_db_path, readonly=True)
     return X
-    
+
 '''
 Read subtomograms from mrc files
 '''
@@ -845,8 +845,8 @@ def get_correlation_score(theta, img_db_path, d, k=None):
                 A_real_pred = v2
                 k_pred = k
 
-    A_aligned = rotate.rotate_pad_mean(A_real_pred, angle = best_ang, 
+    A_aligned = rotate.rotate_pad_mean(A_real_pred, angle = best_ang,
         loc_r = best_loc)
 
     return ("Model%d" % d['v'], k_pred, stats.fsc(v1, A_aligned))
-    
+
