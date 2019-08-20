@@ -10,7 +10,7 @@ import numpy as N
 import aitom.model.util as MU
 
 from numpy.fft import fftn, ifftn, fftshift, ifftshift
-import numpy as N 
+import numpy as N
 
 import aitom.geometry.rotate as GR
 import aitom.model.util as MU
@@ -78,14 +78,14 @@ def align_vols_no_mask(v1, v2, L=36):
 
 
 # fast alignment according to JSB 2012 paper
-# given two subtomograms and their masks, perform populate all candidate rotational angles, 
+# given two subtomograms and their masks, perform populate all candidate rotational angles,
 # with missing wedge correction
 
 def fast_rotation_align(v1, m1, v2, m2, max_l=36):
 
     radius = int( max(v1.shape) / 2 )
 
-    radii = list(range(1,radius+1))     # radii must start from 1, not 0! 
+    radii = list(range(1,radius+1))     # radii must start from 1, not 0!
     radii = N.asarray(radii, dtype=N.float64)		# convert to nparray
 
     # fftshift breaks order='F'
@@ -102,7 +102,7 @@ def fast_rotation_align(v1, m1, v2, m2, max_l=36):
     a2t = v2fa * m2sq
 
     cor12 = core.rot_search_cor(a1t, a2t, radii, max_l)
-    
+
 
 
     sqt_cor11 = N.sqrt( N.real( core.rot_search_cor( N.square(v1fa) * m1sq, m2sq, radii, max_l ) ) )
@@ -123,7 +123,7 @@ def fast_rotation_align(v1, m1, v2, m2, max_l=36):
 
 def translation_align__given_unshifted_fft(v1f, v2f):
     cor = fftshift( N.real( ifftn( v1f * N.conj(v2f) ) ) )
-    
+
     mid_co = IVU.fft_mid_co(cor.shape)
     loc = N.unravel_index( cor.argmax(), cor.shape )
 
@@ -134,12 +134,16 @@ def translation_align__given_unshifted_fft(v1f, v2f):
 
 # for each angle, do a translation search
 def translation_align_given_rotation_angles(v1, m1, v2, m2, angs):
-    v1f = fftn(v1)      ;       v1f[0,0,0] = 0.0        ;           v1f = fftshift(v1f)
+    v1f = fftn(v1)
+    v1f[0,0,0] = 0.0
+    v1f = fftshift(v1f)
 
     a = [None] * len(angs)
     for i, ang in enumerate(angs):
-	v2r = GR.rotate_pad_mean(v2, angle=ang)
-        v2rf = fftn(v2r)        ;       v2rf[0,0,0] = 0.0       ;       v2rf = fftshift(v2rf)
+        v2r = GR.rotate_pad_mean(v2, angle=ang)
+        v2rf = fftn(v2r)
+        v2rf[0,0,0] = 0.0
+        v2rf = fftshift(v2rf)
 
         m2r = GR.rotate_pad_zero(m2, angle=ang)
         m1_m2r = m1 * m2
@@ -147,7 +151,7 @@ def translation_align_given_rotation_angles(v1, m1, v2, m2, angs):
         # masked images
         v1fm = v1f * m1_m2r
         v2rfm = v2rf * m1_m2r
-      
+
         # normalize values
         v1fmn = v1fm / N.sqrt(N.square(N.abs(v1fm)).sum())
         v2rfmn = v2rfm / N.sqrt(N.square(N.abs(v2rfm)).sum())

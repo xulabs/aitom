@@ -3,8 +3,12 @@ construct a missing wedge mask, see tom_wedge,
 angle represents the angle range of MISSING WEDGE region, the larger, the more missing wedge region!!!
 tilt_axis is tilt axis
 '''
-def wedge_mask(size, ang1, ang2=None, tilt_axis=1, sphere_mask=True, verbose=False):
+import warnings
+import numpy as N
+import aitom.tomominer.image.vol.util as IVU
+import aitom.model.util as MU
 
+def wedge_mask(size, ang1, ang2=None, tilt_axis=1, sphere_mask=True, verbose=False):
     warnings.warn("The definition of wedge mask is still ambiguous")        # should define both tilt axis and electron beam (missing wedge) direction
 
     if ang2 is None:
