@@ -2,6 +2,16 @@
 
 imput dataset format should be:
 
+demo dataset is a dict,key is the label, value is a matrix size of (number * size * size * size)
+
+    {'label1':[[[]]],
+    'label2':[[[]]]
+    }
+use data from following location for testing:
+tutorials/000_general.md
+
+
+Then we convert it to
     [
     {'pdb_id':'label1',
     'v':[[[]]]
@@ -13,9 +23,11 @@ imput dataset format should be:
     'v':[[[]]]
     }
     ]
+using the function SD.convert_demo_data_format(dj, label_list)
 
-use data from following location for testing:
-tutorials/000_general.md
+So you can use either of the two format above.
+
+
 '''
 
 
