@@ -73,17 +73,13 @@ def encoder_simple_conv(img_shape, encoding_dim=32, NUM_CHANNELS=1):
     x = Dense(N.prod(encoder_conv_shape[1:]), activation='relu')(x)
     x = Reshape(encoder_conv_shape[1:])(x)
 
-    if True:
-        x = UpSampling3D((2, 2, 2))(x)
-        x = conv_block(x, 32, 3, 3, 3)
+    x = UpSampling3D((2, 2, 2))(x)
+    x = conv_block(x, 32, 3, 3, 3)
 
-        x = UpSampling3D((2, 2, 2))(x)
-        x = conv_block(x, 32, 3, 3, 3)
+    x = UpSampling3D((2, 2, 2))(x)
+    x = conv_block(x, 32, 3, 3, 3)
 
-        x = Convolution3D(1, 3, 3, 3, activation='linear', border_mode='same')(x)       # keep the output layer linear activation, so that the image intensity can be negative
-    else:
-        from keras_contrib.layers import Deconvolution3D
-        x = Deconvolution3D(1, 1, 1, 1, output_shape=input_shape, subsample=(4,4,4), activation='linear', border_mode='same')(x)         # the correct choice of subsample is important to connect Deconvolution3D with output of last layer
+    x = Convolution3D(1, 3, 3, 3, activation='linear', border_mode='same')(x)       # keep the output layer linear activation, so that the image intensity can be negative
 
     decoded = x
     decoder = Model(input=input_img_decoder, output=decoded)
