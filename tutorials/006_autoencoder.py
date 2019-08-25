@@ -1,5 +1,10 @@
 '''
 Tutorial on autoencoder
+
+References:
+https://arxiv.org/abs/1706.04970
+https://github.com/xulabs/projects/tree/master/autoencoder
+
 '''
 
 '''
