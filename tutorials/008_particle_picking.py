@@ -1,5 +1,11 @@
+'''
+a tutorial on using particle picking
 
-#a tutorial on using particle picking
+Reference:
+Pei et al. Simulating cryo electron tomograms of crowded cell cytoplasm for assessment of automated particle picking
+https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-1283-3
+'''
+
 
 from aitom.pick.dog.particle_picking_dog__util import peak
 from aitom.pick.dog.particle_picking_dog__util import peak__partition
