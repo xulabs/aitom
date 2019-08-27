@@ -2,8 +2,14 @@
 functions for gaussian filtering
 
 '''
-
 import scipy.ndimage as SN
+import gc as GC
+import aitom.model.util as MU
+import numpy as N
+from numpy.fft import fftn, ifftn, fftshift, ifftshift
+from ..classify.deep.unsupervised.autoencoder.autoencoder_util import difference_of_gauss_function
+from ..image.vol.util import paste_to_whole_map
+
 # smoothing using scipy.ndimage.gaussian_filter
 def smooth(v, sigma):
     assert  sigma > 0
@@ -35,11 +41,11 @@ def dog_smooth__large_map(v, s1, s2=None):
     del v;      GC.collect()
 
 
-    g_small = MU.difference_of_gauss_function(size=N.array([int(N.round(s2 * 4))]*3), sigma1=s1, sigma2=s2)
+    g_small = difference_of_gauss_function(size=N.array([int(N.round(s2 * 4))]*3), sigma1=s1, sigma2=s2)
     assert      N.all(N.array(g_small.shape) <= N.array(vp.shape))       # make sure we can use CV.paste_to_whole_map()
 
     g = N.zeros(vp.shape)
-    CV.paste_to_whole_map(whole_map=g, vol=g_small, c=None)
+    paste_to_whole_map(whole_map=g, vol=g_small, c=None)
 
     g_fft_conj = N.conj(   fftn(ifftshift(g)).astype(N.complex64)   )    # use ifftshift(g) to move center of gaussian to origin
     del g;      GC.collect()
