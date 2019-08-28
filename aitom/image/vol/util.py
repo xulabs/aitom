@@ -2,6 +2,33 @@ import numpy as N
 
 # convert a 3D cube to a 2D image of slices
 
+def roll(v, s0, s1, s2):
+    if (s0 != 0):
+        v0 = N.roll(v, s0, axis=0)
+    else:
+        v0 = v
+    if (s1 != 0):
+        v1 = N.roll(v0, s1, axis=1)
+    else:
+        v1 = v0
+    if (s2 != 0):
+        v2 = N.roll(v1, s2, axis=2)
+    else:
+        v2 = v1
+    return v2
+
+
+import scipy.ndimage.interpolation as inter
+
+def fft_mid_co(siz):
+    assert all((N.mod(siz, 1) == 0))
+    assert all((N.array(siz) > 0))
+    mid_co = N.zeros(len(siz))
+    for i in range(len(mid_co)):
+        m = siz[i]
+        mid_co[i] = N.floor((m / 2))
+    return mid_co
+
 
 def cub_img(v, view_dir=2):
     if view_dir == 0:
