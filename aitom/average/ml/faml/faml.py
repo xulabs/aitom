@@ -18,6 +18,7 @@ import aitom.tomominer.geometry.ang_loc as ang_loc
 import aitom.statistics.vol as stats
 import aitom.image.io as TIIO
 import aitom.image.vol.util as TIVU
+import aitom.model.util as TMU
 
 # TODO
 MULTIPROCESSING_WORKER_NUM = 1
@@ -115,7 +116,7 @@ def model_based_align_help(img_db_path, d, A_k, n, i, k):
     m1 = X[d['m']]
 
     v2 = inv_fourier_transform(A_k)
-    m2 = np.ones((n, n, n))
+    m2 = TMU.sphere_mask([n, n, n])
 
     transforms = fast_align(v1, m1, v2, m2)
     result = []
