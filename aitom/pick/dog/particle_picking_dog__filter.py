@@ -16,7 +16,7 @@ def do_filter(pp, peak_dist_min, op=None):
     for peak_i in range(len(pp)):
         if redundant_flag[peak_i]:      continue
         
-        if 'id' in pp[peak_i]:        print '\r', peak_i, '    ', pp[peak_i]['id'], '           ',
+        if 'id' in pp[peak_i]:        print ('\r', peak_i, '    ', pp[peak_i]['id'], '           '),
 
         d = cdist(x, N.reshape(x[peak_i,:], (1,-1))).flatten()
 
@@ -29,7 +29,7 @@ def do_filter(pp, peak_dist_min, op=None):
 
         if (op is not None) and ('top_num' in op) and (peak_i > (op['top_num']*2)):
             non_redundante_num = (redundant_flag[:peak_i] == False).sum()
-            print non_redundante_num, '        ',
+            print (non_redundante_num, '        '),
             if non_redundante_num > op['top_num']:          break
     print
 
@@ -57,7 +57,7 @@ def main():
 
     pp_t = []
     for tom_id in tom_ids:
-        print 'processing tomogram', tom_id
+        print ('processing tomogram', tom_id)
 
         r = pp_op['sigma1'] / tom_info[tom_id]['voxel_spacing']
 
@@ -66,7 +66,7 @@ def main():
 
         pp_t.extend(        do_filter(pp_tom, peak_dist_min=2*r, op=op)     )
 
-    print 'peak number reduced from', len(pp), 'to', len(pp_t)
+    print ('peak number reduced from', len(pp), 'to', len(pp_t))
 
     with open(op['out_file'], 'w') as f:       pickle.dump(pp_t, f, protocol=-1)
 
