@@ -20,8 +20,7 @@ import aitom.image.io as TIIO
 import aitom.image.vol.util as TIVU
 import aitom.model.util as TMU
 
-# TODO
-MULTIPROCESSING_WORKER_NUM = 1
+MULTIPROCESSING_WORKER_NUM = 8
 
 '''
 theta : {N : int,
@@ -88,9 +87,7 @@ def compute_trans_list(theta, img_data, use_voronoi):
             t['kwargs'] = {'img_db_path':img_data['db_path'], 'd':d, 'A_k':A_k, 'n':n, 'i':j, 'k':k_}
             tasks[t['uuid']] = t
 
-    # TODO
-    # if len(sys.argv) > 1:
-    if False:
+    if len(sys.argv) > 1:
         rt_s = [_ for _ in TPRJB.run_iterator(tasks, redis_host = sys.argv[1], redis_port=6379, redis_password='2os43FR0Y1NVxAsy6k10A5to3oltsAl6vVeplZ9ktODQ88cs')]
     else:
         rt_s = [_ for _ in TPMU.run_iterator(tasks, worker_num = MULTIPROCESSING_WORKER_NUM)]
@@ -160,9 +157,7 @@ def compute_voronoi_weights(theta):
 
     del i, k
 
-    # TODO
-    # if len(sys.argv) > 1:
-    if False:
+    if len(sys.argv) > 1:
         rt_s = [_ for _ in TPRJB.run_iterator(tasks, redis_host = sys.argv[1], redis_port=6379, redis_password='2os43FR0Y1NVxAsy6k10A5to3oltsAl6vVeplZ9ktODQ88cs')]
     else:
         rt_s = [_ for _ in TPMU.run_iterator(tasks, worker_num = MULTIPROCESSING_WORKER_NUM)]
@@ -200,9 +195,7 @@ def compute_prob(img_data, theta):
             t['kwargs'] = {'img_db_path':img_data['db_path'], 'd':d, 'A_k':A_k, 'n':n, 'i':i, 'k':k, 'J': theta['J'], 'trans_list':trans_list, 'sigma_sq': theta['sigma_sq'], 'xi': theta['xi'], 'alpha': theta['alpha']}
             tasks[t['uuid']] = t
 
-    # TODO
-    # if len(sys.argv) > 1:
-    if False:
+    if len(sys.argv) > 1:
         rt_s = [_ for _ in TPRJB.run_iterator(tasks, redis_host = sys.argv[1], redis_port=6379, redis_password='2os43FR0Y1NVxAsy6k10A5to3oltsAl6vVeplZ9ktODQ88cs')]
     else:
         rt_s = [_ for _ in TPMU.run_iterator(tasks, worker_num = MULTIPROCESSING_WORKER_NUM)]
@@ -356,9 +349,7 @@ def update_a(img_data, theta, alpha, use_voronoi, reg=True):
             t['kwargs'] = {'img_db_path':img_data['db_path'], 'd':d, 'i': i, 'theta':theta, 'k':k, 'use_voronoi':use_voronoi}
             tasks[t['uuid']] = t
 
-    # TODO
-    # if len(sys.argv) > 1:
-    if False:
+    if len(sys.argv) > 1:
         rt_s = [_ for _ in TPRJB.run_iterator(tasks, redis_host = sys.argv[1], redis_port=6379, redis_password='2os43FR0Y1NVxAsy6k10A5to3oltsAl6vVeplZ9ktODQ88cs')]
     else:
         rt_s = [_ for _ in TPMU.run_iterator(tasks, worker_num = MULTIPROCESSING_WORKER_NUM)]
@@ -444,9 +435,7 @@ def update_sigma(img_data, theta, use_voronoi, reg=True):
         t['kwargs'] = {'img_db_path':img_data['db_path'], 'i': i, 'theta':theta, 'd':d, 'use_voronoi':use_voronoi}
         tasks[t['uuid']] = t
 
-    # TODO
-    # if len(sys.argv) > 1:
-    if False:
+    if len(sys.argv) > 1:
         rt_s = [_ for _ in TPRJB.run_iterator(tasks, redis_host = sys.argv[1], redis_port=6379, redis_password='2os43FR0Y1NVxAsy6k10A5to3oltsAl6vVeplZ9ktODQ88cs')]
     else:
         rt_s = [_ for _ in TPMU.run_iterator(tasks, worker_num = MULTIPROCESSING_WORKER_NUM)]
@@ -520,9 +509,7 @@ def update_alpha(img_data, theta, use_voronoi):
             t['kwargs'] = {'i': i, 'theta':theta, 'k':k, 'use_voronoi':use_voronoi}
             tasks[t['uuid']] = t
 
-    # TODO
-    # if len(sys.argv) > 1:
-    if False:
+    if len(sys.argv) > 1:
         rt_s = [_ for _ in TPRJB.run_iterator(tasks, redis_host = sys.argv[1], redis_port=6379, redis_password='2os43FR0Y1NVxAsy6k10A5to3oltsAl6vVeplZ9ktODQ88cs')]
     else:
         rt_s = [_ for _ in TPMU.run_iterator(tasks, worker_num = MULTIPROCESSING_WORKER_NUM)]
@@ -578,9 +565,7 @@ def update_xi(img_data, theta, use_voronoi):
         t['kwargs'] = {'i': i, 'theta':theta, 'use_voronoi':use_voronoi}
         tasks[t['uuid']] = t
 
-    # TODO
-    # if len(sys.argv) > 1:
-    if False:
+    if len(sys.argv) > 1:
         rt_s = [_ for _ in TPRJB.run_iterator(tasks, redis_host = sys.argv[1], redis_port=6379, redis_password='2os43FR0Y1NVxAsy6k10A5to3oltsAl6vVeplZ9ktODQ88cs')]
     else:
         rt_s = [_ for _ in TPMU.run_iterator(tasks, worker_num = MULTIPROCESSING_WORKER_NUM)]

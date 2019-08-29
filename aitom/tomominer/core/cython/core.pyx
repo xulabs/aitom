@@ -197,8 +197,6 @@ def rot_search_cor(np.ndarray[np.double_t, ndim=3] v1, np.ndarray[np.double_t, n
 @cython.wraparound(False)
 def local_max_angles(np.ndarray[np.double_t, ndim=3] cor, unsigned int peak_spacing=8):
 
-    print 'local_max_angles()'
-
     if not cor.flags.f_contiguous:     cor = cor.copy(order='F')
 
     cdef double *cor_data

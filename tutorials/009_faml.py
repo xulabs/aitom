@@ -46,3 +46,12 @@ for s in subtomograms['1KP8_data']:
 
 with open('data/dj.pickle', 'wb') as f:
     pickle.dump(dj, f, protocol=-1)  # Save the key file
+
+img_data = {}
+img_data['db_path'] = 'data/aitom_demo_subtomograms.db'
+with open('data/dj.pickle', 'rb') as f:
+    img_data['dj'] = pickle.load(f)
+
+import aitom.average.ml.faml.faml as faml
+faml.test_EM_real_data(img_data, 20, 2, 5, "output")
+

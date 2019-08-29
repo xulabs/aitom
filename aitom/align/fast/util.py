@@ -103,8 +103,6 @@ def fast_rotation_align(v1, m1, v2, m2, max_l=36):
 
     cor12 = core.rot_search_cor(a1t, a2t, radii, max_l)
 
-
-
     sqt_cor11 = N.sqrt( N.real( core.rot_search_cor( N.square(v1fa) * m1sq, m2sq, radii, max_l ) ) )
     sqt_cor22 = N.sqrt( N.real( core.rot_search_cor( m1sq, N.square(v2fa) * m2sq, radii, max_l ) ) )
 
