@@ -16,7 +16,7 @@ import aitom.io.file as io_file
 import aitom.image.vol.util as im_vol_util
 from aitom.filter.gaussian import smooth
 from aitom.filter.gaussian import dog_smooth
-
+from bisect import bisect
 
 '''
 particle picking
@@ -44,10 +44,9 @@ def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessin
     M = peaks[0]['val'] # max val of all peaks
     m = peaks[len(peaks)-1]['val'] # min val of all peaks
     T = m+t*(M-m)/20
-    for i in range(len(peaks)):
-        if peaks[i]['val'] < T:
-            res = peaks[0:i-1]
-            break
+    peak_vals_neg = [-peak['val'] for peak in peaks]
+    res = peaks[:bisect(peak_vals_neg, -T)]
+    assert res[-1]['val'] >= T
     print("T=m+t*(M-m)/20 \nT=%f m=%f t=%f M=%f" %(T,m,t,M))
     return res
     
