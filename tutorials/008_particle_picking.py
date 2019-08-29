@@ -9,6 +9,7 @@ https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-1283-3
 
 from aitom.pick.dog.particle_picking_dog__util import peak
 from aitom.pick.dog.particle_picking_dog__util import peak__partition
+from aitom.pick.dog.particle_picking_dog__filter import do_filter
 import os
 import json
 os.chdir("..")
@@ -51,11 +52,16 @@ def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessin
     return res
     
 def main():
-    # Download from: http://ftp.ebi.ac.uk/pub/databases/empiar/archive/10227/data/US1363_G1/14nov13a_tilt/14nov13a__001.mrc.bz2
-    # Can first reduce its size through bining
-    result=picking('/ldap_shared/home/v_zhenxi_zhu/14nov13a__001_bin2.mrc', s1=7, s2=7.7, t=3, find_maxima=True, partition_op=None, multiprocessing_process_num=100)
-    print("%d particles detected" %len(result))
+    # Download from: https://cmu.box.com/s/9hn3qqtqmivauus3kgtasg5uzlj53wxp
+    path='/ldap_shared/home/v_zhenxi_zhu/data/aitom_demo_cellular_tomogram.mrc' #file path
+    sigma1=3 #sigma1 should be roughly equal to the radius(in pixels)
+    partition_op={ 'nonoverlap_width':sigma1*20, 'overlap_width': sigma1*10, 'save_vg':False} #change 'nonoverlap_width' and 'overlap_width' if necessary
+    
+    result=picking(path, s1=sigma1, s2=sigma1*1.1, t=5, find_maxima=True, partition_op=partition_op, multiprocessing_process_num=100) # t is threshold level
+    print("%d particles deteced, containing redundant peaks" %len(result))
     print(result[0])
+    result=do_filter(pp=result, peak_dist_min=sigma1, op=None)
+    print("peak number reduced %d" %len(result))
     
 if __name__ == '__main__':
     main()
