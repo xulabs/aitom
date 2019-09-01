@@ -20,13 +20,21 @@ from aitom.filter.gaussian import dog_smooth
 from bisect import bisect
 
 '''
-particle picking
-parameters:  path: file path  s1:sigma1  s2:sigma2  t:threshold level  
-In general, s2=1.1*s1, s1 and t depend on particle size and noise. In related paper, the model achieves highest comprehensive score when s1=7 and t=3. 
+parameters:
+path:file path  s1:sigma1  s2:sigma2  t:threshold level  find_maxima:peaks appears at the maximum/minimum  multiprocessing_process_num: number of multiporcessing
+partition_op: partition the volume for multithreading, is a dict consists 'nonoverlap_width', 'overlap_width' and 'save_vg'
+# Take a two-dimensional image as an example, if the image size is 210*150(all in pixels), nonoverlap_width is 60 and overlap_width is 30.
+# It will be divided into 6 pieces for different threads to process. The ranges of their X and Y are
+# (first line)  (0-90)*(0-90) (60-150)*(0-90) (120-210)*(0-90) (0-90)
+# (second line) (0-90)*(60-150) (60-150)*(60-150) (120-210)*(60-150)
+In general, s2=1.1*s1, s1 and t depend on particle size and noise. In practice, s1 should be roughly equal to the particle radius(in pixels). In related paper, the model achieves highest comprehensive score when s1=7 and t=3. 
 
-return:  a list including all peaks information, each element in the return list looks like: 
+return:
+a list including all peaks information (in descending order of value),  each element in the return list looks like: 
 {'val': 281.4873046875, 'x': [1178, 1280, 0], 'uuid': '6ad66107-088c-471e-b65f-0b3b2fdc35b0'}
-
+'val' is the score of the peak when picking, only the score is higher than the threshold will the peak be selected.
+'x' is the center of the peak in the tomogram.
+'uuid' is an unique id for each peak.
 '''
 def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessing_process_num=0):
 
@@ -53,14 +61,15 @@ def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessin
     
 def main():
     # Download from: https://cmu.box.com/s/9hn3qqtqmivauus3kgtasg5uzlj53wxp
-    path='/ldap_shared/home/v_zhenxi_zhu/data/aitom_demo_cellular_tomogram.mrc' #file path
-    sigma1=3 #sigma1 should be roughly equal to the radius(in pixels)
-    partition_op={ 'nonoverlap_width':sigma1*20, 'overlap_width': sigma1*10, 'save_vg':False} #change 'nonoverlap_width' and 'overlap_width' if necessary
+    path='/ldap_shared/home/v_zhenxi_zhu/data/aitom_demo_cellular_tomogram.mrc'
+    sigma1=3 
+    partition_op={ 'nonoverlap_width':sigma1*20, 'overlap_width': sigma1*10, 'save_vg':False}
+    # input parameters and output data format can be found before 'picking' function
+    result=picking(path, s1=sigma1, s2=sigma1*1.1, t=5, find_maxima=True, partition_op=partition_op, multiprocessing_process_num=100) 
     
-    result=picking(path, s1=sigma1, s2=sigma1*1.1, t=5, find_maxima=True, partition_op=partition_op, multiprocessing_process_num=100) # t is threshold level
     print("%d particles deteced, containing redundant peaks" %len(result))
     print(result[0])
-    result=do_filter(pp=result, peak_dist_min=sigma1, op=None)
+    result=do_filter(pp=result, peak_dist_min=sigma1, op=None) #remove redundant peaks
     print("peak number reduced %d" %len(result))
     
 if __name__ == '__main__':
