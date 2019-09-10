@@ -12,13 +12,13 @@ from aitom.pick.dog.particle_picking_dog__util import peak__partition
 from aitom.pick.dog.particle_picking_dog__filter import do_filter
 import os
 import json
-os.chdir("..")
+os.chdir("..") # Depends on your current dir
 import aitom.io.file as io_file
 import aitom.image.vol.util as im_vol_util
 from aitom.filter.gaussian import smooth
 from aitom.filter.gaussian import dog_smooth
 from bisect import bisect
-
+from pprint import pprint
 '''
 parameters:
 path:file path  s1:sigma1  s2:sigma2  t:threshold level  find_maxima:peaks appears at the maximum/minimum  multiprocessing_process_num: number of multiporcessing
@@ -37,19 +37,17 @@ a list including all peaks information (in descending order of value),  each ele
 'uuid' is an unique id for each peak.
 '''
 def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessing_process_num=0):
-
     a = io_file.read_mrc_data(path)
     print("file has been read")
     temp = im_vol_util.cub_img(a)
     a_im = temp['im'] # image data
     a_vt = temp['vt'] # volume data
 
-    peaks = peak__partition(a_vt, s1=s1, s2=s2, find_maxima=find_maxima, partition_op=partition_op, multiprocessing_process_num=multiprocessing_process_num) 
     # using DoG to detect all peaks, may contain peaks caused by noise
+    peaks = peak__partition(a_vt, s1=s1, s2=s2, find_maxima=find_maxima, partition_op=partition_op, multiprocessing_process_num=multiprocessing_process_num) 
     
     # calculate threshold T and delete peaks whose val are smaller than threshold
     # Related paper: Pei L, Xu M, Frazier Z, Alber F. Simulating Cryo-Electron Tomograms of Crowded Mixtures of Macromolecular Complexes and Assessment of Particle Picking. BMC Bioinformatics. 2016; 17: 405.
-
     M = peaks[0]['val'] # max val of all peaks
     m = peaks[len(peaks)-1]['val'] # min val of all peaks
     T = m+t*(M-m)/20
@@ -61,16 +59,18 @@ def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessin
     
 def main():
     # Download from: https://cmu.box.com/s/9hn3qqtqmivauus3kgtasg5uzlj53wxp
-    path='/ldap_shared/home/v_zhenxi_zhu/data/aitom_demo_cellular_tomogram.mrc'
-    sigma1=3 
-    partition_op={ 'nonoverlap_width':sigma1*20, 'overlap_width': sigma1*10, 'save_vg':False}
-    # input parameters and output data format can be found before 'picking' function
-    result=picking(path, s1=sigma1, s2=sigma1*1.1, t=5, find_maxima=True, partition_op=partition_op, multiprocessing_process_num=100) 
+    path = '/ldap_shared/home/v_zhenxi_zhu/data/aitom_demo_cellular_tomogram.mrc'
     
-    print("%d particles deteced, containing redundant peaks" %len(result))
-    print(result[0])
-    result=do_filter(pp=result, peak_dist_min=sigma1, op=None) #remove redundant peaks
-    print("peak number reduced %d" %len(result))
+    mrc_header = io_file.read_mrc_header(path)
+    voxel_spacing_in_nm = mrc_header['MRC']['xlen'] / mrc_header['MRC']['nx'] / 10
+    sigma1 = max(int(7 / voxel_spacing_in_nm), 2) # 7 is optimal sigma1 val in nm according to the paper and sigma1 should at least be 2
+    # print(mrc_header['MRC']['xlen'], mrc_header['MRC']['nx'], voxel_spacing_in_nm, sigma1)
+    partition_op = {'nonoverlap_width': sigma1*20, 'overlap_width': sigma1*10, 'save_vg': False}
+    result = picking(path, s1=sigma1, s2=sigma1*1.1, t=3, find_maxima=True, partition_op=partition_op, multiprocessing_process_num=100)
+    print("%d particles detected, containing redundant peaks" % len(result))
+    result = do_filter(pp=result, peak_dist_min=sigma1, op=None)  # remove redundant peaks
+    print("peak number reduced to %d" % len(result))
+    pprint(result[:5])
     
 if __name__ == '__main__':
     main()
