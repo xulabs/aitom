@@ -21,7 +21,7 @@ def crop_mrc(mrc_path, crop_path, x=0, y=0, z=0, dx=100, dy=100, dz=100, print_h
     copyfile(mrc_path, crop_path) # Warning: need enough space to store the copy (which may be large) first!
     # Use mmap for faster reading large mrcfile
     with mrcfile.mmap(mrc_path, mode='r') as mrc, mrcfile.mmap(crop_path, mode='r+') as mrc_crop:
-        mrc_crop.set_data(mrc.data[z:dz, x:dx, y:dy]) # set_data automatically sync header info with data
+        mrc_crop.set_data(mrc.data[z:z+dz, x:x+dx, y:y+dy]) # set_data automatically sync header info with data
     mrcfile.validate(crop_path) 
     
     # Print header diff
