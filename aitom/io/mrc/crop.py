@@ -2,8 +2,8 @@ from shutil import copyfile
 import mrcfile
 import aitom.io.file as io_file
 
-def crop_mrc(mrc_path, crop_path, x=0, y=0, z=0, dx=100, dy=100, dz=100, show_header_diff=False):
-    """Crop and save specified part of 3d mrc file. Position cropped: [z:z+dz, x:x+dx, y:y+dy]
+def crop_mrc(mrc_path, crop_path, x=0, y=0, z=0, dx=100, dy=100, dz=100, print_header_diff=False):
+    """Crop and save specified part of the 3d mrc file. Position cropped: [z:z+dz, x:x+dx, y:y+dy]
     
     Arguments:
         mrc_path -- source mrc file path  
@@ -16,7 +16,7 @@ def crop_mrc(mrc_path, crop_path, x=0, y=0, z=0, dx=100, dy=100, dz=100, show_he
         dx {int} -- length of x to crop (default: {100})
         dy {int} -- length of y to crop (default: {100})
         dz {int} -- length of z to crop (default: {100})
-        show_header_diff {bool} -- whether to show difference between the cropped and original (default: {False})
+        print_header_diff {bool} -- whether to print difference between the cropped and original (default: {False})
     """
     copyfile(mrc_path, crop_path) # Warning: need enough space to store the copy (which may be large) first!
     # Use mmap for faster reading large mrcfile
@@ -24,8 +24,8 @@ def crop_mrc(mrc_path, crop_path, x=0, y=0, z=0, dx=100, dy=100, dz=100, show_he
         mrc_crop.set_data(mrc.data[z:dz, x:dx, y:dy]) # set_data automatically sync header info with data
     mrcfile.validate(crop_path) 
     
-    # Show header diff
-    if show_header_diff:
+    # Print header diff
+    if print_header_diff:
         mrc_header = io_file.read_mrc_header(mrc_path)
         crop_header = io_file.read_mrc_header(crop_path)
         diffs = []
@@ -42,6 +42,7 @@ def crop_mrc(mrc_path, crop_path, x=0, y=0, z=0, dx=100, dy=100, dz=100, show_he
 
 
 if __name__ == "__main__":
+    # Try your own example here
     mrc_path = 'IS002_291013_005.mrc'
     crop_path = 'IS002_291013_005_crop_100.mrc'
     crop_mrc(mrc_path, crop_path)
