@@ -3,16 +3,18 @@ import mrcfile
 import aitom.io.file as io_file
 
 def crop_mrc(mrc_path, crop_path, x=0, y=0, z=0, dx=100, dy=100, dz=100, print_header_diff=False):
-    """Crop and save specified part of the 3d mrc file. Position cropped: [z:z+dz, x:x+dx, y:y+dy]
+    """Crop specified part of a 3d mrc file, position cropped: mrc.data[x:x+dx, y:y+dy, z:z+dz].
     
+    Note that the axis order of mrc data is (x, y, z), different from that downstream tasks use, eg. read_mrc_data and imod: (z, y, x).
+
     Arguments:
         mrc_path -- source mrc file path  
         crop_path -- destination path of cropped mrc file
-    
+
     Keyword Arguments:
-        x {int} -- leftmost x coordinate to crop (default: {0})
-        y {int} -- leftmost y coordinate to crop (default: {0})
-        z {int} -- leftmost z coordinate to crop (default: {0})
+        x {int} -- lowerbound x coordinate to crop (default: {0})
+        y {int} -- lowerbound y coordinate to crop (default: {0})
+        z {int} -- lowerbound z coordinate to crop (default: {0})
         dx {int} -- length of x to crop (default: {100})
         dy {int} -- length of y to crop (default: {100})
         dz {int} -- length of z to crop (default: {100})
@@ -21,7 +23,7 @@ def crop_mrc(mrc_path, crop_path, x=0, y=0, z=0, dx=100, dy=100, dz=100, print_h
     copyfile(mrc_path, crop_path) # Warning: need enough space to store the copy (which may be large) first!
     # Use mmap for faster reading large mrcfile
     with mrcfile.mmap(mrc_path, mode='r') as mrc, mrcfile.mmap(crop_path, mode='r+') as mrc_crop:
-        mrc_crop.set_data(mrc.data[z:z+dz, x:x+dx, y:y+dy]) # set_data automatically sync header info with data
+        mrc_crop.set_data(mrc.data[x:x+dx, y:y+dy, z:z+dz]) # set_data automatically syncs header info with data
     mrcfile.validate(crop_path) 
     
     # Print header diff
