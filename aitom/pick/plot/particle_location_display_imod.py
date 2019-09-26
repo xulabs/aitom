@@ -49,8 +49,8 @@ def write_point_file(l, point_file):
             contour_c = 1
             for r in l[i]:
                 for c in range(len(l[i][r])):
-                    print >>f, '\t', i+1, '\t', contour_c, '\t', l[i][r][c][0][0], '\t', l[i][r][c][0][1], '\t', l[i][r][c][0][2]
-                    print >>f, '\t', i+1, '\t', contour_c, '\t', l[i][r][c][1][0], '\t', l[i][r][c][1][1], '\t', l[i][r][c][1][2]
+                    print ('\t', i+1, '\t', contour_c, '\t', l[i][r][c][0][0], '\t', l[i][r][c][0][1], '\t', l[i][r][c][0][2], file=f)
+                    print ('\t', i+1, '\t', contour_c, '\t', l[i][r][c][1][0], '\t', l[i][r][c][1][1], '\t', l[i][r][c][1][2], file =f)
                     contour_c += 1
 
 
@@ -68,14 +68,14 @@ def display_map_with_lines(l, map_file, clip_file=None, remove_intermediate_file
     assert      os.path.isfile(model_file)
 
     # if the model file is generated, call imod to display both the density map and model file
-    print '3dmod', map_file, model_file
+    print ('3dmod', map_file, model_file)
     subprocess.call(['3dmod', map_file, model_file])
 
     if remove_intermediate_file:
         import time
         time.sleep(120)
 
-        print 'deleting intermediate files'
+        print ('deleting intermediate files')
         os.remove(point_file)
         os.remove(model_file)
 
