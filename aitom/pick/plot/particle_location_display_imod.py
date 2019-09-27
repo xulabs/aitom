@@ -58,7 +58,7 @@ def display_map_with_lines(l, map_file, clip_file=None, remove_intermediate_file
 
     # save lines as text file
     point_file = os.path.join('/tmp', '3dmod-points--' + str(uuid.uuid1()))
-    print 'generating', point_file
+    print ('generating', point_file)
     write_point_file(l=l, point_file=point_file)
 
     # call point2model to convert to model file
