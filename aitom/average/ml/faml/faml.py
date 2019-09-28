@@ -818,7 +818,7 @@ def get_correlation_score(theta, img_db_path, d, k=None):
     if k != None:
         v2 = inv_fourier_transform(theta['A'][k])
         m2 = np.ones((n, n, n))
-        item = align.fast_align(v1, m1, v2, m2)[0]
+        item = fast_align(v1, m1, v2, m2)[0]
         best_ang = item['ang']
         best_loc = item['loc']
         A_real_pred = v2
@@ -835,7 +835,7 @@ def get_correlation_score(theta, img_db_path, d, k=None):
             v2 = inv_fourier_transform(theta['A'][k])
             m2 = np.ones((n, n, n))
 
-            transforms = align.fast_align(v1, m1, v2, m2)
+            transforms = fast_align(v1, m1, v2, m2)
             item = transforms[0]
             score = item['score']
 
