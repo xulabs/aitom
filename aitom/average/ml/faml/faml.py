@@ -797,28 +797,31 @@ def print_prediction_results(theta, img_data, print_all=False):
     for i in range(N):
         if print_all:
             for k in range(theta['K']):
-                print(get_correlation_score(theta, X, i, k))
+                print(get_correlation_score(img_data,theta, X, i, k))
         else:
-            print(get_correlation_score(theta, X, i))
+            print(get_correlation_score(img_data,theta, X, i))
 
 '''
 Returns FSC score between the kth average and the given subtomogram
 if k is unspecified, the best score is returned
 '''
-def get_correlation_score(theta, img_db_path, d, k=None):
-    X = get_image_db(img_db_path)
-
+def get_correlation_score(img_data,theta, img_db_path, d, k=None):
+    #X = get_image_db(img_db_path)
+    X = img_db_path
     n = theta['n']
     J = theta['J']
     K = theta['K']
-
-    v1 = inv_fourier_transform(X[d['v']])
-    m1 = X[d['m']]
-
+    
+    #v1 = inv_fourier_transform(X[d['v']])
+    #m1 = X[d['m']]
+    dj = img_data['dj']
+    v1 = inv_fourier_transform(X[dj[d]['v']])
+    m1 = X[dj[d]['m']]
     if k != None:
         v2 = inv_fourier_transform(theta['A'][k])
-        m2 = np.ones((n, n, n))
-        item = fast_align(v1, m1, v2, m2)[0]
+        #m2 = np.ones((n, n, n))
+        m2 = TMU.sphere_mask([n, n, n])
+        item = fast_align(v1, m1, v2, m1)[0]
         best_ang = item['ang']
         best_loc = item['loc']
         A_real_pred = v2
@@ -833,8 +836,9 @@ def get_correlation_score(theta, img_db_path, d, k=None):
         for k in range(K):
 
             v2 = inv_fourier_transform(theta['A'][k])
-            m2 = np.ones((n, n, n))
-
+            #m2 = np.ones((n, n, n))
+            m2 = TMU.sphere_mask([n, n, n])
+            
             transforms = fast_align(v1, m1, v2, m2)
             item = transforms[0]
             score = item['score']
@@ -849,5 +853,5 @@ def get_correlation_score(theta, img_db_path, d, k=None):
     A_aligned = rotate.rotate_pad_mean(A_real_pred, angle = best_ang,
         loc_r = best_loc)
 
-    return ("Model%d" % d['v'], k_pred, stats.fsc(v1, A_aligned))
+    return ("Model", dj[d]['v'], k_pred, stats.fsc(v1, A_aligned))
 
