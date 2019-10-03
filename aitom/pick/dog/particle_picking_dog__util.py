@@ -88,7 +88,7 @@ def peak__partition(v, s1, s2, find_maxima=True, partition_op=None, multiprocess
 def peak__partition__single_job(v, s1, s2, base=None, find_maxima=None, partition_id=None, save_vg=False):
     assert  find_maxima is not None
 
-    vg = FG.dog_smooth__large_map(v, s1=s1, s2=s2)
+    vg = FG.dog_smooth(v, s1=s1, s2=s2) # vg = FG.dog_smooth__large_map(v, s1=s1, s2=s2) 'dog_smooth' seems to perform better
 
     if save_vg:                IOF.put_mrc(v, '/tmp/%d-%d-%d--v.mrc'%(partition_id[0], partition_id[1], partition_id[2]), overwrite=True)        # save the smoothed partition for inspection
 
