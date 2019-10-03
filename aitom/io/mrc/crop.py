@@ -20,10 +20,10 @@ def crop_mrc(mrc_path, crop_path, x=0, y=0, z=0, dx=100, dy=100, dz=100, print_h
         dz {int} -- length of z to crop (default: {100})
         print_header_diff {bool} -- whether to print difference between the cropped and original (default: {False})
     """
-    copyfile(mrc_path, crop_path) # Warning: need enough space to store the copy (which may be large) first!
     # Use mmap for faster reading large mrcfile
-    with mrcfile.mmap(mrc_path, mode='r') as mrc, mrcfile.mmap(crop_path, mode='r+') as mrc_crop:
+    with mrcfile.mmap(mrc_path, mode='r') as mrc, mrcfile.new(crop_path) as mrc_crop:
         mrc_crop.set_data(mrc.data[x:x+dx, y:y+dy, z:z+dz]) # set_data automatically syncs header info with data
+        mrc_crop.voxel_size = mrc.voxel_size
     mrcfile.validate(crop_path) 
     
     # Print header diff
