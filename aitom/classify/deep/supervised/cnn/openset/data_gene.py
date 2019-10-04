@@ -3,12 +3,10 @@ import numpy as np
 import numpy as N
 import pickle
 
+#loading data for training. 
 address =  '/scratch/shared_data/xiangruz/classification/domain_adaptation_simulated_/snr-00_5.pickle'
-#'/scratch/shared_data/xiangruz/classification/experimental/Qiang/Qiang_6_classes.pickle'
-
 a = open(address, 'rb')
 data = pickle.load(a, encoding = 'latin1')
-
 
 #data = data - np.mean(data, axis = 0)
 #data = data / np.std(data, axis = 0) 
@@ -51,8 +49,6 @@ print(labelsi[998])
 print(labelsi[1001])
 print(labelsi[1000])
 
-
-
 '''
 pdb_id_map_i = {0:'proteasome_d', 1:'none', 2:'TRiC', 3:'ribosome', 4:'proteasome_s', 5:'membrane'}
 for i in range(6):
@@ -78,14 +74,13 @@ for i in range(23):
 	data_class = datai[1000*i:1000*i+1000, :, :, :]
 	if i < 17:
 		for sub in range(len(data_class)):
-			address = './0.5_train/'+str(i)#+'/'+str(sub)+'.npy'
+			address = './0.5_train/'+str(i)
 			if not os.path.exists(address):
 				os.makedirs(address)
 			np.save('./0.5_train/'+str(i)+'/'+str(sub)+'.npy', data_class[sub])
-
 	else:
 		for sub in range(len(data_class)):
-			address = './0.5_test/'+str(i)#+'/'+str(sub)+'.npy'
+			address = './0.5_test/'+str(i)
 			if not os.path.exists(address):
 				os.makedirs(address)
 			np.save('./0.5_test/'+str(i)+'/'+str(sub)+'.npy', data_class[sub])
