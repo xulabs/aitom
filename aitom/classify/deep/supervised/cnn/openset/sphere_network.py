@@ -118,7 +118,8 @@ def prelu(x, name = 'prelu'):
     return pos + neg
 
 def first_conv(input, num_output, name):
-    
+    # import ipdb
+    # ipdb.set_trace()
     zero_init = tf.zeros_initializer()
     network = tf.layers.conv3d(input, num_output, kernel_size = [3, 3, 3], strides = (2, 2, 2), padding = 'same', \
         kernel_initializer = xavier, bias_initializer = zero_init, kernel_regularizer = l2_regularizer, \
