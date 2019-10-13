@@ -95,7 +95,7 @@ def parse_arguments(argv):
         help='Number of images to process in a batch in the test set.', default=200)
     parser.add_argument('--test_nrof_folds', type=int,
         help='Number of folds to use for cross validation. Mainly used for testing.', default=10)
-    parser.add_argument('model', type=str, default = '',
+    parser.add_argument('--model', type=str, default = '',
         help='Could be either a directory containing the meta_file and ckpt_file for testing.')
     # parser.add_argument('--weight', type=float,
     #     help='weiht to balance the dist and th loss.', default=2.)
