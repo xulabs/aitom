@@ -8,7 +8,7 @@ from auto_classifier_model import auto_classifier_model
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.optimizers import SGD, Adam
 
-
+# preprocess data into training set (labeled data + unlabeled data), validation set and testing set
 def preprocess(d, num_of_class):
     classes = {'1KP8_data': 0, '5T2C_data': 1}
     
