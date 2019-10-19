@@ -52,7 +52,7 @@ def coco_backward(op, grad):
     return grad_copy,y,m
 
 def coco_func(xw,y,m, name=None):
-    with tf.name_scope("Coco_func") as name:
+    with tf.op_scope([xw,y,m],name,"Coco_func") as name:
         coco_out = py_func(coco_forward,[xw,y,m],tf.float32,name=name,grad_func=coco_backward)
         return coco_out
 
@@ -105,8 +105,6 @@ def softmax_loss(prelogits,labels,nrof_classes,weight_decay,reuse):
         labels=labels, logits=logits, name='cross_entropy_per_example')
     cross_entropy_mean = tf.reduce_mean(cross_entropy, name='cross_entropy')
     return cross_entropy_mean
-
-
 
 
 def contrastive_index(dists, labels, alfa):
@@ -673,12 +671,9 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame, nrof_fold
     tprs = np.zeros((nrof_folds,nrof_thresholds))
     fprs = np.zeros((nrof_folds,nrof_thresholds))
     accuracy = np.zeros((nrof_folds))
-    #print(embeddings1)
     diff = np.subtract(embeddings1, embeddings2)
     dist = np.sum(np.square(diff),1)
     indices = np.arange(nrof_pairs)
-    #pdb.set_trace() 
-    #print(indices)
     for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
         
         # Find the best threshold for the fold
@@ -754,8 +749,6 @@ def calculate_val_far(threshold, dist, actual_issame):
     false_accept = np.sum(np.logical_and(predict_issame, np.logical_not(actual_issame)))
     n_same = np.sum(actual_issame)
     n_diff = np.sum(np.logical_not(actual_issame))
-    #print(n_same)
-    #print(n_diff)
     val = float(true_accept) / float(n_same) 
     far = float(false_accept) / float(n_diff) 
     return val, far
