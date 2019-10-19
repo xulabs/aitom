@@ -1,9 +1,11 @@
+Source Codes for Autoencoding classifier
 The files are organized as follows:
 
 - auto_classifier.py: main program of autoencoding classifier
 - auto_classifier_model.py: model definition of autoencoding classifier
 - utils.py: helper functions to load and visualize subtomograms
 
+##Train
 you can run the program by:
 python auto_classifier.py dataset option
 
