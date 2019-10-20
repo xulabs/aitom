@@ -1,4 +1,3 @@
-from shutil import copyfile
 import mrcfile
 import aitom.io.file as io_file
 
