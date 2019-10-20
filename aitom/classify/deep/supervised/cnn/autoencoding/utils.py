@@ -1,12 +1,13 @@
 import pickle
+import numpy as N 
 
 def pickle_load(path):
     with open(path) as f:     o = pickle.load(f)
     return o
 
 def visualize(img, path):
-	t = auto.cub_img(img)['im']
-	auto.save_png(t, path)
+	t = cub_img(img)['im']
+	save_png(t, path)
 
 def cub_img(v, view_dir=2):
     if view_dir == 0:

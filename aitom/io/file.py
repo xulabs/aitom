@@ -2,6 +2,7 @@
 Functions for reading and writing common files
 '''
 
+import pickle
 import aitom.io.mrcfile_proxy as TIM
 
 def read_mrc_data(path, show_progress=False):
@@ -26,3 +27,11 @@ def put_mrc(mrc, path, overwrite=False):
 def put_mrc_data(mrc,path, overwrite=False):
     TIM.write_data(data=mrc,path=path, overwrite=overwrite)
 
+def pickle_load(path):
+    with open(path,'rb') as f:
+        o = pickle.load(f,encoding='iso-8859-1')
+    return o
+
+def pickle_dump(o, path, protocol=-1):
+    with open(path, 'wb') as f:
+        pickle.dump(o, f, protocol=protocol)

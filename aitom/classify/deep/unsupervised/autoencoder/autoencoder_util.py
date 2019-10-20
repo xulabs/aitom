@@ -22,6 +22,7 @@ import scipy.ndimage.interpolation as SNI
 from numpy.fft import fftn, ifftn, fftshift, ifftshift
 import os, sys, json, shutil, time, struct, array, pickle
 import copy
+import math
 
 def pickle_load(path):
     with open(path,'rb') as f:
@@ -34,20 +35,45 @@ def pickle_dump(o, path, protocol=-1):
 
 
 
-def em2numpy(ve):
-    assert ve.get_ndim() == 3           # only for 3D array
-    return E.EMNumPy.em2numpy(ve).transpose([2,1,0]).copy()
+# def em2numpy(ve):
+#     assert ve.get_ndim() == 3           # only for 3D array
+#     return E.EMNumPy.em2numpy(ve).transpose([2,1,0]).copy()
 
 '''
 read mrc 3D image file into a numpy 3D array
 '''
-def read_mrc_numpy_vol_(path):
-    ve = E.EMData(str(path))
-    v = em2numpy(ve)
-    v = v.astype(N.float32)
-    del ve      # to prevent memory leak
-    return v
+# def read_mrc_numpy_vol_(path):
+#     ve = E.EMData(str(path))
+#     v = em2numpy(ve)
+#     v = v.astype(N.float32)
+#     del ve      # to prevent memory leak
+#     return v
 
+def peaks_to_subvolumes(v, peaks, subvol_size=32):
+    """Convert particle picking peaks to subvolumes. Can be later used as autoencoder input. 
+
+    Returns:
+        d is the small subvolumes, a dictionary consists 'v_siz' and 'vs'.
+            d['v_siz'] is an numpy.ndarray specifying the shape of the small subvolume. For example, d['v_siz'] = array([32,32,32]).
+            d['vs'] is a dictionary with keys of uuids specifying each small subvolume.
+            d['vs'][an example uuid] is a dictionary consists 'center', 'id', and 'v'.
+            d['vs'][an example uuid]['center'] is the center of the small subvolume in the tomogram. For example, d['vs'][an example uuid]['center'] = [110,407,200].
+            d['vs'][an example uuid]['id'] is the specific uuid.
+            d['vs'][an example uuid]['v'] are voxel values of the small subvolume, which is an numpy.ndarray of shape d['v_siz'],
+                notice that if subvol has part outside vol, then ['v'] = None
+    """
+    d = {}
+    d['v_siz'] = subvol_size
+    d['vs'] = {}
+    for p in peaks:
+        uuid = p['uuid']
+        d['vs'][uuid] = {}
+        d['vs'][uuid]['center'] = p['x']
+        d['vs'][uuid]['id'] = uuid
+        d['vs'][uuid]['v'] = cut_from_whole_map(v, p['x'], subvol_size)
+    return d
+    
+    
 def read_mrc_numpy_vol(path):
     with mrcfile.open(path) as mrc:
         v = mrc.data
@@ -56,7 +82,6 @@ def read_mrc_numpy_vol(path):
 
 
 # 3D gaussian filtering of a volume (v)
-
 # smoothing using scipy.ndimage.gaussian_filter
 def smooth(v, sigma):
     assert  sigma > 0
@@ -409,7 +434,6 @@ def rotation_matrix_zyz(ang):
 
     return rm
 
-import  math
 def rotation_matrix_axis(dim, theta):
     # following are left handed system (clockwise rotation)
     # IMPORTANT: different to MATLAB version, this dim starts from 0, instead of 1
