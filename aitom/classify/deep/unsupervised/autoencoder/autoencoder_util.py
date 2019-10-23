@@ -63,7 +63,7 @@ def peaks_to_subvolumes(v, peaks, subvol_size=32):
                 notice that if subvol has part outside vol, then ['v'] = None
     """
     d = {}
-    d['v_siz'] = subvol_size
+    d['v_siz'] = N.array([subvol_size, subvol_size,subvol_size])
     d['vs'] = {}
     for p in peaks:
         uuid = p['uuid']
