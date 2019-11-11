@@ -28,4 +28,6 @@ We are developing computational analysis techniques for processing large amounts
 
 *De novo* structural mining pipeline results: (a). A slice of a [rat neuron tomogram](https://doi.org/10.1016/j.cell.2017.12.030),  (b). Recovered patterns (from left to right): mitochondrial membrane, Ribosome-like pattern, ellipsoid of strong signals, TRiC-like pattern, borders of ice crystal, (c). Pattern mining results embedded, (d). Individual patterns embedded.
 
+### [Cite AITom](https://github.com/xulabs/aitom/blob/master/doc/cite.md)
+
 ### [Funding](https://github.com/xulabs/aitom/blob/master/doc/funding.md)
