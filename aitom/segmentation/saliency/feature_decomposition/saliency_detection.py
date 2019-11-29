@@ -112,7 +112,7 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
                 if label[i][j][k] != label[i - 1][j][k] or label[i][j][k] != label[i + 1][j][k] or label[i][j][k] != \
                         label[i][j - 1][k] or label[i][j][k] != label[i][j + 1][k]:
                     img[i][j] = draw_color
-        plt.axis('off')  # 不显示坐标轴
+        plt.axis('off')
         plt.imshow(img, cmap='gray')
         plt.savefig('./SLIC.png')  # save fig
 
@@ -142,7 +142,7 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
         # show Gabor filter output
         if save_flag:
             img = (b[:, :, int(a.shape[2] / 2)]).copy()
-            plt.axis('off')  # 不显示坐标轴
+            plt.axis('off')
             plt.imshow(img, cmap='gray')
             plt.savefig('./gabor_output(%d).png' % i)  # save fig
 
