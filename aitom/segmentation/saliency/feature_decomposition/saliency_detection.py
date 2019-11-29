@@ -10,8 +10,16 @@ from scipy.spatial.distance import cdist
 from scipy import signal
 
 
+'''
+saliency detection
+parameters:     
+a: volume data      gaussian_sigma: sigma for de-noise      gabor_sigma/gabor_lambda: sigma/lambda for Gabor filter   
+cluster_center_number: initial number of cluster centers        save_flag: set True to save results
+
+return:     saliency map, the same shape as a
+'''
 def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_center_number, save_flag=False):
-    ####
+    # Step 1
     # Data Pre-processing
     a = SN.gaussian_filter(input=a, sigma=gaussian_sigma)  # de-noise
     print('sigma=', gaussian_sigma)
@@ -19,14 +27,13 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
         img = (a[:, :, int(a.shape[2] / 2)]).copy()
         plt.axis('off')
         plt.imshow(img, cmap='gray')
-        plt.savefig('./Saliency_Detection_data/original.png')  # save fig
+        plt.savefig('./original.png')  # save fig
 
-    ####
+    # Step 2
     # Supervoxel over-segmentation
     N = a.shape[0] * a.shape[1] * a.shape[2]
     n = cluster_center_number
     ck = []  # cluster center [x y z g]
-
     interval = int(math.pow(N / n, 1.0 / 3))
     x = int(interval / 2)
     y = int(interval / 2)
@@ -47,7 +54,6 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
 
     print('the number of cluster centers = %d' % len(ck))
     print(ck[: 5])
-    # a=[[[0 for i in range(2)] for i in range(3)]for i in range(4)]  4*3*2
     label = [[[0 for i in range(a.shape[2])] for i in range(a.shape[1])] for i in range(a.shape[0])]
     label = np.array(label)  # numba supports numpy array
     distance = [[[float('inf') for i in range(a.shape[2])] for i in range(a.shape[1])] for i in range(a.shape[0])]
@@ -58,8 +64,8 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
     print('Supervoxel over-segmentation begins')
     ck = np.array(ck)
     redundant_flag = np.array([False] * len(ck))
-    # Number of iterations, 10 iterations suffices for most images
-    for number in range(10):
+
+    for number in range(10):  # 10 iterations suffices for most images
         b_time = time.time()
         print('\n%d of 10 iterations' % number)
         distance, label, ck = fast_SLIC(distance, label, ck, a, interval)
@@ -85,7 +91,6 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
 
     # save labels for Feature extraction
     labels_remove_num = sum(redundant_flag == True)
-
     labels = {}
 
     for i in range(0, a.shape[0]):
@@ -98,7 +103,7 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
     assert labels_remove_num + len(labels) == len(ck)
 
     if save_flag:
-        np.save('./Saliency_Detection_data/labels', labels)
+        np.save('./labels', labels)
         img = (a[:, :, int(a.shape[2] / 2)]).copy()
         k = int(a.shape[2] / 2)
         draw_color = np.min(a)
@@ -109,17 +114,19 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
                     img[i][j] = draw_color
         plt.axis('off')  # 不显示坐标轴
         plt.imshow(img, cmap='gray')
-        plt.savefig('./Saliency_Detection_data/SLIC.png')  # save fig
+        plt.savefig('./SLIC.png')  # save fig
 
-    ####
+    # Step 3
     # Feature Extraction
     stime = time.time()
     Lambda = gabor_lambda
     filters = filter_bank_gb3d(sigma=gabor_sigma, Lambda=Lambda, psi=0, gamma=1)
-    # filters2 = filter_bank_gb3d(sigma=7.5, Lambda=Lambda,psi=0,gamma=1,size=5)
+    # Note: For better performance, two filters with different sigmas are used here in the paper.
+    # filters1 = filter_bank_gb3d(sigma=s1, Lambda=Lambda,psi=0,gamma=1)
+    # filters2 = filter_bank_gb3d(sigma=s2, Lambda=Lambda,psi=0,gamma=1)
     # filters = filters1 + filters2
     filters_num = len(filters)
-    feature_matrix = np.zeros((len(filters) + 6, len(labels)))  # Gabor filter bases features + 6 density features
+    feature_matrix = np.zeros((len(filters) + 6, len(labels)))  # Gabor filter bases features and 6 density features
     print('%d Gabor based features' % filters_num)
 
     print('Feature extraction begins')
@@ -137,7 +144,7 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
             img = (b[:, :, int(a.shape[2] / 2)]).copy()
             plt.axis('off')  # 不显示坐标轴
             plt.imshow(img, cmap='gray')
-            plt.savefig('./gabor/lambda%d(%d).png' % (Lambda, i))  # save fig
+            plt.savefig('./gabor_output(%d).png' % i)  # save fig
 
         # generate feature vector
         start_time = time.time()
@@ -170,12 +177,12 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
     print('Density features done')
 
     if save_flag:
-        np.save('./Saliency_Detection_data/feature_matrix', feature_matrix)
+        np.save('./feature_matrix', feature_matrix)
 
     etime = time.time()
     print('Feature extraction done,', etime - stime, 's')
 
-    ####
+    # Step 4
     # RPCA
     start_time = time.time()
     print('RPCA begins')
@@ -184,16 +191,14 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
     print('RPCA done, ', end_time - start_time, 's')
     supervoxel_saliency = np.sum(S, axis=0) / S.shape[0]
     if save_flag:
-        np.save('./Saliency_Detection_data/supervoxel_saliency', supervoxel_saliency)
+        np.save('./supervoxel_saliency', supervoxel_saliency)
 
-    ####
+    # Step 5
     # Generate Saliency Map
     min_saliency = np.min(supervoxel_saliency)
     max_saliency = np.max(supervoxel_saliency)
-    mean_saliency = np.mean(supervoxel_saliency)
-    # threshold
-    t = (min_saliency + max_saliency) / 2
-    print('min=', min_saliency, 'max=', max_saliency, 'mean=', mean_saliency, 'threshold=', t)
+    t = (min_saliency + max_saliency) / 2  # threshold
+    print('min=', min_saliency, 'max=', max_saliency, 'threshold=', t)
     index_col = 0
     for key in labels:
         vox = labels[key]
@@ -205,13 +210,12 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
         index_col += 1
         # print('sum.type',type(sum)) <class 'numpy.float64'>
 
-    img = a[:, :, int(a.shape[2] / 2)].copy()
-    plt.axis('off')
-    plt.imshow(img, cmap='gray')
-    plt.savefig('./Saliency_Detection_data/saliency_map.png')
-
     if save_flag:
-        io_file.put_mrc_data(a, './Saliency_Detection_data/saliency_map.mrc')
+        img = a[:, :, int(a.shape[2] / 2)].copy()
+        plt.axis('off')
+        plt.imshow(img, cmap='gray')
+        plt.savefig('./saliency_map.png')
+        io_file.put_mrc_data(a, './saliency_map.mrc')
         print('saliency map saved')
 
     return a
@@ -377,8 +381,9 @@ def L1Norm(X):
 @jit(nopython=True)
 def converged(M, L, S, initial_error):
     """
-    A simple test of convergence based on accuracy of matrix reconstruction
+     A simple test of convergence based on accuracy of matrix reconstruction
     from sparse and low rank parts
+    In practice, a fixed error may cause problems
     """
     error = frobeniusNorm(M - L - S) / frobeniusNorm(M)
     print("error =", error)
@@ -426,5 +431,4 @@ if __name__ == "__main__":
     a = io_file.read_mrc_data(path)  # volume data
     assert a.shape[0] > 0
     print("file has been read, shape is", a.shape)
-    # a.flags.writeable = True
-    saliency_detection(a=a, gaussian_sigma=2.5, gabor_sigma=9.0, gabor_lambda=9.0, cluster_center_number=10000, save_flag=False)
+    saliency_detection(a=a, gaussian_sigma=2.5, gabor_sigma=9.0, gabor_lambda=9.0, cluster_center_number=10000, save_flag=True)
