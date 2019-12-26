@@ -1,4 +1,5 @@
 import numpy as N
+import aitom.image.util as AIU
 
 # convert a 3D cube to a 2D image of slices
 
@@ -66,14 +67,10 @@ def cub_img(v, view_dir=2):
 # display an image
 
 
-def dsp_img(v, new_figure=True):
-    import aitom.image.util as TIU
-    TIU.dsp_img(v, new_figure=new_figure)
-
 
 def dsp_cub(v, view_dir=2, new_figure=True):
 
-    dsp_img(cub_img(v=v, view_dir=view_dir)['im'])
+    AIU.dsp_img(cub_img(v=v, view_dir=view_dir)['im'])
 
 
 '''

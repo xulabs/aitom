@@ -85,26 +85,6 @@ def decode_images(autoencoder, vs):
 
     return vs_p
 
-def conv_block(x, nb_filter, nb0, nb1, nb2, border_mode='same', subsample=(1, 1, 1), bias=True, batch_norm=False):
-    from keras.layers import Input, Dense, Convolution3D, MaxPooling3D, UpSampling3D, Reshape, Flatten, Activation
-    from keras.layers.normalization import BatchNormalization
-
-    from keras import backend as K
-    if K.image_dim_ordering() == "th":
-        channel_axis = 1
-    else:
-        channel_axis = -1
-
-    x = Convolution3D(nb_filter, nb0, nb1, nb2, subsample=subsample, border_mode=border_mode, bias=bias)(x)
-    if batch_norm:
-        assert not bias
-        x = BatchNormalization(axis=channel_axis)(x)
-    else:
-        assert bias
-
-    x = Activation('relu')(x)
-
-    return x
     
     
     
@@ -148,6 +128,7 @@ def model_simple_upsampling__reshape(img_shape, class_n=None):
     from keras.layers import Input, Dense, Convolution3D, MaxPooling3D, UpSampling3D, Reshape, Flatten
     from keras.models import Sequential, Model
     from keras.layers.core import Activation
+    from aitom.classify.deep.unsupervised.autoencoder.seg_util import conv_block
 
     NUM_CHANNELS=1
     input_shape = (None, img_shape[0], img_shape[1], img_shape[2], NUM_CHANNELS)
