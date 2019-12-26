@@ -111,15 +111,15 @@ def voronoi_weights_6d(phis):
         for r in sample_range:
             p_.append(np.random.uniform(r[0], r[1]))
 
-        best_d = None
-        best_i = None
-        for i in range(n):
-            p = points[i]
-            d = distance_6d_sq__frobenius(p, p_)
-            if best_d == None or d < best_d:
-                best_i = i
-                best_d = d
-        result[best_i] += 1
+    best_d = None
+    best_i = None
+    for i in range(n):
+        p = points[i]
+        d = distance_6d_sq__frobenius(p, p_)
+        if best_d == None or d < best_d:
+            best_i = i
+            best_d = d
+    result[best_i] += 1
     result = result / np.sum(result)
     #print (result)
     return result
