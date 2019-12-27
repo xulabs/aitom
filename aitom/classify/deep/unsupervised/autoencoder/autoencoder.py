@@ -23,6 +23,10 @@ from collections import defaultdict
 import numpy as N
 
 import aitom.classify.deep.unsupervised.autoencoder.autoencoder_util as auto
+import aitom.io.file as AIF
+import aitom.image.vol.util as AIVU
+import aitom.image.io as AIIO
+import aitom.filter.guassian as AFG
 #import autoencoder_util as auto
 
 import os, sys
@@ -105,7 +109,7 @@ def encoder_simple_conv_test(d, pose, img_org_file, out_dir, clus_num):
         assert img_org_file != None
 
         tom0 = auto.read_mrc_numpy_vol(img_org_file)
-        tom = auto.smooth(tom0, 2.0)
+        tom = AFG.smooth(tom0, 2.0)
         x_keys = [_ for _ in d['vs'] if d['vs'][_]['v'] is not None]
 
         x_train_no_pose = [N.expand_dims(d['vs'][_]['v'], -1) for _ in x_keys]
@@ -218,17 +222,17 @@ def encoder_simple_conv_test(d, pose, img_org_file, out_dir, clus_num):
 
     kmeans_clus = defaultdict(list)
     for i,l in enumerate(kmeans.labels_):   kmeans_clus[l].append(x_keys[i])
-    auto.pickle_dump(kmeans_clus, op_join(clus_center_dir, 'kmeans.pickle'))
+    AIF.pickle_dump(kmeans_clus, op_join(clus_center_dir, 'kmeans.pickle'))
 
     ccents = {}
     for i in range(len(x_km_cent_pred)):    ccents[i] = x_km_cent_pred[i].reshape(d['v_siz'])
-    auto.pickle_dump(ccents, op_join(clus_center_dir, 'ccents.pickle'))
-    auto.pickle_dump(x_km_cent, op_join(clus_center_dir, 'ccents_d.pickle'))
+    AIF.pickle_dump(ccents, op_join(clus_center_dir, 'ccents.pickle'))
+    AIF.pickle_dump(x_km_cent, op_join(clus_center_dir, 'ccents_d.pickle'))
 
 
 def kmeans_centers_plot(clus_center_dir):
-    kmeans_clus = auto.pickle_load(op_join(clus_center_dir, 'kmeans.pickle'))
-    ccents = auto.pickle_load(op_join(clus_center_dir, 'ccents.pickle'))
+    kmeans_clus = AIF.pickle_load(op_join(clus_center_dir, 'kmeans.pickle'))
+    ccents = AIF.pickle_load(op_join(clus_center_dir, 'ccents.pickle'))
 
     # export slices for visual inspection
     if False:
@@ -248,14 +252,14 @@ def kmeans_centers_plot(clus_center_dir):
 
         for i in ccents_t:
             clus_siz = len(kmeans_clus[i])
-            t = auto.cub_img(ccents_t[i])['im']
-            auto.save_png(t, op_join(clus_center_figure_dir, '%003d--%d.png'%(i,clus_siz)), normalize=False)
+            t = AIVU.cub_img(ccents_t[i])['im']
+            AIIO.save_png(t, op_join(clus_center_figure_dir, '%003d--%d.png'%(i,clus_siz)), normalize=False)
 
 
 
 if __name__ == "__main__":
 
-    d = auto.pickle_load(sys.argv[1])
+    d = AIF.pickle_load(sys.argv[1])
 
     img_org_file = sys.argv[2]
 

@@ -6,7 +6,6 @@ import pickle
 import aitom.io.mrcfile_proxy as TIM
 
 def read_mrc_data(path, show_progress=False):
-    #return read_mrc(path=path, show_progress=show_progress)['value']
     return TIM.read_data(path)
 
 import aitom.tomominer.io.file as ATIF

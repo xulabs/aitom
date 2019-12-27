@@ -7,17 +7,17 @@ from numpy.fft import fftn, ifftn, fftshift, ifftshift
 import mrcfile as mrc
 import pickle
 
-import aitom.tomominer.io.file as TIF
+import aitom.io.file as AIF
 import aitom.io.db.lsm_db as TIDL
 import aitom.parallel.multiprocessing.util as TPMU
 
 
 import aitom.align.fast.util as align
 import aitom.geometry.rotate as rotate
-import aitom.tomominer.geometry.ang_loc as ang_loc
+import aitom.geometry.ang_loc as ang_loc
 import aitom.statistics.vol as stats
-import aitom.image.io as TIIO
-import aitom.image.vol.util as TIVU
+import aitom.image.io as AIIO
+import aitom.image.vol.util as AIVU
 import aitom.model.util as TMU
 
 MULTIPROCESSING_WORKER_NUM = 8
@@ -148,7 +148,7 @@ def compute_voronoi_weights(theta):
 
             t = {}
             t['uuid'] = str(uuid.uuid4())
-            t['module'] = 'aitom.tomominer.hypervolume.utils'
+            t['module'] = 'aitom.geometry.volume.hypervolume.utils'
             t['method'] = 'voronoi_weights_6d'
             t['kwargs'] = {'phis':trans_list}
             t['i'] = i
@@ -671,7 +671,7 @@ def EM(img_data, K, iteration, path, snapshot_interval=5, reg=False, use_voronoi
     for i in range(iteration):
         checkpoint_file = os.path.join(checkpoint_dir, '%08d.pickle'%(i))
         if os.path.exists(checkpoint_file):
-            checkpoint_data = TIF.pickle_load(checkpoint_file)
+            checkpoint_data = AIF.pickle_load(checkpoint_file)
             theta = checkpoint_data['theta']
             continue
 
@@ -716,7 +716,7 @@ def EM(img_data, K, iteration, path, snapshot_interval=5, reg=False, use_voronoi
             assert not os.path.exists(checkpoint_file)
         except:
             raise Exception("Checkpoint file already exists!")
-        TIF.pickle_dump({'theta':theta}, checkpoint_file)
+        AIF.pickle_dump({'theta':theta}, checkpoint_file)
 
     print_prediction_results(theta, img_data)
     output_images(theta, iteration, path=path)
@@ -784,7 +784,7 @@ def output_images(theta, iteration, path):
 Saves the sliced image of model v to path
 '''
 def output_image(v, path):
-    TIIO.save_png(TIVU.cub_img(v)['im'], path)
+    AIIO.save_png(AIVU.cub_img(v)['im'], path)
 
 '''
 Print prediction results from FSC correlation score

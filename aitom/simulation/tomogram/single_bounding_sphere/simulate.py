@@ -11,13 +11,9 @@ from mayavi.mlab import *
 from random import shuffle
 import copy
 import miniball
+import aitom.io.file as AIF
 
 
-
-def read_mrc(mrc_path):
-    with mrcfile.open(mrc_path) as mrc:
-        v = mrc.data
-    return v
 
 def get_mass(path):
     atom_count = 0
@@ -47,7 +43,7 @@ def get_mass(path):
 
 
 def find_bounding_sphere(mrc, L):
-    v = read_mrc(mrc)
+    v = AIF.read_mrc(mrc)
 
     points = []
     density_max = v.max()

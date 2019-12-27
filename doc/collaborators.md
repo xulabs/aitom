@@ -2,7 +2,7 @@
 
 * [Murphy lab](https://www.andrew.cmu.edu/user/murphy/)
 
-* [Yang Lab](http://www.lcecb.org/index.html)
+* [Yang Lab](https://cbmi-group.github.io/)
 
 * [Scipion team](http://scipion.i2pc.es/)
 

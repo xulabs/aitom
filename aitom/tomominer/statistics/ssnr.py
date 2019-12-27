@@ -15,10 +15,10 @@ import copy
 import numpy as N
 import numpy.fft as NF
 from multiprocessing.pool import Pool as Pool
-import aitom.tomominer.image.vol.util as GV
+import aitom.image.vol.util as GV
 import aitom.tomominer.io.file as IV
 import aitom.tomominer.geometry.rotate as GR
-import aitom.tomominer.geometry.ang_loc as AAL
+import aitom.geometry.ang_loc as AAL
 
 def ssnr_to_fsc(ssnr):
     fsc = (ssnr / (2.0 + ssnr))
