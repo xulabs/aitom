@@ -71,4 +71,9 @@ setup(name='aitom',
       packages=get_packages(),
       package_dir={'aitom': 'aitom',
                    'aitom.tomominer.core': 'aitom/tomominer/core/', },
-      cmdclass={'build_ext': build_ext, })
+      cmdclass={'build_ext': build_ext, },
+      entry_points={
+          'console_scripts': [
+              'picking = aitom.cmd.picking:main',
+          ]}
+      )
