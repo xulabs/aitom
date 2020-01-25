@@ -74,6 +74,6 @@ setup(name='aitom',
       cmdclass={'build_ext': build_ext, },
       entry_points={
           'console_scripts': [
-              'picking = aitom.cmd.picking:main',
+              'picking = aitom.bin.picking:main',
           ]}
       )
