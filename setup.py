@@ -8,6 +8,7 @@ from setuptools import setup
 from distutils.extension import Extension
 from Cython.Distutils import build_ext
 from Cython.Build import cythonize
+from codecs import open
 import numpy as N
 
 compile_extra_args = ['-std=c++11']
@@ -60,11 +61,16 @@ def get_packages(root_dir='aitom', exclude_dir_roots=['aitom/tomominer/core/src'
     return pkg
 
 
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
+
+
 setup(name='aitom',
       version='0.0.1',
       author='Xu Lab (CMU) and collaborators',
       author_email='mxu1@cs.cmu.edu',
       description='AI software for tomogram analysis',
+      install_requires=[requirements],
       license='GPLv3',
       url='https://github.com/xulabs/aitom',
       platforms=['x86_64'],
