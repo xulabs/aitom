@@ -6,6 +6,9 @@ It is significant for improving quality of 3D reconstruction of large macromolec
 
 A simulated annealing-based algorithm (SA) performs better than baseline methods, image matching algorithm (MA) and genetic algorithm (GA), on both accuracy and speed after testing on simulated and experimental datasets. 
 
+#### Reference
+Shi J, Zeng X, Jiang R, Jiang T, Xu M. A simulated annealing approach for resolution guided homogeneous cryo electron microscopy image selection. Quantitative Biology. doi:10.1007/s40484-019-0191-8
+
 ### Environment
 
 Python 2.7
