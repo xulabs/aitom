@@ -20,7 +20,7 @@ def convert(op):
         import tomominer.image.vol.util as IVU
         v = IVU.resize_center(v=v, s=op['out_map_size'], cval=0.0)
 
-    import tomominer.io.file as IF
+    import aitom.io.file as IF
     IF.put_mrc(v, op['out_file'])
 
 
