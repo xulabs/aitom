@@ -97,6 +97,39 @@ def highlight_xy_axis(v, dim_siz=64, model_id=0, copy=True):
 
 
 
+# resize an volume(v) to given size, and keep image center same
+def resize_center(v, s, cval=float('NaN')):
+    vs = N.array(v.shape, dtype=N.float)
+
+    from scipy.ndimage import interpolation
+    v1 = interpolation.affine_transform(input=v, matrix=N.eye(v.ndim), offset=(vs-s)/2.0, output_shape=s, cval=cval )
+    return v1
+
+
+# given a dictionary of volumes, find the largest, then generate a new set of volumes of same size as the largest multiplied by a factor
+def resize_center_batch_dict(vs, cubic=True, enlarge_factor=None, size=None, cval=float('NaN')):
+    if size is None:
+        siz = [N.array(vs[_].shape, dtype=int) for _ in vs]
+        siz = N.array(siz)
+        if cubic:
+            siz = siz.max()
+            siz = N.array([siz, siz, siz])
+        else:
+            siz = siz.max(axis=0)
+
+        if enlarge_factor is not None:
+            siz = N.ceil(siz * enlarge_factor).astype(int)
+    else:
+        siz = size
+        siz = N.array([siz, siz, siz])
+
+    vsn = {}
+    for i in vs:
+        vsn[i] = resize_center(vs[i], siz, cval)
+
+    return vsn
+
+
 #-------------------------------------------------------------------
 # grid functions
 
