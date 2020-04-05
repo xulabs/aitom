@@ -4,7 +4,7 @@
 import numpy as N
 import scipy.ndimage.interpolation as SNI
 import aitom.geometry.ang_loc as AA
-import aitom.tomominer.image.vol.util as IVU
+import aitom.image.vol.util as IVU
 
 def rotate(v, angle=None, rm=None, c1=None, c2=None, loc_r=None, siz2=None, default_val=float('NaN')):
     if (angle is not None):

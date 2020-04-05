@@ -1,4 +1,4 @@
-import aitom.tomominer.geometry.ang_loc as TGA
+import aitom.geometry.ang_loc as TGA
 import numpy as np
 #import tomominer.hypervolume.hyper as hyper
 # Computes a list of hypervolumes of the voronoi regions given
