@@ -24,13 +24,13 @@ import numpy.fft as NF
 from aitom.tomominer.io.cache import Cache
 from aitom.tomominer.common.obj import Object
 import aitom.tomominer.dimension_reduction.util as DU
-import aitom.tomominer.image.vol.util as UV
+import aitom.image.vol.util as UV
 import aitom.tomominer.io.file as IV
-import aitom.tomominer.geometry.ang_loc as AAL
+import aitom.geometry.ang_loc as AAL
 import aitom.tomominer.geometry.rotate as GR
 import aitom.tomominer.align.fast.full as AFF
 import aitom.tomominer.align.refine.gradient_refine as AFGF
-import aitom.tomominer.align.util as AU
+import aitom.align.fast.util as AU
 import aitom.tomominer.statistics.ssnr as SS
 import aitom.tomominer.segmentation.watershed as SW
 import aitom.tomominer.segmentation.active_contour.chan_vese.segment as SACS

@@ -5,7 +5,7 @@ tilt_axis is tilt axis
 '''
 import warnings
 import numpy as N
-import aitom.tomominer.image.vol.util as IVU
+import aitom.image.vol.util as AIVU
 import aitom.model.util as MU
 
 def wedge_mask(size, ang1, ang2=None, tilt_axis=1, sphere_mask=True, verbose=False):
@@ -25,7 +25,7 @@ def wedge_mask(size, ang1, ang2=None, tilt_axis=1, sphere_mask=True, verbose=Fal
     ang1 = (ang1 / 180.0) * N.pi
     ang2 = (ang2 / 180.0) * N.pi
 
-    g = IVU.grid_displacement_to_center(size=size, mid_co=IVU.fft_mid_co(siz=size))
+    g = AIVU.grid_displacement_to_center(size=size, mid_co=AIVU.fft_mid_co(siz=size))
 
     if tilt_axis==0:
         # y-z plane

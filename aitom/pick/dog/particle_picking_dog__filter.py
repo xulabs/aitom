@@ -5,7 +5,7 @@ after the peak detection, remove redundant peaks so that the distance between pe
 '''
 
 
-import cPickle as pickle
+import pickle
 import numpy as N
 from scipy.spatial.distance import cdist
 def do_filter(pp, peak_dist_min, op=None):
@@ -16,7 +16,7 @@ def do_filter(pp, peak_dist_min, op=None):
     for peak_i in range(len(pp)):
         if redundant_flag[peak_i]:      continue
         
-        if 'id' in pp[peak_i]:        print ('\r', peak_i, '    ', pp[peak_i]['id'], '           '),
+        if 'id' in pp[peak_i]:        print ('\r', peak_i, '    ', pp[peak_i]['id'], '           ')
 
         d = cdist(x, N.reshape(x[peak_i,:], (1,-1))).flatten()
 
@@ -31,7 +31,6 @@ def do_filter(pp, peak_dist_min, op=None):
             non_redundante_num = (redundant_flag[:peak_i] == False).sum()
             print (non_redundante_num, '        '),
             if non_redundante_num > op['top_num']:          break
-    print
 
     pp_f = []
     for i,pp_t in enumerate(pp):

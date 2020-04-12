@@ -67,3 +67,13 @@ def rotation_matrix_zyz_normalized_angle(rm):
     return ang
 
 
+def reverse_transform(rm, loc_r):
+    rev_rm = rm.T
+    rev_loc_r = (- N.dot(loc_r, rev_rm))
+    return (rev_rm, rev_loc_r)
+
+
+def reverse_transform_ang_loc(ang, loc_r):
+    rm = rotation_matrix_zyz(ang)
+    (rev_rm, rev_loc_r) = reverse_transform(rm, loc_r)
+    return (rotation_matrix_zyz_normalized_angle(rev_rm), rev_loc_r)

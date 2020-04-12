@@ -1,51 +1,18 @@
 # AITom
 
 ## Introduction
-AITom is a library for developping AI algorithms for cellular electron cryo-tomography analysis. Developped and maintained by [Xu Lab](https://cs.cmu.edu/~mxu1) and collaborators, particularly [Yang Lab](http://www.lcecb.org/index.html). 
+AITom is an open-source platform for AI driven cellular electron cryo-tomography analysis. 
 
-The tomominer module was adapted from an [extended version](http://web.cmb.usc.edu/people/alber/Software/mpp/) of the [tomominer library](https://github.com/alberlab/tomominer), developed at [Alber Lab](http://web.cmb.usc.edu/people/alber/).
+AITom is originated from the tomominer library, adapted from an [extended version](http://web.cmb.usc.edu/people/alber/Software/mpp/) of the [tomominer library](https://github.com/alberlab/tomominer), developed at [Alber Lab](http://web.cmb.usc.edu/people/alber/).
 
 
-# Build library
-## Ubuntu
+## [Tutorials](https://github.com/xulabs/aitom_doc/tree/master/tutorials)
 
-1. install dependencies and build
-```bash
-sudo apt-get install python python3-dev fftw3-dev libblas3 liblapack3 libarmadillo-dev
-pip install -r requirements.txt
-sh clean.sh
-sh build.sh
-```
+## [Install](https://github.com/xulabs/aitom/blob/master/doc/install.md)
 
-## Mac OS X
-
-1. Download FFTW3 and install it.
-
-```bash
-wget http://www.fftw.org/fftw-3.3.8.tar.gz
-tar xvf fftw-3.3.8.tar.gz
-cd fftw-3.3.8
-./configure
-make -j8
-sudo make install
-```
-
-2. install other dependencies using brew and pip.
-```bash
-xcode-select --install
-brew install armadillo openblas lapack
-pip install -r requirements.txt
-```
-
-3. clean && build library
-
-```bash
-sh clean.sh
-sh build.sh
-```
 # About us
-## Xulab at Carnegie Mellon Univeristy Computational Biology Department
-Code and data for projects developped at Xu Lab
+## Xulab at Carnegie Mellon University Computational Biology Department
+Code and data for projects developed and maintained by [Xu Lab](https://cs.cmu.edu/~mxu1) and [collaborators](https://github.com/xulabs/aitom/blob/master/doc/collaborators.md). 
 
 The research related to the code and data can be found at http://cs.cmu.edu/~mxu1
 
@@ -60,3 +27,7 @@ We are developing computational analysis techniques for processing large amounts
 <img src="https://user-images.githubusercontent.com/31047726/51266413-3613ec00-1989-11e9-810f-f8cb4924f435.png">
 
 *De novo* structural mining pipeline results: (a). A slice of a [rat neuron tomogram](https://doi.org/10.1016/j.cell.2017.12.030),  (b). Recovered patterns (from left to right): mitochondrial membrane, Ribosome-like pattern, ellipsoid of strong signals, TRiC-like pattern, borders of ice crystal, (c). Pattern mining results embedded, (d). Individual patterns embedded.
+
+### [Cite AITom](https://github.com/xulabs/aitom/blob/master/doc/cite.md)
+
+### [Funding](https://github.com/xulabs/aitom/blob/master/doc/funding.md)

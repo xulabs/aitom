@@ -7,17 +7,17 @@ from numpy.fft import fftn, ifftn, fftshift, ifftshift
 import mrcfile as mrc
 import pickle
 
-import aitom.tomominer.io.file as TIF
+import aitom.io.file as AIF
 import aitom.io.db.lsm_db as TIDL
 import aitom.parallel.multiprocessing.util as TPMU
 
 
 import aitom.align.fast.util as align
 import aitom.geometry.rotate as rotate
-import aitom.tomominer.geometry.ang_loc as ang_loc
+import aitom.geometry.ang_loc as ang_loc
 import aitom.statistics.vol as stats
-import aitom.image.io as TIIO
-import aitom.image.vol.util as TIVU
+import aitom.image.io as AIIO
+import aitom.image.vol.util as AIVU
 import aitom.model.util as TMU
 
 MULTIPROCESSING_WORKER_NUM = 8
@@ -148,7 +148,7 @@ def compute_voronoi_weights(theta):
 
             t = {}
             t['uuid'] = str(uuid.uuid4())
-            t['module'] = 'aitom.tomominer.hypervolume.utils'
+            t['module'] = 'aitom.geometry.volume.hypervolume.utils'
             t['method'] = 'voronoi_weights_6d'
             t['kwargs'] = {'phis':trans_list}
             t['i'] = i
@@ -671,7 +671,7 @@ def EM(img_data, K, iteration, path, snapshot_interval=5, reg=False, use_voronoi
     for i in range(iteration):
         checkpoint_file = os.path.join(checkpoint_dir, '%08d.pickle'%(i))
         if os.path.exists(checkpoint_file):
-            checkpoint_data = TIF.pickle_load(checkpoint_file)
+            checkpoint_data = AIF.pickle_load(checkpoint_file)
             theta = checkpoint_data['theta']
             continue
 
@@ -716,7 +716,7 @@ def EM(img_data, K, iteration, path, snapshot_interval=5, reg=False, use_voronoi
             assert not os.path.exists(checkpoint_file)
         except:
             raise Exception("Checkpoint file already exists!")
-        TIF.pickle_dump({'theta':theta}, checkpoint_file)
+        AIF.pickle_dump({'theta':theta}, checkpoint_file)
 
     print_prediction_results(theta, img_data)
     output_images(theta, iteration, path=path)
@@ -784,7 +784,7 @@ def output_images(theta, iteration, path):
 Saves the sliced image of model v to path
 '''
 def output_image(v, path):
-    TIIO.save_png(TIVU.cub_img(v)['im'], path)
+    AIIO.save_png(AIVU.cub_img(v)['im'], path)
 
 '''
 Print prediction results from FSC correlation score
@@ -797,28 +797,31 @@ def print_prediction_results(theta, img_data, print_all=False):
     for i in range(N):
         if print_all:
             for k in range(theta['K']):
-                print(get_correlation_score(theta, X, i, k))
+                print(get_correlation_score(img_data,theta, X, i, k))
         else:
-            print(get_correlation_score(theta, X, i))
+            print(get_correlation_score(img_data,theta, X, i))
 
 '''
 Returns FSC score between the kth average and the given subtomogram
 if k is unspecified, the best score is returned
 '''
-def get_correlation_score(theta, img_db_path, d, k=None):
-    X = get_image_db(img_db_path)
-
+def get_correlation_score(img_data,theta, img_db_path, d, k=None):
+    #X = get_image_db(img_db_path)
+    X = img_db_path
     n = theta['n']
     J = theta['J']
     K = theta['K']
-
-    v1 = inv_fourier_transform(X[d['v']])
-    m1 = X[d['m']]
-
+    
+    #v1 = inv_fourier_transform(X[d['v']])
+    #m1 = X[d['m']]
+    dj = img_data['dj']
+    v1 = inv_fourier_transform(X[dj[d]['v']])
+    m1 = X[dj[d]['m']]
     if k != None:
         v2 = inv_fourier_transform(theta['A'][k])
-        m2 = np.ones((n, n, n))
-        item = align.fast_align(v1, m1, v2, m2)[0]
+        #m2 = np.ones((n, n, n))
+        m2 = TMU.sphere_mask([n, n, n])
+        item = fast_align(v1, m1, v2, m1)[0]
         best_ang = item['ang']
         best_loc = item['loc']
         A_real_pred = v2
@@ -833,9 +836,10 @@ def get_correlation_score(theta, img_db_path, d, k=None):
         for k in range(K):
 
             v2 = inv_fourier_transform(theta['A'][k])
-            m2 = np.ones((n, n, n))
-
-            transforms = align.fast_align(v1, m1, v2, m2)
+            #m2 = np.ones((n, n, n))
+            m2 = TMU.sphere_mask([n, n, n])
+            
+            transforms = fast_align(v1, m1, v2, m2)
             item = transforms[0]
             score = item['score']
 
@@ -849,5 +853,5 @@ def get_correlation_score(theta, img_db_path, d, k=None):
     A_aligned = rotate.rotate_pad_mean(A_real_pred, angle = best_ang,
         loc_r = best_loc)
 
-    return ("Model%d" % d['v'], k_pred, stats.fsc(v1, A_aligned))
+    return ("Model", dj[d]['v'], k_pred, stats.fsc(v1, A_aligned))
 

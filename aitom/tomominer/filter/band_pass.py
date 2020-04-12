@@ -9,7 +9,7 @@ Please cite: Xu et al. De novo visual proteomics of single cells through pattern
 
 import numpy as N
 from numpy.fft import fftn, ifftn, fftshift, ifftshift
-import aitom.tomominer.image.vol.util as GV
+import aitom.image.vol.util as GV
 
 def filter_given_curve(v, curve):
     grid = GV.grid_displacement_to_center(v.shape, GV.fft_mid_co(v.shape))
