@@ -1,5 +1,5 @@
 '''
-Simple iterative subtomogram alignment and averaging
+Simple iterative subtomogram alignment, averaging and classification
 
 '''
 
@@ -12,17 +12,19 @@ import aitom.geometry.rotate as GR
 import aitom.io.db.lsm_db as TIDL
 
 '''
-average
+classify
 
 parameters:     
 dj_init: a list of dicts, where each element looks like: 
 {'subtomogram':v_id, 'mask':mask_id, 'angle':ang_t, 'loc':loc_t, 'model_id':model_id} 
-img_db: a dict to find subtomogram data by its uuid (img_db[uuid] is a 3D np array), it contains only one class
+img_db: a dict to find subtomogram data by its uuid (img_db[uuid] is a 3D np array)
 
-result(pickle file): average result, the same shape as original subtomogram 
+result(pickle file): average results of each class
 '''
-def average(dj_init=None, img_db=None, djs_file=None, avgs_file=None, pcas_file=None, op=None):
+def classify(dj_init=None, img_db=None, djs_file=None, avgs_file=None, pcas_file=None, op=None):
     djs = load_dict(op['data_checkpoint'])
+    pcas = load_dict(op['dim_reduction']['pca']['checkpoint'])
+    clus = load_dict(op['clustering']['checkpoint'])
     avgs = load_dict(op['average']['checkpoint'])
 
     if -1 not in djs:
@@ -33,21 +35,54 @@ def average(dj_init=None, img_db=None, djs_file=None, avgs_file=None, pcas_file=
 
     dj = djs[-1]
     for pass_i in range(op['option']['pass_num']):
-        print('pass_i', pass_i)
         if pass_i in djs:
             dj = djs[pass_i]
             continue
 
         dj = copy.deepcopy(dj)  # make a copy of the previous pass, for an update
 
-        c = str(uuid.uuid4())
-        avg_t = vol_avg(dj=dj, op=op['average'], img_db=img_db)
-        avgs[c] = avg_t
-        avgs[c]['pass_i'] = pass_i
-        avgs[c]['id'] = c
-        AIF.pickle_dump(avgs, op['average']['checkpoint'])
-        print('averaging done')
+        if pass_i not in pcas:
+            red = covariance_filtered_pca(dj=dj, img_db=img_db, templates=avgs, pca_op=op['dim_reduction']['pca'])
+            # print(type(red))
+            pcas[pass_i] = red
+            AIF.pickle_dump(pcas, op['dim_reduction']['pca']['checkpoint'])
+        else:
+            red = copy.deepcopy(pcas[pass_i])
 
+        if pass_i not in clus:
+            lbl = kmeans_clustering(x=red, k=op['clustering']['kmeans_k'])
+            clus[pass_i] = lbl
+            AIF.pickle_dump(clus, op['clustering']['checkpoint'])
+        else:
+            lbl = clus[pass_i]
+        # print('lbl', lbl)
+
+        for d in dj:        d['cluster'] = lbl[d['subtomogram']]
+
+        # calculate cluster averages
+        new_avgs = set()
+        for c in set([lbl[_] for _ in lbl]):
+            # print('c', c)
+            if c in avgs:    continue
+
+            avg_t = vol_avg(dj=[_ for _ in dj if _['cluster'] == c], op=op['average'], img_db=img_db)
+            if avg_t is None:   continue
+
+            avgs[c] = avg_t
+            avgs[c]['pass_i'] = pass_i
+            avgs[c]['id'] = c
+
+            new_avgs.add(c)
+
+        if len(new_avgs) > 0:       AIF.pickle_dump(avgs, op['average']['checkpoint'])
+        '''
+        print('avgs')
+        for key in avgs:
+            print('\n',pass_i,key)
+            for key2 in avgs[key]:
+                print(key2)
+            print(avgs[key]['pass_i'],avgs[key]['id'])
+        '''
         # re-align subtomograms
         al = align_all_pairs(avgs=avgs, dj=dj, img_db=img_db)
         a = align_all_pairs__select_best(al)
@@ -57,7 +92,6 @@ def average(dj_init=None, img_db=None, djs_file=None, avgs_file=None, pcas_file=
             d['angle'] = a[i]['angle']
             d['score'] = a[i]['score']
             d['template_id'] = a[i]['template_id']
-        print('re-align done')
 
         djs[pass_i] = dj
         AIF.pickle_dump(djs, op['data_checkpoint'])
@@ -70,6 +104,105 @@ def load_dict(path):
     else:
         d = AIF.pickle_load(path)
     return d
+
+
+'''
+simplified from
+tomominer.pursuit.multi.util.covariance_filtered_pca
+'''
+
+
+def covariance_filtered_pca(dj=None, img_db=None, templates=None, pca_op=None):
+    # print ('Dimension reduction')
+
+    mat = data_matrix_collect(dj=dj, img_db=img_db, templates=templates)
+
+    # centerize collected matrix, for PCA
+    mat_mean = mat.mean(axis=0)
+    for i in range(mat.shape[0]):   mat[i, :] -= mat_mean
+
+    # weight missing value regions as 0
+    empca_weight = N.zeros(mat.shape, dtype=float)
+    empca_weight[N.isfinite(mat)] = 1.0
+
+    import aitom.tomominer.dimension_reduction.empca as drempca
+    pca = drempca.empca(data=mat, weights=empca_weight, nvec=pca_op['n_dims'], niter=pca_op[
+        'n_iter'])  # note: need to watch out the R2 values to see how much variation can be explained by the estimated model, if the value is small, need to increase dims
+
+    red = pca.coeff
+
+    red_d = {}
+    for i, d in enumerate(dj):        red_d[d['subtomogram']] = red[i]
+    
+
+    return red_d
+
+
+'''
+simplified from 
+tomominer.pursuit.multi.util.data_matrix_collect__local
+'''
+
+
+def data_matrix_collect(dj, templates, img_db):
+    # print 'data_matrix_collect()'
+
+    mat = None
+    for i, d in enumerate(dj):
+        v = img_db[d['subtomogram']]
+        vm = img_db[d['mask']]
+        
+        # print(v.shape)
+        # print(d['angle'],d['loc'])
+
+        v_r = GR.rotate_pad_mean(v, angle=d['angle'], loc_r=d['loc']);
+        assert N.all(N.isfinite(v_r))
+        vm_r = GR.rotate_mask(vm, angle=d['angle']);
+        assert N.all(N.isfinite(vm_r))
+        
+        from aitom.tomominer.pursuit.multi.util import impute_aligned_vols
+        if 'template' in d:
+            vi = CU.impute_aligned_vols(t=templates[d['template']]['v'], v=v_r, vm=(vm_r > 0.5))
+        else:
+            vi = v_r
+
+        vi = vi.flatten()
+
+        if mat is None:            mat = N.zeros([len(dj), vi.size])
+        mat[i, :] = vi
+
+        # print ('\r', i, '       ') 
+        sys.stdout.flush()
+
+    return mat
+
+
+'''
+simplified from 
+tomominer.pursuit.multi.util.kmeans_clustering
+'''
+
+
+def kmeans_clustering(x, k):
+    from sklearn.cluster import KMeans
+    import multiprocessing
+    km = KMeans(n_clusters=k, n_jobs=multiprocessing.cpu_count())
+
+    # xk = x.keys()
+    # In python3, type(x.keys()) is <class 'dict_keys'>!
+    xk = list(x.keys())
+    # print(xk,type(xk))
+    assert type(xk) is list
+
+    labels = km.fit_predict(N.array([x[_] for _ in xk]))
+    labels = labels.tolist()
+
+    # re-index labels using uuids
+    labels_dict = {}
+    for i, l in enumerate(labels):
+        if l not in labels_dict:    labels_dict[l] = str(uuid.uuid4())
+
+    return {xk[_]: labels_dict[labels[_]] for _ in range(len(labels))}
 
 
 '''
