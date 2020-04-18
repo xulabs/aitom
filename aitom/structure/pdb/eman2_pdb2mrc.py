@@ -6,7 +6,6 @@
 	e2pdb2mrc.py ./pdbfile/3hhb.pdb ./mrcfile/3hhb.mrc res=2.8 apix=1.0
 
 	Note that the eman2 package need to be installed first, or this function will not work.
-	Besides, the anaconda shoube be installed before eman2.
 '''
 
 
@@ -16,7 +15,7 @@ import sys
 def eman2_pdb2mrc(pdbpath=os.getcwd(),mrcpath=os.getcwd(),res=2.8,apix=1.0):
 	'''
 
-	read all the pdb files in pdbpath and conver them into mrc files.
+	read all the pdb files in pdbpath and convert them into mrc files.
 	the output files will be saved in mrcpath
 
 	:param pdbpath: the path of input file.
