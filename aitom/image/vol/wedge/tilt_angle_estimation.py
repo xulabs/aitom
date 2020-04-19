@@ -125,7 +125,7 @@ if __name__ == '__main__':
         data = pickle.load(f, encoding='iso-8859-1')
 
     # 'data' is a dict containing several different subtomograms.
-    # 'data['5T2C_template']' is a list containing 100 three-dimensional arrays (100 subtomograms).
+    # 'data['5T2C_data']' is a list containing 100 three-dimensional arrays (100 subtomograms).
     print(data['5T2C_data'][0].shape)
     start_time = time.time()
     v = data['5T2C_data'][0]  # 32x32x32 volume
