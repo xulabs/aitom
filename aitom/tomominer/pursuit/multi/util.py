@@ -27,7 +27,7 @@ import aitom.tomominer.dimension_reduction.util as DU
 import aitom.image.vol.util as UV
 import aitom.tomominer.io.file as IV
 import aitom.geometry.ang_loc as AAL
-import aitom.tomominer.geometry.rotate as GR
+import aitom.geometry.rotate as GR
 import aitom.tomominer.align.fast.full as AFF
 import aitom.tomominer.align.refine.gradient_refine as AFGF
 import aitom.align.fast.util as AU
