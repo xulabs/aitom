@@ -1,10 +1,48 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import math
 
+'''
+the main function to the packing process of a target macromolecule and a few neighbors
+'''
+
+def get_box_size(radius_list, show_log = 0):
+    '''
+
+    :param radius_list: the radius list of all the protein in this simulation field
+    :param show_log: print log or not
+    :return: the size of a box, a int number
+    '''
+    print('Start to set box size')
+    tmp1 = math.ceil(math.sqrt(len(radius_list))) # number of protein put in one column
+    tmp2 = max(radius_list[0]) # the max radius
+    tmp_boxsize = int(tmp1 * tmp2 *2 ) # get a tmp boxsize
+
+    # format it to a *0000 number
+    if int(str(tmp_boxsize)[0]) < 5:
+        first = 3
+    else:
+        first = 15
+    box_size =  (10 ** (len(str(tmp_boxsize))) ) * first
+
+    if show_log != 0:
+        print('number in column,', tmp1)
+        print('max radius', tmp2)
+        print('tmp box size', tmp_boxsize)
+        print('box_size:', box_size)
+    print('Finish set box size, box size is', box_size, '\n')
+    return box_size
 
 
 def overlap_detection(radius_list, x, y, z , show_info = 0):
+    '''
+
+    :param radius_list: the radius list of all the protein in this simulation field
+    :param x: the coordinate (x) list of all the protein in this simulation field
+    :param y: the coordinate (y) list of all the protein in this simulation field
+    :param z: the coordinate (z) list of all the protein in this simulation field
+    :param show_info: print log or not
+    :return: Boolean value
+    '''
     overlapOrNot = 0
 
     # detecte if these ball are overlap
@@ -28,24 +66,21 @@ def overlap_detection(radius_list, x, y, z , show_info = 0):
 
     return overlapOrNot
 
-def show_image(x,y,z):
-    print("Show distribution img of protein's center")
-    ax = plt.subplot(111, projection='3d')  # create project
-    ax.scatter(x, y, z, c='r')  # draw
 
-    ax.set_zlabel('Z')  # aix
-    ax.set_ylabel('Y')
-    ax.set_xlabel('X')
-    plt.show()
+def initialization(radius_list, box_size = 5000, show_log = 0):
+    '''
 
-def show_sum_img(sumlist):
-    print('Show sum img')
-    ax = plt.subplot()
-    ax.scatter(range(len(sumlist)), sumlist, alpha=0.5)
-    plt.show()
+    :param radius_list: the radius list of all the protein in this simulation field
+    :param box_size: an int number of the simulation field size
+    :param show_log: print log or not
+    :return: the inital location of all the macromolecules in the simulation field
 
-
-def initialization(radius_list, box_size = 5000, show_img = 0, show_log = 0):
+        location = {
+                    'x' : [P1, P2, ... ,Pn]
+                    'y' : [P1, P2, ... ,Pn]
+                    'z' : [P1, P2, ... ,Pn]
+                    }
+    '''
     print('Start initialization!')
     if show_log == 0:
         pass
@@ -67,105 +102,104 @@ def initialization(radius_list, box_size = 5000, show_img = 0, show_log = 0):
     else:
         pass
 
-    #show initial image
-    if show_img == 0:
-        pass
-    else:
-        show_image(x, y, z)
-
     print('Finish initialization\n')
     return location
 
-def do_packing(radius_list, location, iteration = 10001, step = 1,  show_img = 0, show_log = 0):
-        # packing process
-        print('Start packing!')
+def do_packing(radius_list, location, iteration=5001, step=1, show_log=0):
+    '''
 
-        # initialization
-        x, y, z = location[0], location[1], location[2]
+    :param radius_list: the radius list of all the protein in this simulation field
+    :param location: the initialization location of all the macromolecules in the simulation field
+    :param iteration: the number of iteration time
+    :param step: the moving step(parameter to chotrol how long a macromolecules will move) in each iteration
+    :param show_log: print log or not
+    :return: the packing result, including sum, grad, x, y, z, sum_list
 
-        print('processing...')
-        learningRate = step
-        sum_list = []
-        for ii in range(1, iteration):
-            for jj in range(0, len(radius_list)):
-                sumx = sum(x)
-                sumy = sum(y)
-                sumz = sum(z)
-                GradX = len(radius_list) * x[jj] - sumx
-                GradY = len(radius_list) * y[jj] - sumy
-                GradZ = len(radius_list) * z[jj] - sumz
-                tempsum = GradX * GradX + GradY * GradY + GradZ * GradZ
-                tempsum = math.sqrt(tempsum)
+        dict = {
+                'sum' : a number, final value of the loss
+                'grad' : a number, final valus of the grad of the loss
+                'x' : list, final location of all macromolecules in the simulation field
+                'y' : list, final location of all macromolecules in the simulation field
+                'z' : list, final location of all macromolecules in the simulation field
+                'sum_list' : list, the sumlist of all the macromolecules, is used to draw the img of loss in each iteration
+                }
+    '''
 
-                # for i in range(6):
-                #     if ii == i * (math.floor(iteration / 5)) and jj == 0:
-                #         print('index',ii, 'tempsum:', tempsum, 'GradX:', GradX)
-                if show_log != 0:
-                    if (ii == iteration-1 or ii == math.ceil(iteration*4/5) or ii == math.ceil(iteration*3/5) or ii == math.ceil(iteration*2/5) or ii == math.ceil(iteration*1/5) ) and jj == 0:
-                        print('setp', ii, 'tempsum:', tempsum, 'GradX:', GradX)
+    # packing process
+    print('Start packing!')
 
-                GradX2 = GradX / tempsum
-                GradY2 = GradY / tempsum
-                GradZ2 = GradZ / tempsum
-                x[jj] = x[jj] - GradX2 * learningRate
-                y[jj] = y[jj] - GradY2 * learningRate
-                z[jj] = z[jj] - GradZ2 * learningRate
+    # initialization
+    x = []
+    y = []
+    z = []
+    x, y, z = location[0], location[1], location[2]
 
-                # overlap detection
-                mark = overlap_detection(radius_list, x, y, z, 0)
-                if mark == 1:
-                    x[jj] = x[jj] + GradX2 * learningRate
-                    y[jj] = y[jj] + GradY2 * learningRate
-                    z[jj] = z[jj] + GradZ2 * learningRate
+    print('processing...')
+    learningRate = step
+    sum_list = []
+    for ii in range(1, iteration):
+        for jj in range(0, len(radius_list)):
+            sumx = sum(x)
+            sumy = sum(y)
+            sumz = sum(z)
+            GradX = len(radius_list) * x[jj] - sumx
+            GradY = len(radius_list) * y[jj] - sumy
+            GradZ = len(radius_list) * z[jj] - sumz
+            tempsum = GradX * GradX + GradY * GradY + GradZ * GradZ
+            tempsum = math.sqrt(tempsum)
 
-                sum_list.append(tempsum)
+            # for i in range(6):
+            #     if ii == i * (math.floor(iteration / 5)) and jj == 0:
+            #         print('index',ii, 'tempsum:', tempsum, 'GradX:', GradX)
+            if show_log != 0:
+                if (ii == iteration - 1 or ii == math.ceil(iteration * 4 / 5) or ii == math.ceil(
+                        iteration * 3 / 5) or ii == math.ceil(iteration * 2 / 5) or ii == math.ceil(
+                        iteration * 1 / 5)) and jj == 0:
+                    print('setp', ii, 'tempsum:', tempsum, 'GradX:', GradX)
 
-            if show_img == 0:
-                pass
-            else:
-                if ii == (iteration-1):
-                    show_image(x, y, z)
-                    show_sum_img(sum_list)
+            GradX2 = GradX / tempsum
+            GradY2 = GradY / tempsum
+            GradZ2 = GradZ / tempsum
+            x[jj] = x[jj] - GradX2 * learningRate
+            y[jj] = y[jj] - GradY2 * learningRate
+            z[jj] = z[jj] - GradZ2 * learningRate
 
-        if show_log != 0:
-            print('The coordinate of all the proteins center:')
-            print(x)
-            print(y)
-            print(z)
+            # overlap detection
+            mark = overlap_detection(radius_list, x, y, z, 0)
+            if mark == 1:
+                x[jj] = x[jj] + GradX2 * learningRate
+                y[jj] = y[jj] + GradY2 * learningRate
+                z[jj] = z[jj] + GradZ2 * learningRate
 
-        print('The radius and distance:')
-        # print center and distance between all these balls
-        overlap_detection(radius_list, x, y, z, 1)
+            sum_list.append(tempsum)
 
-        dict = {}
-        dict['sum'] = tempsum
-        dict['grad'] = GradX
-        dict['x'] = x
-        dict['y'] = y
-        dict['z'] = z
-        print('Finish packing!\n')
-        return dict
-
-def get_box_size(radius_list, show_log = 0):
-    print('Start to set box size')
-    tmp1 = math.ceil(math.sqrt(len(radius_list))) # number of protein put in one column
-    tmp2 = max(radius_list[0]) # the max radius
-    tmp_boxsize = int(tmp1 * tmp2 *2 ) # get a tmp boxsize
-
-    # format it to a *0000 number
-    if int(str(tmp_boxsize)[0]) < 5:
-        first = 1
-    else:
-        first = 5
-    box_size =  (10 ** (len(str(tmp_boxsize))) ) * first
+        # if show_img == 0:
+        #     pass
+        # else:
+        #     if ii == (iteration-1):
+        #         DR.show_center_img(x, y, z)
+        #         DR.show_sum_img(sum_list,len(radius_list))
 
     if show_log != 0:
-        print('number in column,', tmp1)
-        print('max radius', tmp2)
-        print('tmp box size', tmp_boxsize)
-        print('box_size:', box_size)
-    print('Finish set box size, box size is', box_size, '\n')
-    return box_size
+        print('The coordinate of all the proteins center:')
+        print(x)
+        print(y)
+        print(z)
+
+    print('The radius and distance:')
+    # print center and distance between all these balls
+    overlap_detection(radius_list, x, y, z, 1)
+
+    dict = {}
+    dict['sum'] = tempsum
+    dict['grad'] = GradX
+    dict['x'] = x
+    dict['y'] = y
+    dict['z'] = z
+    dict['sum_list'] = sum_list
+    print('Finish packing!\n')
+    return dict
+
 
 
 

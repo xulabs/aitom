@@ -56,7 +56,7 @@ def dist_Eur_array(array,origin):
 
 # PDB_ori_path = './pdbfile/'
 
-def pdb2ball_single(PDB_ori_path = './pdbfile/', show_log = 0):
+def pdb2ball_single(PDB_ori_path = '../IOfile/pdbfile/', show_log = 0):
     print('start convert pdb file to single ball')
     '''
 
