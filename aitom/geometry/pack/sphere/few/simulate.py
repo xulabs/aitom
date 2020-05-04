@@ -1,12 +1,17 @@
-import pdb2ball_single as P2B
-import random_select as RS
-import packing as PK
-import drawing as DR
+import aitom.geometry.pack.sphere.few.pdb2ball_single as P2B
+import aitom.geometry.pack.sphere.few.random_select as RS
+import aitom.geometry.pack.sphere.few.packing as PK
+# import aitom.geometry.pack.sphere.few.drawing as DR
 import pprint
 import sys
 
 
-def packing_with_target(target_protein = '1bxn', random_protein_number = 4, iteration=5001, PDB_ori_path = '../IOfile/pdbfile/', step=1, show_img= 1, show_log = 0):
+'''
+If you want to see the output image(location, loss, etc.) of the simulating process
+please uncomment the line 3, line 122-127.
+'''
+
+def packing_with_target(target_protein = '1bxn', random_protein_number = 4, iteration=5001, PDB_ori_path = '../IOfile/pdbfile/', step=1, show_img= 1, show_log = 1):
     '''
 
     :param target_protein: the name of the target macromolecule
@@ -78,21 +83,23 @@ def packing_with_target(target_protein = '1bxn', random_protein_number = 4, iter
     # random run multiple times and return the optimal result
     dict_out = {}
     sum_list = []
-    for i in range(2):  # try n times and get the optimal solution
+    for i in range(5):  # try n times and get the optimal solution
         print('Round', i+1)
         # initialization
         location = PK.initialization(radius_list, box_size, show_log = show_log)
         save_location = [tuple(location[0]),tuple(location[1]),tuple(location[2])]
-        print('init 1',location)
+        # print('init 1',location)
         # packing
         dict = PK.do_packing(radius_list, location, iteration=iteration, step=step, show_log= show_log)
         save_location = [list(save_location[0]), list(save_location[1]), list(save_location[2])]
         dict['initialization'] = save_location
         dict_out[i] = dict
-        print('init 2',dict['initialization'])
-        print('final x',dict['x'])
-        print('final y',dict['y'])
-        print('final z',dict['z'])
+        # print('init x', dict['initialization'][0])
+        # print('init y', dict['initialization'][1])
+        # print('init z', dict['initialization'][2])
+        # print('final x',dict['x'])
+        # print('final y',dict['y'])
+        # print('final z',dict['z'])
 
         # save result
         sum_list.append(dict['sum'])
@@ -103,18 +110,21 @@ def packing_with_target(target_protein = '1bxn', random_protein_number = 4, iter
     min_dict = dict_out[index]
     min_dict['pdb_id'] = protein
     min_dict['box_size'] = box_size
+
+    # delete sum_list and print the optimal result
     print('The following is the optimal solution:')
-    if show_log != 0:
-        dic_print = pprint.PrettyPrinter(indent=4)
-        dic_print.pprint(min_dict)
+    sum_list = min_dict.pop('sum_list')
+    dic_print = pprint.PrettyPrinter(indent=4)
+    dic_print.pprint(min_dict)
+    # add back sum_list
+    min_dict['sum_list'] = sum_list
 
-    # show image
-    if show_img != 0:
-        DR.show_center_img(min_dict['initialization'][0], min_dict['initialization'][1], min_dict['initialization'][2])
-        DR.show_center_img(min_dict['x'], min_dict['y'], min_dict['z'])
-        DR.show_sum_img(min_dict['sum_list'], len(radius_list))
-
-        DR.get_packing_and_plot_ball(min_dict, boundary_shpere)
+    # # show image
+    # if show_img != 0:
+    #     DR.show_center_img(min_dict['initialization'][0], min_dict['initialization'][1], min_dict['initialization'][2])
+    #     DR.show_center_img(min_dict['x'], min_dict['y'], min_dict['z'])
+    #     DR.show_sum_img(min_dict['sum_list'], len(radius_list), protein_name)
+    #     DR.get_packing_and_plot_ball(min_dict, boundary_shpere)
 
 
     # save general information

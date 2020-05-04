@@ -82,9 +82,7 @@ def initialization(radius_list, box_size = 5000, show_log = 0):
                     }
     '''
     print('Start initialization!')
-    if show_log == 0:
-        pass
-    else:
+    if show_log != 0:
         print('radius:', radius_list)
 
     # initialization all proteins with different localization without overlap
@@ -148,9 +146,6 @@ def do_packing(radius_list, location, iteration=5001, step=1, show_log=0):
             tempsum = GradX * GradX + GradY * GradY + GradZ * GradZ
             tempsum = math.sqrt(tempsum)
 
-            # for i in range(6):
-            #     if ii == i * (math.floor(iteration / 5)) and jj == 0:
-            #         print('index',ii, 'tempsum:', tempsum, 'GradX:', GradX)
             if show_log != 0:
                 if (ii == iteration - 1 or ii == math.ceil(iteration * 4 / 5) or ii == math.ceil(
                         iteration * 3 / 5) or ii == math.ceil(iteration * 2 / 5) or ii == math.ceil(
@@ -181,14 +176,9 @@ def do_packing(radius_list, location, iteration=5001, step=1, show_log=0):
         #         DR.show_sum_img(sum_list,len(radius_list))
 
     if show_log != 0:
-        print('The coordinate of all the proteins center:')
-        print(x)
-        print(y)
-        print(z)
-
-    print('The radius and distance:')
-    # print center and distance between all these balls
-    overlap_detection(radius_list, x, y, z, 1)
+        print('The radius and distance:')
+        # print center and distance between all these balls
+        overlap_detection(radius_list, x, y, z, 1)
 
     dict = {}
     dict['sum'] = tempsum
