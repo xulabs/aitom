@@ -1,17 +1,25 @@
-import aitom.geometry.pack.sphere.few.pdb2ball_single as P2B
-import aitom.geometry.pack.sphere.few.random_select as RS
-import aitom.geometry.pack.sphere.few.packing as PK
-# import aitom.geometry.pack.sphere.few.drawing as DR
+import pdb2ball_single as P2B
+import random_select as RS
+import packing as PK
+#import drawing as DR
 import pprint
 import sys
 
-
 '''
 If you want to see the output image(location, loss, etc.) of the simulating process
-please uncomment the line 3, line 122-127.
+please uncomment the line 4, line 130-136.
 '''
 
-def packing_with_target(target_protein = '1bxn', random_protein_number = 4, iteration=5001, PDB_ori_path = '../IOfile/pdbfile/', step=1, show_img= 1, show_log = 1):
+packing_op = {'target': '1bxn',
+              'random_protein_number': 4,
+              'PDB_ori_path': '../IOfile/pdbfile/',
+              'iteration':5001,
+              'step':1,
+              'show_img': 1,
+              'show_log': 1
+              }
+
+def packing_with_target(packing_op):
     '''
 
     :param target_protein: the name of the target macromolecule
@@ -58,27 +66,27 @@ def packing_with_target(target_protein = '1bxn', random_protein_number = 4, iter
                     }
     '''
     # convert pdb file into single ball and get the center and radius of this ball.
-    boundary_shpere = P2B.pdb2ball_single(PDB_ori_path = PDB_ori_path, show_log = show_log)
+    boundary_shpere = P2B.pdb2ball_single(PDB_ori_path = packing_op['PDB_ori_path'], show_log = packing_op['show_log'])
 
     # set target protein
-    if show_log != 0:
-        print('target protein is', target_protein,'\n\n')
+    if packing_op['show_log'] != 0:
+        print('target protein is', packing_op['target'],'\n\n')
     protein_name = []
-    protein_name.append(target_protein)
+    protein_name.append(packing_op['target'])
     radii_list = []
     radii_list.append(boundary_shpere[protein_name[0]]['radius'])
 
     # select random proteins
-    random_protein = RS.get_random_protein(boundary_shpere,protein_number = random_protein_number,show_log= show_log)
+    random_protein = RS.get_random_protein(boundary_shpere,protein_number = packing_op['random_protein_number'],show_log= packing_op['show_log'])
 
     # get important info
-    info = RS.get_radius_and_id(random_protein, radii_list = radii_list, protein_name = protein_name, show_log = show_log)
+    info = RS.get_radius_and_id(random_protein, radii_list = radii_list, protein_name = protein_name, show_log = packing_op['show_log'])
     radius_list = info['radius_list']
     protein = info['protein_key']
 
 
     # set box
-    box_size = PK.get_box_size(radius_list,show_log= show_log)  # obtain box size
+    box_size = PK.get_box_size(radius_list,show_log= packing_op['show_log'])  # obtain box size
 
     # random run multiple times and return the optimal result
     dict_out = {}
@@ -86,11 +94,11 @@ def packing_with_target(target_protein = '1bxn', random_protein_number = 4, iter
     for i in range(5):  # try n times and get the optimal solution
         print('Round', i+1)
         # initialization
-        location = PK.initialization(radius_list, box_size, show_log = show_log)
+        location = PK.initialization(radius_list, box_size, show_log = packing_op['show_log'])
         save_location = [tuple(location[0]),tuple(location[1]),tuple(location[2])]
         # print('init 1',location)
         # packing
-        dict = PK.do_packing(radius_list, location, iteration=iteration, step=step, show_log= show_log)
+        dict = PK.do_packing(radius_list, location, iteration = packing_op['iteration'], step = packing_op['step'], show_log = packing_op['show_log'])
         save_location = [list(save_location[0]), list(save_location[1]), list(save_location[2])]
         dict['initialization'] = save_location
         dict_out[i] = dict
@@ -119,20 +127,20 @@ def packing_with_target(target_protein = '1bxn', random_protein_number = 4, iter
     # add back sum_list
     min_dict['sum_list'] = sum_list
 
-    # # show image
-    # if show_img != 0:
-    #     DR.show_center_img(min_dict['initialization'][0], min_dict['initialization'][1], min_dict['initialization'][2])
-    #     DR.show_center_img(min_dict['x'], min_dict['y'], min_dict['z'])
-    #     DR.show_sum_img(min_dict['sum_list'], len(radius_list), protein_name)
-    #     DR.get_packing_and_plot_ball(min_dict, boundary_shpere)
+    ## show image
+    # if packing_op['show_img'] != 0:
+    #    DR.show_center_img(min_dict['initialization'][0], min_dict['initialization'][1], min_dict['initialization'][2])
+    #    DR.show_center_img(min_dict['x'], min_dict['y'], min_dict['z'])
+    #    DR.show_sum_img(min_dict['sum_list'], len(radius_list), protein_name)
+    #    DR.get_packing_and_plot_ball(min_dict, boundary_shpere)
 
 
     # save general information
     general_info = {}
-    general_info['target'] = target_protein
-    general_info['random_protein_number'] = random_protein_number
-    general_info['iteration'] = iteration
-    general_info['step'] = step
+    general_info['target'] = packing_op['target']
+    general_info['random_protein_number'] = packing_op['random_protein_number']
+    general_info['iteration'] = packing_op['iteration']
+    general_info['step'] = packing_op['step']
     general_info['box_size'] = box_size
 
     # save return information
@@ -146,6 +154,6 @@ def packing_with_target(target_protein = '1bxn', random_protein_number = 4, iter
 
 if __name__ == '__main__':
     try:
-        packing_with_target(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+        packing_with_target(sys.argv[1])
     except:
         packing_with_target()

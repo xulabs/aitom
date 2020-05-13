@@ -168,13 +168,6 @@ def do_packing(radius_list, location, iteration=5001, step=1, show_log=0):
 
             sum_list.append(tempsum)
 
-        # if show_img == 0:
-        #     pass
-        # else:
-        #     if ii == (iteration-1):
-        #         DR.show_center_img(x, y, z)
-        #         DR.show_sum_img(sum_list,len(radius_list))
-
     if show_log != 0:
         print('The radius and distance:')
         # print center and distance between all these balls
