@@ -1,24 +1,10 @@
-
 # Simple-Packing
 a simple packing function that implements 'single ball model' and 'multiple-ball model' for packing only 5 - 10 macromolecules. So that we can simulate a subtomogram that contain one target macromolecule and some neighbor structures. And the simulation can be performed quickly in CPU.
 
 
-# Workflow of single-ball-model packing
-run simulate.py, a packing result with a default parameter will be obtained
- 
-    
-###### 1.pbd 2 single ball
-    
-###### 2.set target protein
+# including the following algorithm
+###### 1. packing_single_sphere: using single sphere to model one macromolecule, packing using gradient descent.
 
-###### 3.random select neighbor proteins
+###### 2. map_tomo: obtain density map of single macromolecule and merge them based on packing result, then convert to cryo-ET.
 
-###### 4.set simulate box size
-
-###### 5.initialization the location of all proteins
-
-###### 6. packing using gradient descent
-
-###### 7. run multiple times and return the optimal packing result
-    
-###### 8. return all important information
+###### 3. simu_subtomo.py: packing and obtain cryo-ET of several macromolecules, then get the subtomogram of the target macromolecule.
