@@ -3,6 +3,12 @@ import sys
 sys.path.append("..")
 import json
 
+'''
+if you want to run this file to generate only one subtomogram, please uncomment line 85-96 and comment line 97
+if you want to run file generate_simu_subtomo to generate a lot of data, please comment line85-96 and uncomment line 97. This will save time.
+'''
+
+
 # set parameters for the simulation
 
 num = 1
@@ -15,7 +21,8 @@ op = {
            'map_single_path': './IOfile/map_single'}, # read density map from mrc
     'tomo':{'model':{'missing_wedge_angle':30, 'SNR':500000000},
             'ctf':{'pix_size':1.0, 'Dz':-5.0, 'voltage':300, 'Cs':2.0, 'sigma':0.4}},
-    'target_size':30
+    'target_size':32,
+    'v': None
     }
 
 
@@ -75,17 +82,19 @@ def simu_subtomo(op, packing_op, output, save_tomo = 0, save_target = 1, save_to
     '''
 
 
-    # convert pdb to map
+    # # convert pdb to map
     import map_tomo.pdb2map as PM
     import map_tomo.iomap as IM
-    ms = PM.pdb2map(op['map'])
-    for n in ms:
-        v = ms[n]
-        IM.map2mrc(v, op['map']['map_single_path']+ '/{}.mrc'.format(n))
+    # ms = PM.pdb2map(op['map'])
+    # for n in ms:
+    #     v = ms[n]
+    #     IM.map2mrc(v, op['map']['map_single_path']+ '/{}.mrc'.format(n))
 
-    # read density map from mrc
-    rootdir = op['map']['map_single_path']
-    v = IM.readMrcMapDir(rootdir)
+    # # read density map from mrc
+    # rootdir = op['map']['map_single_path']
+    # v = IM.readMrcMapDir(rootdir)
+    # print('read density map done')
+    v = op['v']
 
     # get packing info
     import packing_single_sphere.simulate as SI
@@ -95,11 +104,12 @@ def simu_subtomo(op, packing_op, output, save_tomo = 0, save_target = 1, save_to
     x = packing_result['optimal_result']['x']/10
     y = packing_result['optimal_result']['y']/10
     z = packing_result['optimal_result']['z']/10
-    print('initialization',packing_result['optimal_result']['initialization'])
+    # print('initialization',packing_result['optimal_result']['initialization'])
     x0 = np.array(packing_result['optimal_result']['initialization'][0])/10
     y0 = np.array(packing_result['optimal_result']['initialization'][1])/10
     z0 = np.array(packing_result['optimal_result']['initialization'][2])/10
     box_size = packing_result['general_info']['box_size']/10
+    print('get packing info done')
 
     # merge map to hugemap, save random angle in packing_result
     import map_tomo.merge_map as MM
@@ -107,12 +117,15 @@ def simu_subtomo(op, packing_op, output, save_tomo = 0, save_target = 1, save_to
     packmap,pack_angle_list = MM.merge_map(v, protein_name, x, y, z, box_size)
     packing_result['optimal_result']['initmap_rotate_angle'] = init_angle_list
     packing_result['optimal_result']['packmap_rotate_angle'] = pack_angle_list
+    print('merge huge map done ')
     # save packing info
     with open(output['json']['pack'],'w') as f:
         json.dump(packing_result, f, cls=MM.NumpyEncoder)
+    print('save packing info')
     # convert packmap to tomogram
     import map_tomo.map2tomogram as MT
     tomo = MT.map2tomo(packmap, op['tomo'])
+    print('convert to tomo')
 
 
     if save_tomo != 0:
@@ -143,7 +156,7 @@ def simu_subtomo(op, packing_op, output, save_tomo = 0, save_target = 1, save_to
 
     # trim target
     i = protein_name.index(target_name)
-    print('i',i)
+    # print('i',i)
     target_packmap, loc_r = MM.trim_target(packmap, np.array([x[i],y[i],z[i]]), op['target_size'])
     target_tomo, loc_r = MM.trim_target(tomo, np.array([x[i],y[i],z[i]]), op['target_size'], loc_r)
     if save_target != 0:
@@ -151,6 +164,7 @@ def simu_subtomo(op, packing_op, output, save_tomo = 0, save_target = 1, save_to
         IM.map2mrc(target_tomo, output['tomo']['target']['mrc'])
         IM.map2png(target_packmap, output['packmap']['target']['png'])
         IM.map2png(target_tomo, output['tomo']['target']['png'])
+    print('trim target done')
     # save target info
     target_info = {}
     target_info['loc'] = loc_r
@@ -158,6 +172,7 @@ def simu_subtomo(op, packing_op, output, save_tomo = 0, save_target = 1, save_to
     target_info['name'] = packing_op['target']
     with open(output['json']['target'],'w') as f:
         json.dump(target_info, f, cls=MM.NumpyEncoder)
+    print('get target info done')
 
     if save_tomo_slice != 0:
         # convert packmap & tomo to separate pictures
@@ -169,6 +184,7 @@ def simu_subtomo(op, packing_op, output, save_tomo = 0, save_target = 1, save_to
     target_simu_tomo['tomo'] = target_tomo
     target_simu_tomo['density_map'] = target_packmap
     target_simu_tomo['info'] = target_info
+    print('all done')
 
     return target_simu_tomo
 
