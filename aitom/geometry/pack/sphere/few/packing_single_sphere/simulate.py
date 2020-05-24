@@ -7,7 +7,7 @@ import sys
 
 '''
 If you want to see the output image(location, loss, etc.) of the simulating process
-please uncomment the line 4, line 130-136.
+please uncomment the line 4, line 134-139.
 '''
 
 packing_op = {'target': '1bxn',
@@ -16,7 +16,8 @@ packing_op = {'target': '1bxn',
               'iteration':5001,
               'step':1,
               'show_img': 1,
-              'show_log': 1
+              'show_log': 1,
+              'boundary_shpere':  None
               }
 
 def packing_with_target(packing_op):
@@ -65,8 +66,8 @@ def packing_with_target(packing_op):
                                         }
                     }
     '''
-    # convert pdb file into single ball and get the center and radius of this ball.
-    boundary_shpere = P2B.pdb2ball_single(PDB_ori_path = packing_op['PDB_ori_path'], show_log = packing_op['show_log'])
+    # # convert pdb file into single ball and get the center and radius of this ball.
+    # boundary_shpere = P2B.pdb2ball_single(PDB_ori_path = packing_op['PDB_ori_path'], show_log = packing_op['show_log'])
 
     # set target protein
     if packing_op['show_log'] != 0:
@@ -74,10 +75,10 @@ def packing_with_target(packing_op):
     protein_name = []
     protein_name.append(packing_op['target'])
     radii_list = []
-    radii_list.append(boundary_shpere[protein_name[0]]['radius'])
+    radii_list.append(packing_op['boundary_shpere'][protein_name[0]]['radius'])
 
     # select random proteins
-    random_protein = RS.get_random_protein(boundary_shpere,protein_number = packing_op['random_protein_number'],show_log= packing_op['show_log'])
+    random_protein = RS.get_random_protein(packing_op['boundary_shpere'],protein_number = packing_op['random_protein_number'],show_log= packing_op['show_log'])
 
     # get important info
     info = RS.get_radius_and_id(random_protein, radii_list = radii_list, protein_name = protein_name, show_log = packing_op['show_log'])
@@ -92,7 +93,8 @@ def packing_with_target(packing_op):
     dict_out = {}
     sum_list = []
     for i in range(5):  # try n times and get the optimal solution
-        print('Round', i+1)
+        if packing_op['show_log'] != 0:
+            print('Round', i+1)
         # initialization
         location = PK.initialization(radius_list, box_size, show_log = packing_op['show_log'])
         save_location = [tuple(location[0]),tuple(location[1]),tuple(location[2])]
@@ -111,7 +113,8 @@ def packing_with_target(packing_op):
 
         # save result
         sum_list.append(dict['sum'])
-        print('sum:\t',dict['sum'], '\tgrad:\t',dict['grad'],'\n\n')
+        if packing_op['show_log'] != 0:
+            print('sum:\t',dict['sum'], '\tgrad:\t',dict['grad'],'\n\n')
 
     # choose a best result
     index = sum_list.index(min(sum_list))
@@ -120,12 +123,13 @@ def packing_with_target(packing_op):
     min_dict['box_size'] = box_size
 
     # delete sum_list and print the optimal result
-    print('The following is the optimal solution:')
-    sum_list = min_dict.pop('sum_list')
-    dic_print = pprint.PrettyPrinter(indent=4)
-    dic_print.pprint(min_dict)
-    # add back sum_list
-    min_dict['sum_list'] = sum_list
+    if packing_op['show_log'] != 0:
+        print('The following is the optimal solution:')
+        sum_list = min_dict.pop('sum_list')
+        dic_print = pprint.PrettyPrinter(indent=4)
+        dic_print.pprint(min_dict)
+        # add back sum_list
+        min_dict['sum_list'] = sum_list
 
     ## show image
     # if packing_op['show_img'] != 0:
@@ -146,14 +150,16 @@ def packing_with_target(packing_op):
     # save return information
     packing_result = {}
     packing_result['general_info'] = general_info
-    packing_result['boundary_shpere'] = boundary_shpere
+    packing_result['boundary_shpere'] = packing_op['boundary_shpere']
     packing_result['optimal_result'] = min_dict
 
     return packing_result
 
 
 if __name__ == '__main__':
+    # convert pdb file into single ball and get the center and radius of this ball.
+    packing_op['boundary_shpere'] =  P2B.pdb2ball_single(PDB_ori_path='../IOfile/pdbfile/', show_log=0)
     try:
         packing_with_target(sys.argv[1])
     except:
-        packing_with_target()
+        packing_with_target(packing_op)

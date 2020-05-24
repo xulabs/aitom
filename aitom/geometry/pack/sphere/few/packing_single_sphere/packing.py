@@ -12,7 +12,8 @@ def get_box_size(radius_list, show_log = 0):
     :param show_log: print log or not
     :return: the size of a box, a int number
     '''
-    print('Start to set box size')
+    if show_log != 0:
+        print('Start to set box size')
     tmp1 = math.ceil(math.sqrt(len(radius_list))) # number of protein put in one column
     tmp2 = max(radius_list[0]) # the max radius
     tmp_boxsize = int(tmp1 * tmp2 *2 ) # get a tmp boxsize
@@ -29,7 +30,7 @@ def get_box_size(radius_list, show_log = 0):
         print('max radius', tmp2)
         print('tmp box size', tmp_boxsize)
         print('box_size:', box_size)
-    print('Finish set box size, box size is', box_size, '\n')
+        print('Finish set box size, box size is', box_size, '\n')
     return box_size
 
 
@@ -53,9 +54,7 @@ def overlap_detection(radius_list, x, y, z , show_info = 0):
             tempDis = (x[ii] - x[jj]) ** 2 + (y[ii] - y[jj]) ** 2 + (z[ii] - z[jj]) ** 2
             Distance = math.sqrt(tempDis)
             # print log or not
-            if show_info == 0:
-                pass
-            else:
+            if show_info != 0:
                 print('radius of NO.', ii, ': ', tempR1, '\tradius of NO.', jj, ': ',tempR2, '\tDistance: ', Distance)
 
             #detection
@@ -81,7 +80,8 @@ def initialization(radius_list, box_size = 5000, show_log = 0):
                     'z' : [P1, P2, ... ,Pn]
                     }
     '''
-    print('Start initialization!')
+    if show_log != 0:
+        print('Start initialization!')
     if show_log != 0:
         print('radius:', radius_list)
 
@@ -97,10 +97,7 @@ def initialization(radius_list, box_size = 5000, show_log = 0):
     if show_log != 0:
         print('Initialization Coordinates:')
         print('x: ', x,'\n y:', y, '\n z:', z)
-    else:
-        pass
-
-    print('Finish initialization\n')
+        print('Finish initialization\n')
     return location
 
 def do_packing(radius_list, location, iteration=5001, step=1, show_log=0):
@@ -124,7 +121,8 @@ def do_packing(radius_list, location, iteration=5001, step=1, show_log=0):
     '''
 
     # packing process
-    print('Start packing!')
+    if show_log != 0:
+        print('Start packing!')
 
     # initialization
     x = []
@@ -132,7 +130,8 @@ def do_packing(radius_list, location, iteration=5001, step=1, show_log=0):
     z = []
     x, y, z = location[0], location[1], location[2]
 
-    print('processing...')
+    if show_log != 0:
+        print('processing...')
     learningRate = step
     sum_list = []
     for ii in range(1, iteration):
@@ -180,7 +179,8 @@ def do_packing(radius_list, location, iteration=5001, step=1, show_log=0):
     dict['y'] = y
     dict['z'] = z
     dict['sum_list'] = sum_list
-    print('Finish packing!\n')
+    if show_log != 0:
+        print('Finish packing!\n')
     return dict
 
 

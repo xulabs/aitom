@@ -57,7 +57,8 @@ def dist_Eur_array(array,origin):
 # PDB_ori_path = './pdbfile/'
 
 def pdb2ball_single(PDB_ori_path = '../IOfile/pdbfile/', show_log = 0):
-    print('start convert pdb file to single ball')
+    if show_log != 0:
+        print('start convert pdb file to single ball')
     '''
 
     :param PDB_ori_path: this is the path that save all the original pdb file
@@ -147,8 +148,7 @@ def pdb2ball_single(PDB_ori_path = '../IOfile/pdbfile/', show_log = 0):
         # print the result
         dic_print = pprint.PrettyPrinter(indent=4)
         dic_print.pprint(pdb_dict)
-
-    print('pdb 2 single ball: All File Done!\n\n')
+        print('pdb 2 single ball: All File Done!\n\n')
     return pdb_dict
 
 

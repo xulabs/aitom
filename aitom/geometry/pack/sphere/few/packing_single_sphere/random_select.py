@@ -19,7 +19,8 @@ def get_random_protein(boundary_shpere, protein_number = 5, show_log = 0):
             }
 
     '''
-    print('Start to select', protein_number, 'random proteins')
+    if show_log != 0:
+        print('Start to select', protein_number, 'random proteins')
     random_protein = {}
     for keys in boundary_shpere.keys():
         random_key = random.sample(boundary_shpere.keys(), protein_number)  # random dic, the second parameter is the number
@@ -28,7 +29,7 @@ def get_random_protein(boundary_shpere, protein_number = 5, show_log = 0):
     if show_log != 0:
         dic_print = pprint.PrettyPrinter(indent=4)
         dic_print.pprint(random_protein)
-    print('Get random protein: Done!\n\n')
+        print('Get random protein: Done!\n\n')
     return random_protein
 
 def get_radius_and_id(random_protein, radii_list = [], protein_name = [], show_log = 0):
@@ -47,7 +48,8 @@ def get_radius_and_id(random_protein, radii_list = [], protein_name = [], show_l
 
     '''
     # get all radii
-    print('Start to get the radius of each protein')
+    if show_log != 0:
+        print('Start to get the radius of each protein')
     for protein in random_protein:
         radii_list.append(random_protein[protein]['radius'])
         protein_name.append(random_protein[protein]['pdb_id'])
@@ -59,6 +61,5 @@ def get_radius_and_id(random_protein, radii_list = [], protein_name = [], show_l
     if show_log != 0:
         dic_print = pprint.PrettyPrinter(indent=4)
         dic_print.pprint(random_dic)
-
-    print('Get all radius value: Done!\n\n')
+        print('Get all radius value: Done!\n\n')
     return random_dic
