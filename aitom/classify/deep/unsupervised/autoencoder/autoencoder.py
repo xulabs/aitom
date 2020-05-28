@@ -26,7 +26,7 @@ import aitom.classify.deep.unsupervised.autoencoder.autoencoder_util as auto
 import aitom.io.file as AIF
 import aitom.image.vol.util as AIVU
 import aitom.image.io as AIIO
-import aitom.filter.guassian as AFG
+import aitom.filter.gaussian as AFG
 #import autoencoder_util as auto
 
 import os, sys
