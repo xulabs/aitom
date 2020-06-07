@@ -1,0 +1,149 @@
+﻿<html>
+<head>
+    <title>three.js webgl - loaders - vtk loader</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <script src="https://github.com/mrdoob/three.js/raw/dev/build/three.min.js"></script>
+    <script src="https://github.com/mrdoob/three.js/raw/dev/examples/js/libs/stats.min.js"></script>
+    <script src="https://github.com/mrdoob/three.js/raw/dev/examples/js/controls/TrackballControls.js"></script>
+    <script src="https://github.com/mrdoob/three.js/raw/dev/examples/js/loaders/VTKLoader.js"></script>
+</head>
+<body>
+    <br />
+    <br />
+    <br />
+    <button onclick="resubmit1()">2</button>
+    <button onclick="resubmit2()">3</button>
+    <button onclick="dispose()">dispose</button>
+    <div id="canvas"></div>
+    <script>
+        server = 'http://localhost:8000/'
+
+        function dispose() {
+            globalGeometry.dispose()
+            material.dispose()
+            scene.dispose()
+            renderer.clear()
+        }
+
+        function reload(path) {
+            if (typeof (globalGeometry) !== "undefined") {
+                console.log("second")
+                globalGeometry.dispose()
+                scene.dispose()
+                scene = new THREE.Scene()
+                scene.add(camera)
+                renderer.clear()
+            }
+            var loader = new THREE.VTKLoader();
+            loader.load(path, function (geometry) {
+                globalGeometry = geometry
+                globalGeometry.center();
+                globalGeometry.computeVertexNormals();
+
+                var mesh = new THREE.Mesh(globalGeometry, material);
+                mesh.position.set(- 0.075, 0.005, 0);
+                mesh.scale.multiplyScalar(0.2);
+                scene.add(mesh);
+            });
+        }
+
+
+        function resubmit1() {
+            console.log("2")
+            reload(server + "test2.vtk")
+        }
+
+        function resubmit2() {
+            console.log("3")
+            reload(server + "test3.vtk")
+        }
+
+
+        var container, stats;
+
+        var camera, controls, scene, renderer, material;
+
+        var globalGeometry
+
+        init();
+        animate();
+
+        function init() {
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 1e10);
+            camera.position.z = 0.2;
+
+            scene = new THREE.Scene();
+
+            scene.add(camera);
+
+            // light
+
+            var dirLight = new THREE.DirectionalLight(0xffffff);
+            dirLight.position.set(200, 200, 1000).normalize();
+
+            camera.add(dirLight);
+            camera.add(dirLight.target);
+
+            material = new THREE.MeshLambertMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+
+            reload(server + "test2.vtk")
+
+
+            // renderer
+
+            renderer = new THREE.WebGLRenderer();
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container = document.getElementById("canvas")
+            //container = document.createElement( 'div' );
+            document.body.appendChild(container);
+            container.appendChild(renderer.domElement);
+
+            // controls
+
+            controls = new THREE.TrackballControls(camera, renderer.domElement);
+
+            controls.rotateSpeed = 5.0;
+            controls.zoomSpeed = 5;
+            controls.panSpeed = 2;
+
+            controls.staticMoving = true;
+
+            stats = new Stats();
+            container.appendChild(stats.dom);
+
+            //
+
+            window.addEventListener('resize', onWindowResize, false);
+
+        }
+
+        function onWindowResize() {
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            controls.handleResize();
+
+        }
+
+        function animate() {
+
+            requestAnimationFrame(animate);
+
+            controls.update();
+            renderer.render(scene, camera);
+
+            stats.update();
+
+        }
+
+
+    </script>
+
+</body>
+</html>
