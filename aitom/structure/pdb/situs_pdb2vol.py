@@ -38,7 +38,7 @@ def convert(op):
 
     os.remove(out_fn)
 
-    print 'pdb_id', op['pdb_id'], 'map size:', op['map'].shape, 'mean:', op['map'].mean(), 'std:', op['map'].std()
+    print ('pdb_id', op['pdb_id'], 'map size:', op['map'].shape, 'mean:', op['map'].mean(), 'std:', op['map'].std())
     return op
 
 
@@ -61,7 +61,7 @@ def convert_interactive(op):
 
     import subprocess
     cmd = [str(op['situs_pdb2vol_program']), op['pdb_file'], out_fn]
-    print cmd
+    print (cmd)
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False, universal_newlines=True)
 
 
@@ -122,8 +122,8 @@ def convert_interactive(op):
         errors = getOutput(errQueue)
         output = getOutput(outQueue)
 
-        print 'output:' + output
-        print 'errors:' + errors
+        print ('output:' + output)
+        print ('errors:' + errors)
 
         someInput = raw_input("Input: ")
         proc.stdin.write(someInput + '\n')
@@ -131,7 +131,7 @@ def convert_interactive(op):
 
     os.remove(out_fn)
 
-    print 'return'
+    print ('return')
     return op
 
 
