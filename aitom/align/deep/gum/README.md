@@ -31,4 +31,14 @@ Please follow the installation guide of AITom.
 
 Alternatively, you could download all the scripts in aitom.align.gum and modify the lines for importing modules to run Gum-Net independently. 
 
+### BibTeX
 
+If you use or modify the code from this project in your project, please cite:
+```bibtex
+@inproceedings{zeng2020gum,
+  title={Gum-Net: Unsupervised Geometric Matching for Fast and Accurate 3D Subtomogram Image Alignment and Averaging},
+  author={Zeng, Xiangrui and Xu, Min},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={4073--4084},
+  year={2020}
+}
