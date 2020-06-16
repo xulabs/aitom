@@ -3,13 +3,7 @@ import numpy as np
 import scipy
 from scipy.spatial import ConvexHull
 import sys
-
-
-def read_mrc(mrc_path):
-    with mrcfile.open(mrc_path) as mrc:
-        v = mrc.data
-    return v
-
+import aitom.io.file as AIF
 
 def ldivide(array, vector):
     return np.linalg.solve(array, vector)
@@ -167,8 +161,6 @@ def permute_dims(array, dims):
     return np.transpose(np.expand_dims(array, axis=max(dims)), dims)
 
 
-def ldivide(array, vector):
-    return np.linalg.solve(array, vector)
 def fit_2_points(vertices):
     num_vertices = len(vertices)
 
@@ -264,9 +256,6 @@ def fit_2_points(vertices):
 
         return R, C
 
-
-def permute_dims(array, dims):
-    return np.transpose( np.expand_dims(array, axis=max(dims)), dims )
 
 
 def B_min_sphere(P, B):
@@ -382,35 +371,6 @@ def exact_min_bound_sphere_3D(array):
 
         return R, C, Xb
 
-
-def B_min_sphere(P, B):
-    eps = 1E-6
-    if len(B) == 4 or len(P) == 0:
-        R, C = fit_sphere_2_points(B)  # fit sphere to boundary points
-        return R, C, P
-
-    # Remove the last (i.e., end) point, p, from the list
-    P_new = P[:-1].copy()
-    p = P[-1].copy()
-
-    # Check if p is on or inside the bounding sphere. If not, it must be
-    # part of the new boundary.
-    R, C, P_new = B_min_sphere(P_new, B)
-    if np.isnan(R) or np.isinf(R) or R < eps:
-        chk = True
-    else:
-        chk = np.linalg.norm(p - C) > (R + eps)
-
-    if chk:
-        if len(B) == 0:
-            B = np.array([p])
-        else:
-            B = np.array(np.insert(B, 0, p, axis=0))
-        R, C, _ = B_min_sphere(P_new, B)
-        P = np.insert(P_new.copy(), 0, p, axis=0)
-    return R, C, P
-
-
 def bounding_sphere(hull, points):
     vertices = [points[i] for i in hull.vertices]
     vertices = np.unique(vertices, axis=0)
@@ -442,7 +402,7 @@ def bounding_sphere(hull, points):
 
 
 def find_min_bounding_sphere(path, L):
-    v = read_mrc(path)
+    v = AIF.read_mrc(path)
 
     points = []
     density_max = v.max()

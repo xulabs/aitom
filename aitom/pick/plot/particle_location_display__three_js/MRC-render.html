@@ -1,0 +1,508 @@
+<!--
+    Three.js is a cross-browser JavaScript library and Application Programming Interface 
+    used to create and display animated 3D computer graphics in a web browser. (https://threejs.org/) 
+    We designed a [CryoEM render](https://github.com/xulabs/aitom/tree/master/aitom/pick/plot/particle_location_display__three_js) 
+    for displaying 3D CryoEM image in web browser.
+
+    Thanks aearanky's [previous work](https://github.com/aearanky/MRC-file-renderer-v1).
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>three.js webgl - loaders - mrc loader</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="styles/styles_v3.css">
+</head>
+
+<body>
+<div class="slidecontainer" style="position: absolute; top:50px; left: 150px; z-index: 1000; width: 20%;">
+    <output style="color:white;"> index X Value: <span id="demoX"></span></output>
+    <input type="range" id="indexX" class="Slider" oninput='functionX()'>
+</div>
+<div class="slidecontainer" style="position: absolute; top:50px; width: 20%; z-index: 1000; left: 500px">
+    <output style="color:white;"> index Y Value: <span id="demoY"></span></output>
+    <input type="range" id="indexY" class="Slider1" oninput='functionY()'>
+</div>
+<div class="slidecontainer" style="position: absolute; top:50px; width: 20%; z-index: 1000;  left: 850px">
+    <output style="color:white;">index Z Value: <span id="demoZ"></span></output>
+    <input type="range" id="indexZ" class="Slider2" oninput='functionZ()'>
+</div>
+
+<div id="info">
+    <a href="http://threejs.org" target="_blank">three.js</a> -
+    3D Cryo-EM render by threejs
+</div>
+<div id="inset"></div>
+<div id="container"></div>
+<div id="containerX"></div>
+<div id="containerY"></div>
+<div id="containerZ"></div>
+
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/threejs/r83/three.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r83/three.js"></script>
+<script src="js/controls/TrackballControls.js"></script>
+<script src="js/Volume.js"></script>
+<script src="js/VolumeSlice.js"></script>
+<script src="js/loaders/MRCLoader.js"></script>
+<script src="js/libs/dat.gui.min.js"></script>
+
+<script>
+    // change the const variable to the directory of your mrc file
+    const url = 'models/test.mrc';
+    var renderer3, renderer4, renderer5, camera3, camera4, camera5;
+    var container, camera, controls, scene, renderer, gui, container2, renderer2, camera2, axes2, scene2;
+    var sliceZ, sliceY, sliceX;
+    var windowWidth, windowHeight;
+    var containerX, sceneX;
+    var containerY, sceneY;
+    var containerZ, sceneZ;
+    var cameraNumbers = [camera, camera3, camera4, camera5];
+    windowWidth = window.innerWidth;
+    windowHeight = window.innerHeight;
+    container = document.getElementById("container");
+    var oneWidth = 675;
+    var oneHeight = 675;
+    var twoHeight = 300;
+    var twoWidth = 300;
+    var view;
+
+    var views = [
+        {
+            left: 0,
+            bottom: 0,
+            width: 0.6,
+            height: 1.0,
+            background: new THREE.Color().setRGB(0, 0, 0),
+            eye: [-200, 200, 300],
+            up: [0, 1, 0],
+            fov: 60,
+
+            updateCamera: function (camera, scene) {
+                camera.lookAt(scene.position);
+            }
+
+        },
+        {
+            left: 0,
+            bottom: 0.0,
+            width: 0,
+            height: 0,
+            background: new THREE.Color().setRGB(0, 0, 0),
+            eye: [300, 0, 0],
+            up: [0, 0, 1],
+            fov: 45,
+
+            updateCamera: function (camera, sceneX) {
+                camera.lookAt(sceneX.position);
+            }
+
+        },
+        {
+            left: 0,
+            bottom: 0.0,
+            width: 0,
+            height: 0,
+            background: new THREE.Color().setRGB(0, 0, 0),
+            eye: [0, 300, 0],
+            up: [0, 1, 0],
+            fov: 45,
+
+            updateCamera: function (camera, sceneY) {
+                camera.lookAt(sceneY.position);
+            }
+        },
+        {
+            left: 0,
+            bottom: 0,
+            width: 0,
+            height: 0,
+            background: new THREE.Color().setRGB(0, 0, 0),
+            eye: [0, 0, 300],
+            up: [1, 0, 0],
+            fov: 45,
+
+            updateCamera: function (camera, sceneZ) {
+                camera.lookAt(sceneZ.position);
+            }
+        }
+    ];
+
+
+    init();
+    animate();
+
+
+    function init() {
+
+
+        view = views[0];
+        camera = new THREE.PerspectiveCamera(view.fov, oneWidth / oneHeight, 0.01, 10000);
+
+        camera.position.x = view.eye[0];
+        camera.position.y = view.eye[1];
+        camera.position.z = view.eye[2];
+
+        camera.up.x = view.up[0];
+        camera.up.y = view.up[1];
+        camera.up.z = view.up[2];
+
+        views[0].camera = camera;
+
+
+        view = views[1];
+        camera3 = new THREE.PerspectiveCamera(view.fov, twoWidth / twoHeight, 0.01, 10000);
+
+        //camera3.position.x = view.eye[0] + 128;
+        camera3.position.x = view.eye[0];
+        camera3.position.y = view.eye[1];
+        camera3.position.z = view.eye[2];
+
+        camera3.up.x = view.up[0];
+        camera3.up.y = view.up[1];
+        camera3.up.z = view.up[2];
+
+        views[1].camera3 = camera3;
+
+
+        view = views[2];
+        camera4 = new THREE.PerspectiveCamera(view.fov, twoWidth / twoHeight, 0.01, 10000);
+
+        camera4.position.x = view.eye[0];
+        //camera4.position.y = view.eye[1] + 20;
+        camera4.position.y = view.eye[1];
+        camera4.position.z = view.eye[2];
+
+        camera4.up.x = view.up[0];
+        camera4.up.y = view.up[1];
+        camera4.up.z = view.up[2];
+
+        views[2].camera4 = camera4;
+
+
+        view = views[3];
+        camera5 = new THREE.PerspectiveCamera(view.fov, twoWidth / twoHeight, 0.01, 10000);
+
+        camera5.position.x = view.eye[0];
+        camera5.position.y = view.eye[1];
+        //camera5.position.z = view.eye[2] + 65;
+        camera5.position.z = view.eye[2];
+
+        camera5.up.x = view.up[0];
+        camera5.up.y = view.up[1];
+        camera5.up.z = view.up[2];
+
+        views[3].camera5 = camera5;
+
+        scene = new THREE.Scene();
+        scene.add(camera);
+
+        sceneX = new THREE.Scene();
+
+        sceneY = new THREE.Scene();
+
+        sceneZ = new THREE.Scene();
+
+        // light
+
+        var dirLight = new THREE.DirectionalLight(0xffffff);
+        dirLight.position.set(200, 200, 1000).normalize();
+        camera.add(dirLight);
+        camera.add(dirLight.target);
+        sceneY.add(dirLight);
+        sceneX.add(dirLight);
+        sceneZ.add(dirLight);
+
+        var manager = new THREE.LoadingManager();
+        var loader = new THREE.MRCLoader(manager);
+        console.log("Manager is ready");
+
+        loader.load(url, function (volume) {
+
+            //box helper to see the extend of the volume
+            var geometry = new THREE.BoxGeometry(volume.xLength, volume.yLength, volume.zLength);
+            var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+            var cube = new THREE.Mesh(geometry, material);
+            var cubeX = new THREE.Mesh(geometry, material);
+            var cubeY = new THREE.Mesh(geometry, material);
+            var cubeZ = new THREE.Mesh(geometry, material);
+            cubeZ.visible = false;
+            cubeY.visible = false;
+            cubeX.visible = false;
+            cube.visible = false;
+            var box = new THREE.BoxHelper(cube);
+            var boxX = new THREE.BoxHelper(cubeX);
+            var boxY = new THREE.BoxHelper(cubeY);
+            var boxZ = new THREE.BoxHelper(cubeZ);
+            scene.add(box);
+            box.applyMatrix(volume.matrix);
+
+            sceneZ.add(cubeZ);
+            sceneY.add(cubeY);
+            sceneX.add(cubeX);
+            scene.add(cube);
+
+            console.log(volume.RASDimensions[2]);
+            //x plane
+            var indexX = 0;
+            sliceX = volume.extractSlice('x', Math.floor(volume.RASDimensions[0] / 2));
+            var sliceXCopy = volume.extractSlice('x', Math.floor(volume.RASDimensions[0] / 2));
+            scene.add(sliceXCopy.mesh);
+            sceneX.add(sliceX.mesh);
+
+            //y plane
+            var indexY = 0;
+            sliceY = volume.extractSlice('y', Math.floor(volume.RASDimensions[1] / 2));
+            var sliceYCopy = volume.extractSlice('y', Math.floor(volume.RASDimensions[1] / 2));
+            scene.add(sliceYCopy.mesh);
+            sceneY.add(sliceY.mesh);
+
+            //z plane
+            var indexZ = 0;
+            sliceZ = volume.extractSlice('z', Math.floor(volume.RASDimensions[2] / 2));
+            var sliceZCopy = volume.extractSlice('z', Math.floor(volume.RASDimensions[2] / 2));
+            scene.add(sliceZCopy.mesh);
+            sceneZ.add(sliceZ.mesh);
+
+            // set three slide bar
+            var sliderX = document.getElementById('indexX');
+            sliderX.max = volume.RASDimensions[0];
+            sliderX.value = volume.RASDimensions[0] / 2;
+            var outputX = document.getElementById('demoX');
+            outputX.innerHTML = sliderX.value;
+
+            // change the senseX with the slide bar
+            functionX = function () {
+                outputX.innerHTML = sliderX.value;
+                indexX = sliderX.value;
+                scene.remove(sliceXCopy.mesh);
+                sceneX.remove(sliceX.mesh);
+                sliceX = volume.extractSlice('x', Math.floor(indexX));
+                sliceXCopy = volume.extractSlice('x', Math.floor(indexX));
+                scene.add(sliceXCopy.mesh);
+                sceneX.add(sliceX.mesh);
+                // adjust the camera position
+                views[1].camera3.position.x = parseInt(indexX) + parseInt(views[1].eye[0]) - parseInt(sliderX.max/2);
+            };
+
+            var sliderY = document.getElementById('indexY');
+            sliderY.max = volume.RASDimensions[1] - 1;
+            sliderY.value = volume.RASDimensions[1] / 2 - 1;
+            var outputY = document.getElementById('demoY');
+            outputY.innerHTML = sliderY.value;
+            functionY = function () {
+                outputY.innerHTML = sliderY.value;
+                indexY = sliderY.value;
+                scene.remove(sliceYCopy.mesh);
+                sceneY.remove(sliceY.mesh);
+                sliceY = volume.extractSlice('y', Math.floor(indexY));
+                sliceYCopy = volume.extractSlice('y', Math.floor(indexY));
+                scene.add(sliceYCopy.mesh);
+                sceneY.add(sliceY.mesh);
+                views[2].camera4.position.y = parseInt(views[2].eye[1]) + parseInt(indexY) - parseInt(sliderY.max/2);
+            };
+            var sliderZ = document.getElementById('indexZ');
+            sliderZ.max = volume.RASDimensions[2];
+            sliderZ.value = volume.RASDimensions[2] / 2;
+            var outputZ = document.getElementById('demoZ');
+            outputZ.innerHTML = sliderZ.value;
+            sliderZ.value = volume.RASDimensions[2] / 2;
+            functionZ = function () {
+                outputZ.innerHTML = sliderZ.value;
+                indexZ = sliderZ.value;
+                scene.remove(sliceZCopy.mesh);
+                sceneZ.remove(sliceZ.mesh);
+                sliceZ = volume.extractSlice('z', Math.floor(indexZ));
+                sliceZCopy = volume.extractSlice('z', Math.floor(indexZ));
+                scene.add(sliceZCopy.mesh);
+                sceneZ.add(sliceZ.mesh);
+                views[3].camera5.position.z = parseInt(views[3].eye[2]) + parseInt(indexZ) - parseInt(sliderZ.max/2);
+            };
+
+            gui.add(volume, "lowerThreshold", volume.min, volume.max, 1).name("Lower Threshold").onChange(function () {
+                volume.repaintAllSlices();
+            });
+            gui.add(volume, "upperThreshold", volume.min, volume.max, 1).name("Upper Threshold").onChange(function () {
+                volume.repaintAllSlices();
+            });
+            gui.add(volume, "windowLow", volume.min, volume.max, 1).name("Window Low").onChange(function () {
+                volume.repaintAllSlices();
+            });
+            gui.add(volume, "windowHigh", volume.min, volume.max, 1).name("Window High").onChange(function () {
+                volume.repaintAllSlices();
+            });
+        });
+
+
+        // renderer
+        renderer3 = new THREE.WebGLRenderer({alpha: true});
+        renderer4 = new THREE.WebGLRenderer({alpha: true});
+        renderer5 = new THREE.WebGLRenderer({alpha: true});
+        renderer = new THREE.WebGLRenderer({antialias: false, alpha: true});
+
+        container = document.createElement('container');
+        containerX = document.createElement('containerX');
+        containerY = document.createElement('containerY');
+        containerZ = document.createElement('containerZ');
+        document.body.appendChild(containerZ);
+        document.body.appendChild(containerY);
+        document.body.appendChild(containerX);
+        document.body.appendChild(container);
+        container.appendChild(renderer.domElement);
+        containerX.appendChild(renderer3.domElement);
+        containerY.appendChild(renderer4.domElement);
+        containerZ.appendChild(renderer5.domElement);
+
+
+        controls = new THREE.TrackballControls(camera, renderer.domElement);
+        controls.rotateSpeed = 5.0;
+        controls.zoomSpeed = 5;
+        controls.panSpeed = 2;
+        controls.noZoom = false;
+        controls.noPan = false;
+        controls.staticMoving = true;
+        controls.dynamicDampingFactor = 0.3;
+
+        var gui = new dat.GUI();
+
+        setupInset();
+
+        window.addEventListener('resize', onWindowResize, false);
+
+    }
+
+    function onWindowResize() {
+
+        windowWidth = window.innerWidth;
+        windowHeight = window.innerHeight;
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        controls.handleResize();
+
+    }
+
+    function animate() {
+
+        var rendererNumber = [renderer, renderer3, renderer4, renderer5];
+        var sceneLetter = [scene, sceneX, sceneY, sceneZ];
+
+        requestAnimationFrame(animate);
+        controls.update();
+        //copy position of the camera into inset
+
+        camera2.position.copy(camera.position);
+        camera2.position.sub(controls.target);
+        camera2.position.setLength(300);
+        camera2.lookAt(scene2.position);
+        renderer2.render(scene2, camera2);
+
+        setupRenderer();
+        setupRenderer3();
+        setupRenderer4();
+        setupRenderer5();
+    }
+
+    function rotateAroundWorldAxis(object, axis, radians) {
+
+        var rotWorldMatrix = new THREE.Matrix4();
+        rotWorldMatrix.makeRotationAxis(axis.normalize(), radians);
+        object.applyMatrix(rotWorldMatrix);
+
+    }
+
+
+    function setupInset() {
+
+        var insetWidth = 150, insetHeight = 150;
+        container2 = document.getElementById('inset');
+        container2.width = insetWidth;
+        container2.height = insetHeight;
+
+        // renderer
+        renderer2 = new THREE.WebGLRenderer({alpha: true});
+        renderer2.setClearColor(0x000000, 0);
+        renderer2.setSize(insetWidth, insetHeight);
+        container2.appendChild(renderer2.domElement);
+
+        // scene
+        scene2 = new THREE.Scene();
+
+        // camera
+        camera2 = new THREE.PerspectiveCamera(50, insetWidth / insetHeight, 1, 1000);
+        camera2.up = camera.up; // important
+
+        // axes
+        axes2 = new THREE.AxisHelper(100);
+        scene2.add(axes2);
+    }
+
+    function setupRenderer() {
+        container = document.getElementById('container');
+        container.appendChild(renderer.domElement);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(oneWidth, oneHeight);
+        view = views[0];
+        camera = view.camera;
+        view.updateCamera(camera, scene);
+        camera.aspect = oneWidth / oneHeight;
+        camera.updateProjectionMatrix();
+        camera.lookAt(scene.position);
+        renderer.render(scene, camera);
+
+    }
+
+    function setupRenderer3() {
+        containerX = document.getElementById('containerX');
+        containerX.appendChild(renderer3.domElement);
+        renderer3.setPixelRatio(window.devicePixelRatio);
+        renderer3.setSize(twoWidth, twoHeight);
+        view = views[1];
+        camera3 = view.camera3;
+        view.updateCamera(camera3, sceneX);
+        camera3.aspect = twoWidth / twoHeight;
+        //camera3.updateProjectionMatrix();
+        //camera3.position.x=view.eye[0]+128;
+        camera3.lookAt(sceneX.position);
+        renderer3.render(sceneX, camera3);
+
+    }
+
+    function setupRenderer4() {
+
+        containerY = document.getElementById('containerY');
+        renderer4.setPixelRatio(window.devicePixelRatio);
+        containerY.appendChild(renderer4.domElement);
+        renderer4.setSize(twoWidth, twoHeight);
+        view = views[2];
+        camera4 = view.camera4;
+        view.updateCamera(camera4, sceneY);
+        camera4.aspect = twoWidth / twoHeight;
+        //camera4.updateProjectionMatrix();
+        camera4.lookAt(sceneY.position);
+        renderer4.render(sceneY, camera4);
+
+    }
+
+    function setupRenderer5() {
+
+        containerZ = document.getElementById('containerZ');
+        renderer5.setPixelRatio(window.devicePixelRatio);
+        containerZ.appendChild(renderer5.domElement);
+        renderer5.setSize(twoWidth, twoHeight);
+        view = views[3];
+        camera5 = view.camera5;
+        view.updateCamera(camera5, sceneZ);
+        camera5.aspect = twoWidth / twoHeight;
+        //camera5.updateProjectionMatrix();
+        camera5.lookAt(sceneZ.position);
+        renderer5.render(sceneZ, camera5);
+
+    }
+
+
+</script>
+
+</body>
+</html>

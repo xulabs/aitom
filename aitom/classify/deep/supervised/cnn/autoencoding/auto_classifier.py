@@ -1,6 +1,6 @@
 import os, sys
 import numpy as np
-import utils as auto
+import aitom.io.file as AIF
 
 from os.path import join as op_join
 from sklearn.metrics import mean_squared_error
@@ -116,7 +116,7 @@ def run_auto_classifier(d, option, out_dir):
 
 if __name__ == "__main__":
 
-    d = auto.pickle_load(sys.argv[1])
+    d = AIF.pickle_load(sys.argv[1])
 
     option = sys.argv[2]
     

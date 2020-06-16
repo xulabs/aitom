@@ -189,12 +189,3 @@ def put_mrc(mrc, path, overwrite=True):
     import aitom.tomominer.core.core as core
     core.write_mrc(mrc, path)
 
-def pickle_load(path):
-    with open(path,'rb') as f:
-        o = pickle.load(f,encoding='iso-8859-1')
-    return o
-
-def pickle_dump(o, path, protocol=-1):
-    with open(path, 'wb') as f:
-        pickle.dump(o, f, protocol=protocol)
-

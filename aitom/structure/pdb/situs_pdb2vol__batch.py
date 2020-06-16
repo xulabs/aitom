@@ -29,7 +29,7 @@ def batch_processing(op):
     if 'pdb_id_selected' in op:
         pdb_path = {_:pdb_path[_] for _ in (set(pdb_path.keys()) & set(op['pdb_id_selected']))}
 
-    print 'generating maps for ', len(pdb_path), 'structures'
+    print ('generating maps for ', len(pdb_path), 'structures')
 
     import copy
     ts = {}
@@ -76,7 +76,7 @@ def display(path):
     for pdb_id in m:
         for voxel_size in m[pdb_id]:
             for reolution in m[pdb_id][voxel_size]:
-                print 'pdb_id', pdb_id, 'voxel_size', voxel_size, 'reolution', reolution
+                print ('pdb_id', pdb_id, 'voxel_size', voxel_size, 'reolution', reolution)
                 VU.dsp_cub(m[pdb_id][voxel_size][reolution]['map'])
 
             raw_input('press enter')
