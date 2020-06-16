@@ -13,11 +13,7 @@ The training is performed in a fully unsupervised fashion to optimize a matching
 
 Please refer to our paper for more details:
 
-Zeng, Xiangrui, and Min Xu. "Gum-Net: Unsupervised Geometric Matching for Fast and Accurate 3D Subtomogram Image Alignment and Averaging." In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 4073-4084. 2020.
-
-http://openaccess.thecvf.com/content_CVPR_2020/html/Zeng_Gum-Net_Unsupervised_Geometric_Matching_for_Fast_and_Accurate_3D_Subtomogram_CVPR_2020_paper.html 
-
-
+Zeng, Xiangrui, and Min Xu. "Gum-Net: Unsupervised Geometric Matching for Fast and Accurate 3D Subtomogram Image Alignment and Averaging." In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 4073-4084. 2020. [[CVPR 2020 open access](http://openaccess.thecvf.com/content_CVPR_2020/html/Zeng_Gum-Net_Unsupervised_Geometric_Matching_for_Fast_and_Accurate_3D_Subtomogram_CVPR_2020_paper.html)]
 
 
 ## Key prerequisites
@@ -30,6 +26,20 @@ http://openaccess.thecvf.com/content_CVPR_2020/html/Zeng_Gum-Net_Unsupervised_Ge
 Please follow the installation guide of AITom. 
 
 Alternatively, you could download all the scripts in aitom.align.gum and modify the lines for importing modules to run Gum-Net independently. 
+
+## Demo
+
+### Dataset
+
+To be linked soon!
+
+### Trained model
+
+To be linked soon!
+
+### Training code
+
+Available soon!
 
 ### BibTeX
 
