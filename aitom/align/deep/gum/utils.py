@@ -1,13 +1,16 @@
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import backend as K
+import math
 
 
 def get_initial_weights(output_size):
     b = np.random.random((6,)) - 0.5
     W = np.zeros((output_size, 6), dtype = 'float32')
     weights = [W, b.flatten()]
+
     return weights    
+
 
 
 def correlation_coefficient_loss(y_true, y_pred):
@@ -23,3 +26,69 @@ def correlation_coefficient_loss(y_true, y_pred):
     r = K.maximum(K.minimum(r, 1.0), -1.0)
 
     return 1 - K.square(r)
+
+
+
+def alignment_eval(y_true, y_pred, image_size):
+    """
+    y_true is defined in Radian [-pi, pi] (ZYZ convention) for rotation, and voxels for translation
+    y_pred is in [0, 1] from sigmoid activation, need to scale y_pred for comparison
+    """
+
+    ang_d = []
+    loc_d = []
+
+    for i in range(len(y_true)):
+        a = angle_zyz_difference(ang1 = y_true[i][:3], ang2 = y_pred[i][:3] * 2 * np.pi - np.pi)
+        b = np.linalg.norm(np.round(y_true[i][3:6]) - np.round((y_pred[i][3:6] * 2 - 1) * (image_size/2) ))
+        ang_d.append(a)
+        loc_d.append(b)
+
+    print('Rotation error: ', np.mean(ang_d), '+/-', np.std(ang_d), 'Translation error: ', np.mean(loc_d), '+/-', np.std(loc_d), '----------')
+
+    
+    
+def angle_zyz_difference(ang1=np.zeros(3), ang2=np.zeros(3)):
+    loc1_r = np.zeros(ang1.shape)
+    loc2_r = np.zeros(ang2.shape)
+
+    rm1 = rotation_matrix_zyz(ang1)
+    rm2 = rotation_matrix_zyz(ang2)
+    loc1_r_t = np.array([loc1_r, loc1_r, loc1_r])
+    loc2_r_t = np.array([loc2_r, loc2_r, loc2_r])
+
+    dif_m = (rm1.dot(np.eye(3) - loc1_r_t)).transpose() - (rm2.dot(np.eye(3) - loc2_r_t)).transpose()
+    dif_d = math.sqrt(np.square(dif_m).sum())
+
+
+    return dif_d 
+
+
+
+def rotation_matrix_zyz(ang):
+    phi = ang[0];       theta = ang[1];     psi_t = ang[2];
+    
+    a1 = rotation_matrix_axis(2, psi_t)       # first rotate about z axis for angle psi_t
+    a2 = rotation_matrix_axis(1, theta)
+    a3 = rotation_matrix_axis(2, phi)
+    
+    rm = a3.dot(a2).dot(a1)      # for matrix left multiplication
+    
+    rm = rm.transpose()       # note: transform because tformarray use right matrix multiplication
+
+    return rm
+
+
+
+def rotation_matrix_axis(dim, theta):
+    # following are left handed system (clockwise rotation)
+    if dim == 0:        # x-axis
+        rm = np.array(  [[1.0, 0.0, 0.0], [0.0, math.cos(theta), -math.sin(theta)], [0.0, math.sin(theta), math.cos(theta)]]  )
+    elif dim == 1:    # y-axis
+        rm = np.array(  [[math.cos(theta), 0.0, math.sin(theta)], [0.0, 1.0, 0.0], [-math.sin(theta), 0.0, math.cos(theta)]]  )
+    elif dim == 2:        # z-axis
+        rm = np.array(  [[math.cos(theta), -math.sin(theta), 0.0], [math.sin(theta), math.cos(theta), 0.0], [0.0, 0.0, 1.0]]  )
+    else:
+        raise    
+    
+    return rm
