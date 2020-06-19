@@ -31,7 +31,9 @@ Alternatively, you could download all the scripts in aitom.align.gum and modify 
 
 ### Dataset
 
-The [demo dataset](https://cmu.box.com/s/la07ke48s6vkv8y4ntv7yn1hlgwo9ybn) consists of 100 subtomogram pairs (20 of each structure) simulated at SNR 0.1. Masks of observed region and missing region in Fourier space are provided for imputation in the spatial transformation step. Transformation ground truth is provided for evaluation. 
+The [demo dataset](https://cmu.box.com/s/la07ke48s6vkv8y4ntv7yn1hlgwo9ybn) consists of 100 subtomogram pairs (20 of each structure) simulated at SNR 0.1. Transformation ground truth is provided for evaluation. 
+
+Masks of observed region and missing region in Fourier space are provided for imputation in the spatial transformation step. Tilt angle range masks can be generated using functions in aitom.image.vol.wedge.util.
 
 ### Trained model
 
