@@ -35,7 +35,7 @@ The [[demo dataset](https://cmu.box.com/s/la07ke48s6vkv8y4ntv7yn1hlgwo9ybn)] con
 
 ### Trained model
 
-The model is trained on the simulated dataset at SNR 100 from the paper.
+The [[model](https://cmu.box.com/s/ymjit1ta5svqb8hyegwf5rqk2m46ouz7)] is trained on the simulated dataset at SNR 100 from the paper.
 
 ### Training code
 
@@ -51,11 +51,15 @@ Output:
 Before finetuning:
 Rotation error:  1.3030150126200715 +/- 0.8484602493466796 Translation error:  5.723414606003282 +/- 3.9436690083966606 ----------
 
+Training Iteration 0
+
 ......
+......
+
+Training Iteration 19
 
 After finetuning:
 Rotation error:  1.0768166138653037 +/- 0.7477417154213482 Translation error:  3.5317874399013327 +/- 2.4426374023491872 ----------
-
 ```
 
 
