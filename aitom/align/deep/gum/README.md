@@ -31,11 +31,11 @@ Alternatively, you could download all the scripts in aitom.align.gum and modify 
 
 ### Dataset
 
-The [demo dataset (https://cmu.box.com/s/la07ke48s6vkv8y4ntv7yn1hlgwo9ybn)] consists of 100 subtomogram pairs (20 of each structure) simulated at SNR 0.1. Masks of observed region and missing region in Fourier space are provided for imputation in the spatial transformation step. Transformation ground truth is provided for evaluation. 
+The [demo dataset](https://cmu.box.com/s/la07ke48s6vkv8y4ntv7yn1hlgwo9ybn) consists of 100 subtomogram pairs (20 of each structure) simulated at SNR 0.1. Masks of observed region and missing region in Fourier space are provided for imputation in the spatial transformation step. Transformation ground truth is provided for evaluation. 
 
 ### Trained model
 
-The [model (https://cmu.box.com/s/ymjit1ta5svqb8hyegwf5rqk2m46ouz7)] is trained on the simulated dataset at SNR 100 from the paper.
+The [model](https://cmu.box.com/s/ymjit1ta5svqb8hyegwf5rqk2m46ouz7) is trained on the simulated dataset at SNR 100 from the paper.
 
 ### Training code
 
