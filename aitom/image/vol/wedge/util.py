@@ -52,3 +52,40 @@ def wedge_mask(size, ang1, ang2=None, tilt_axis=1, sphere_mask=True, verbose=Fal
     return m
 
 
+'''
+wedge mask defined using tilt angles 
+light axis is the direction of electrons
+'''
+
+def tilt_mask(size, tilt_ang1, tilt_ang2=None, tilt_axis=1, light_axis=2, sphere_mask=True):
+    assert tilt_axis != light_axis
+
+    if tilt_ang2 is None:
+        tilt_ang2 = float(N.abs(tilt_ang1))
+        tilt_ang1 = -tilt_ang2
+
+    else:
+        assert tilt_ang1 < 0
+        assert tilt_ang2 > 0
+
+    tilt_ang1 = (tilt_ang1 / 180.0) * N.pi
+    tilt_ang2 = (tilt_ang2 / 180.0) * N.pi
+
+    g = AIVU.grid_displacement_to_center(size=size, mid_co=IVU.fft_mid_co(siz=size))
+
+    plane_axis = set([0,1,2])
+    plane_axis.difference_update([light_axis,tilt_axis])
+    assert len(plane_axis) == 1
+    plane_axis = list(plane_axis)[0]
+
+    x_light = g[light_axis]
+    x_plane = g[plane_axis]
+
+    m = N.zeros(size, dtype=float)
+
+    m[ N.logical_and(x_light <= (N.tan(tilt_ang1) * x_plane), x_light >= (N.tan(tilt_ang2) * x_plane))] = 1.0
+    m[ N.logical_and(x_light >= (N.tan(tilt_ang1) * x_plane), x_light <= (N.tan(tilt_ang2) * x_plane))] = 1.0
+
+    if sphere_mask:    m *= MU.sphere_mask(m.shape)
+
+    return m
