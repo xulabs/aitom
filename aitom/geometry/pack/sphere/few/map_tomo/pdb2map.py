@@ -22,7 +22,8 @@ def pdb2map(op):
     import numpy as np
     for n in ms:
         print(n, np.shape(ms[n]))
-    import tomominer.image.vol.util as TIVU
+    # import tomominer.image.vol.util as TIVU
+    import aitom.image.vol.util as TIVU
     ms = TIVU.resize_center_batch_dict(vs=ms, cval=0.0)
     print('#resize#')
     for n in ms:
