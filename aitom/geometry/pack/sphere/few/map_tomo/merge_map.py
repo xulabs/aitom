@@ -89,7 +89,7 @@ def trim_margin(hugemap):
     trimmed_cub = pad_to_cub(trimmed)
     return trimmed_cub
 
-def trim_target(hugemap, target_center, target_size = 30, loc_r = None):
+def trim_target(hugemap, target_center, target_size = 32, loc_r = None):
     # volume size = 30*30*30
     side = target_size
     if loc_r is None:
