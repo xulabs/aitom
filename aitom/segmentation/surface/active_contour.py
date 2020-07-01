@@ -84,7 +84,6 @@ def active_contour_slice(v, sigma=3.5, membrane_thickness=5, display_slice=-1, o
     return mask_v   
 
 
-
 def create_sphere(cx,cy,cz, r, resolution=360):
     '''
     create sphere with center (cx, cy, cz) and radius r
@@ -111,9 +110,7 @@ def contour_shrink(img):
                 if img[i+1][j] == 2: result[i+1][j]=1
                 if img[i][j-1] == 2: result[i][j-1]=1
                 if img[i][j+1] == 2: result[i][j+1]=1
-                
-                
-    
+                  
     return result
            
 
