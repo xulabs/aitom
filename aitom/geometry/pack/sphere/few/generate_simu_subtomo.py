@@ -9,7 +9,7 @@ op = {
            'map_single_path': './IOfile/map_single'}, # read density map from mrc
     'tomo':{'model':{'missing_wedge_angle':30, 'SNR':500000000},
             'ctf':{'pix_size':1.0, 'Dz':-5.0, 'voltage':300, 'Cs':2.0, 'sigma':0.4}},
-    'target_size':30,
+    'target_size':32,
     'v': None
     }
 
