@@ -10,6 +10,7 @@ import os
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.conf import settings
 from backend.contour import process  
+
 PROJECT_APP_PATH = os.path.dirname(os.path.abspath(__file__))
 def index(request):
 
@@ -36,15 +37,5 @@ def display(request):
 
 
 
-def process(path, savepath):
-    path = settings.MEDIA_ROOT + '/' + path
-    mrc = mrcfile.open(path)
-   # print(type(mrc.data))
-    obj = contour3d(mrc.data, contours=4,figure=None)
-    mlab.close(all=True)
-    vtkout = obj.contour.contour_filter.output
-    write_data(vtkout, settings.MEDIA_ROOT+ '/' + savepath)
-    # obj.module_manager.source.save_output(savepath)
-    return obj
-    
+
    
