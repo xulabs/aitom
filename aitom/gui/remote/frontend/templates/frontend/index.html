@@ -1,0 +1,93 @@
+<!--this page design was taken from https://threejs.org/examples/-->
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>AITom frontend</title>
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="shortcut icon" href=" {% static '/frontend/other/favicon.ico' %} " />
+		<link rel="stylesheet" type="text/css" href=" {% static '/frontend/css/main.css' %} ">
+	</head>
+	<body>
+{% block body %}
+		<div id="panel">
+
+			<div id="header">
+				<h1><a href="https://github.com/xulabs/aitom">AITom frontend</a></h1>
+
+				<div id="sections">
+
+					<span class="selected">Upload an MRC file</span>
+				</div>
+
+
+			</div>
+
+			<div id="panelScrim"></div>
+
+			<div id="contentWrapper">
+
+				<div id="inputWrapper">
+					
+				</div>
+
+				<div id="content">
+				<form method="post" enctype="multipart/form-data" accept = ".mrc">
+    {% csrf_token %}
+    <input type="file" name="myfile">
+    
+    <button type="submit" formaction="/api/model" >Upload</button>
+  </form>
+
+  {% if uploaded_file_url %}
+  
+    <script>
+    sessionStorage['model'] = '{{uploaded_file_url}}'
+    </script>
+  {% endif %}
+
+
+				</div>
+			</div>
+
+		</div>
+
+		<iframe id="viewer" name="viewer" allowfullscreen allowvr onmousewheel="" src = "/display"></iframe>
+
+        {% block extra_js %}
+
+
+		
+		<script>
+
+		var panel = document.getElementById( 'panel' );
+		var content = document.getElementById( 'content' );
+		var viewer = document.getElementById( 'viewer' );
+		var filterInput = document.getElementById( 'filterInput' );
+		var exitSearchButton = document.getElementById( 'exitSearchButton' );
+		var expandButton = document.getElementById( 'expandButton' );
+		var viewSrcButton = document.getElementById( 'button' );
+		var panelScrim = document.getElementById( 'panelScrim' );
+
+		var links = {};
+		var selected = null;
+		var container = document.createElement( 'div' );
+
+		init();
+
+		function init() {
+
+
+
+		}
+
+		
+
+		
+
+		</script>
+		{% endblock extra_js %}
+{% endblock body %}
+	</body>
+</html>
