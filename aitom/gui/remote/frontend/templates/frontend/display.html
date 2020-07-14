@@ -1,23 +1,22 @@
+<!DOCTYPE html>
 ﻿<html>
+{% load static %}
 <head>
     <title>three.js webgl - loaders - vtk loader</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <script src="https://github.com/mrdoob/three.js/raw/dev/build/three.min.js"></script>
-    <script src="https://github.com/mrdoob/three.js/raw/dev/examples/js/libs/stats.min.js"></script>
-    <script src="https://github.com/mrdoob/three.js/raw/dev/examples/js/controls/TrackballControls.js"></script>
-    <script src="https://github.com/mrdoob/three.js/raw/dev/examples/js/loaders/VTKLoader.js"></script>
+    <script src=" {% static '/frontend/js/three.min.js' %} "></script>
+    <script src=" {% static '/frontend/js/stats.min.js' %} "></script>
+    <script src=" {% static '/frontend/js/TrackballControls.js' %} "></script>
+    <script src=" {% static '/frontend/js/VTKLoader.js' %} "></script>
 </head>
 <body>
     <br />
     <br />
     <br />
-    <button onclick="resubmit1()">2</button>
-    <button onclick="resubmit2()">3</button>
-    <button onclick="dispose()">dispose</button>
     <div id="canvas"></div>
     <script>
-        server = 'http://localhost:8000/'
+      //  server = 'http://localhost:8000/'
 
         function dispose() {
             globalGeometry.dispose()
@@ -48,8 +47,15 @@
             });
         }
 
-
-        function resubmit1() {
+	function check(){
+	if (sessionStorage['model'] != undefined){
+	reload(sessionStorage['model'])
+	sessionStorage.removeItem('model')
+	}
+	setTimeout(check,1000)
+	}
+	setTimeout(check,1000)
+      /*  function resubmit1() {
             console.log("2")
             reload(server + "test2.vtk")
         }
@@ -58,7 +64,7 @@
             console.log("3")
             reload(server + "test3.vtk")
         }
-
+*/
 
         var container, stats;
 
@@ -88,7 +94,7 @@
 
             material = new THREE.MeshLambertMaterial({ color: 0xffffff, side: THREE.DoubleSide });
 
-            reload(server + "test2.vtk")
+           // reload(server + "test2.vtk")
 
 
             // renderer

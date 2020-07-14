@@ -2,8 +2,6 @@
 from math import floor, ceil
 
 
-
-
 class PointMap:
     def __init__(self):
         self.xs = []

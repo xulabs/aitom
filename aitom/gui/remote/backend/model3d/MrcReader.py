@@ -1,6 +1,6 @@
 ﻿import mrcfile
 import os
-from MrcWriter import MrcWriter
+from .MrcWriter import MrcWriter
 
 class MrcReader:
     def __init__(self, path, scale_rate=0):

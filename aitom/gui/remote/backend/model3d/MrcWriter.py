@@ -1,6 +1,6 @@
 ﻿import mrcfile
 import numpy as np
-from config import SCALE_BASE
+from .config import SCALE_BASE
 from tqdm import tqdm
 
 class MrcWriter:

@@ -1,5 +1,5 @@
 ﻿import mrcfile
-from MrcReader import MrcReader
+from .MrcReader import MrcReader
 import zipfile
 import os
 

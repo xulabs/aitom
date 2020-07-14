@@ -1,0 +1,5 @@
+mayavi==4.7.1
+vtk==8.2.0
+mrcfile==1.1.2
+numpy==1.18.5
+Django==3.0.8

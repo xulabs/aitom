@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 import mrcfile
 from tqdm import tqdm
-from PointMap import PointMap
+from .PointMap import PointMap
 
 
 def get_rotation_matrix(center, x_rot: float, y_rot: float, z_rot: float, reverse=False):
