@@ -10,7 +10,7 @@ import pickle as pickle
 
 class LSM:
     def __init__(self, filename, readonly=False):
-        import lsm
+        import lsm      # from the lsm-db package
         self.db = lsm.LSM(filename=filename, readonly=readonly)
 
     def __getitem__(self, key):
