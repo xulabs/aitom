@@ -1,8 +1,6 @@
 # Multi-task Learning for Macromolecule Classification, Segmentation-Implementation
 Pytorch Implementation for the Segmentation Part of [**Multi-task Learning for Macromolecule Classification, Segmentation and Coarse Structural Recovery in Cryo-Tomography**](https://arxiv.org/pdf/1805.06332)
 
-![The Overview Framework.png](readme_images/The_Overview_Framework.png)
-
 # Execution Guideline
 ## Requirements
 pytorch==0.4.1  

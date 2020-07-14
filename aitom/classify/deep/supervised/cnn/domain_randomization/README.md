@@ -1,8 +1,6 @@
 # Macromolecule Structure Segmentation-Implementation
 Pytorch Implementation for the Segmentation Part of [**Domain Randomization for Macromolecule Structure Classification and Segmentation in Electron Cyro-tomograms**](https://repository.kaust.edu.sa/bitstream/handle/10754/663480/2019_domainrandomization_bibm.pdf?sequence=1&isAllowed=y)
 
-![The Overview Framework.png](readme_images/The_Overview_Framework.png)
-
 # Execution Guideline
 ## Requirements
 pytorch==0.4.1  

@@ -1,8 +1,6 @@
 # PUB-SalNet-Implementation
 Pytorch Implementation of [**PUB-SalNet: A Pre-Trained Unsupervised Self-Aware Backpropagation Network for Biomedical Salient Segmentation**](https://www.mdpi.com/1999-4893/13/5/126/htm)
 
-![The Overview Framework.png](readme_images/The_Overview_Framework.png)
-
 # Execution Guideline
 ## Requirements
 pytorch==0.4.1  
