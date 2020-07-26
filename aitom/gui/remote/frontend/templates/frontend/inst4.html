@@ -1,0 +1,66 @@
+ 
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>AITom GUI</title>
+  <link rel="stylesheet" href="{% static '/frontend/css/icon.css' %}">
+ <!-- <link rel="stylesheet" href="{% static '/frontend/css/material.indigo-pink.min.css' %}"> -->
+  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-light_blue.min.css">
+  <link rel="stylesheet" href=" {% static '/frontend/css/stepper.css' %} ">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link href="{% static '/frontend/css/iconcss.css' %}" rel='stylesheet' type='text/css'>
+  <link href="{% static '/frontend/css/styles.css' %}" rel='stylesheet' type='text/css'>
+  <link rel="shortcut icon" href=" {% static '/frontend/other/favicon.ico' %} " />
+  <script src="{% static '/frontend/js/jquery.min.js' %} "></script>
+
+  <script src = " {% static '/frontend/js/resumable.js' %}"></script>
+  <script src="{% static '/frontend/js/material.min.js' %}"></script> 
+  <script src=" {% static '/frontend/js/stepper.min.js' %} "></script>
+  
+</head>
+
+<body>
+    <!-- Simple list -->
+<style>
+    .demo-list-item {
+      width: 300px;
+    }
+    </style>
+Now, you can see the name of file that you have selected.
+<br> Enter the coordinates for zooming in the following order:
+<ol>
+<li>Left Upper X</li>
+<li>Left Upper Y</li>
+<li>Left Upper Z</li>
+<li>Right Down X</li>
+<li>Right Down Y</li>
+<li>Right Down Z</li>
+</ol>
+Kindly take care that left-up point should be smaller than right-down point.
+<br><br>
+
+After you click on submit, some magic for extracting a new zoomed in model will occur, and you will be able to see the new model here :)
+<br><br>
+OR
+<br> Enter the coordinates for slicing in the following order:
+<ol>
+<li>Centre X</li>
+<li>Centre Y</li>
+<li>Centre Z</li>
+<li>Rotation X</li>
+<li>Rotation Y</li>
+<li>Rotation Z</li>
+</ol>
+
+<br><br>
+
+After you click on submit, some magic for extracting a slice of model will occur, and you will be able to see the slice here :)
+<br><br>  
+</body>
+
+</html>

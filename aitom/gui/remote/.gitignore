@@ -1,1 +1,9 @@
+<<<<<<< HEAD
+db.sqlite3
+/uploads
+__pycache__/
+run.bat
+
+=======
 db.sqlite3 
+>>>>>>> b75fc973a6f53ef3bcccca31402135ce7c7b5b6d

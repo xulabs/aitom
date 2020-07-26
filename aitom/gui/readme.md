@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # AITOM GUI
 
 This tool is being developed at Xu Labs, CMU to aid the exploration of MRC models. Currently, Zooming into a model and extracting a slice is supported
@@ -80,15 +79,4 @@ All the contents of `tmp` directory are periodically cleared by a `cron` job as 
 
 * Dr Min Xu for his valueable guidance for the project
 * Ms Sinuo Liu for her guidance and facilitation of communication between stakeholders
-=======
-Use `python manage.py runserver` to start the server, then go over to http://localhost:8000 to browser the application.
-
-`backend` folder contains the code that will be used in processing of .mrc file
-
-`frontend` folder contains the GUI related files.
-
-`django_server` folder contains django related files
-
-`uploads` is the media directory for the project.
->>>>>>> b75fc973a6f53ef3bcccca31402135ce7c7b5b6d
 

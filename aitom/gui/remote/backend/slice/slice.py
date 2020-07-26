@@ -1,10 +1,18 @@
 ﻿from math import tan, pi, atan, sin, cos
+import matplotlib
+# avoid UserWarning: Starting a Matplotlib GUI outside of the main thread will likely fail.
+matplotlib.use('agg')
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import pyplot as plt
 import numpy as np
 import mrcfile
 from tqdm import tqdm
 from .PointMap import PointMap
+<<<<<<< HEAD:aitom/gui/remote/backend/slice/slice.py
+from io import BytesIO
+import base64
+=======
+>>>>>>> b75fc973a6f53ef3bcccca31402135ce7c7b5b6d:aitom/gui/remote/slice/slice.py
 
 
 def get_rotation_matrix(center, x_rot: float, y_rot: float, z_rot: float, reverse=False):
@@ -76,7 +84,7 @@ def slice3d(model, center, x_rot: float, y_rot: float, z_rot: float, default_pla
     base = (A ** 2 + B ** 2 + C ** 2) ** 0.5
     rot_matrix = get_rotation_matrix(center, x_rot, y_rot, z_rot, reverse=True)
     ret = []
-    fig = plt.figure()
+    fig = plt.figure(frameon=False)
     ax = fig.add_subplot(221, projection='3d')
     xs, ys, zs = [], [], []
     mp = PointMap()
@@ -138,14 +146,18 @@ def slice3d(model, center, x_rot: float, y_rot: float, z_rot: float, default_pla
     gray_pic = mp.generate_gray_map()
     ax2 = fig.add_subplot(222)
     ax2.imshow(gray_pic, cmap='gray')
-    plt.show()
-
+    #plt.show()
+    buf = BytesIO()
+    
+    plt.savefig(buf, format='png') 
+    buf.seek(0)
+    return base64.b64encode(buf.read())#have to return base64 encoded string, which is 37% larger in size, because otherwise the image data gets corrupted during AJAX request https://stackoverflow.com/a/42929211/4634893	 
 
 if __name__ == '__main__':
-    mrc = mrcfile.open('test.mrc')
+    mrc = mrcfile.open('tomotarget0.mrc')
     model = mrc.data
     # 73 32 -47
     #x_rot, y_rot, z_rot = 12, -23, 83
     x_rot, y_rot, z_rot = 73, 32, -47
-    center = (100, 100, 100)
+    center = (10, 10, 10)
     slice3d(model, center, x_rot, y_rot, z_rot)

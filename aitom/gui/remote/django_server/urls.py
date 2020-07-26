@@ -21,11 +21,31 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import url, include
 
+<<<<<<< HEAD
+#expose the required URLs
+#a script with 'api' prefix goes to backend for handling
+#all other url are handled by front end modules
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('inst1/',views.inst1,name='inst1'),
+    path('inst2/',views.inst2,name='inst2'),
+    path('inst3/',views.inst3,name='inst3'),
+    path('inst4/',views.inst4,name='inst4'),
+    path('display/',views.display,name='display'),
+    path('disp-img/',views.disp_img,name='disp_img'),
+    path('download/',views.download,name='download'),
+    path('admin/', admin.site.urls),
+    path('api/', include('backend.urls')),
+    path('getUploadForm/', views.getUploadForm,name='getUploadForm'),
+    path('getLibrary/', views.getLibrary,name='getLibrary'),
+    path('getInputForm/',views.getInputForm,name='getInputForm'),
+=======
 #expose the three required URLs
 urlpatterns = [
     path('', views.index, name='index'),
     path('display/',views.display,name='display'),
     path('admin/', admin.site.urls),
     path('api/', include('backend.urls')),
+>>>>>>> b75fc973a6f53ef3bcccca31402135ce7c7b5b6d
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
