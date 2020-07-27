@@ -4,6 +4,7 @@ console.warn( "THREE.TrackballControls: As part of the transition to ES6 Modules
  * @author Mark Lundin 	/ http://mark-lundin.com
  * @author Simone Manini / http://daron1337.github.io
  * @author Luca Antiga 	/ http://lantiga.github.io
+ Source: https://github.com/mrdoob/three.js/blob/master/examples/js/controls/TrackballControls.js
  */
 
 THREE.TrackballControls = function ( object, domElement ) {

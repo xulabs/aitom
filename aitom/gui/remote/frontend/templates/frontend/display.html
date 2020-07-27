@@ -1,27 +1,19 @@
 <!DOCTYPE html>
-<<<<<<< HEAD:aitom/gui/remote/frontend/templates/frontend/display.html
 <html>
-=======
-﻿<html>
->>>>>>> b75fc973a6f53ef3bcccca31402135ce7c7b5b6d:aitom/gui/remote/model/frontend/index.html
 {% load static %}
 <head>
     <title>three.js webgl - loaders - vtk loader</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <script src=" {% static '/frontend/js/three.min.js' %} "></script>
-    <script src=" {% static '/frontend/js/stats.min.js' %} "></script>
-    <script src=" {% static '/frontend/js/TrackballControls.js' %} "></script>
-    <script src=" {% static '/frontend/js/VTKLoader.js' %} "></script>
+    <script src="https://cdn.jsdelivr.net/npm/stats-js@1.0.1/build/stats.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r118/three.min.js"></script>
+        <script src=" {% static '/frontend/js/TrackballControls.js' %} "></script>
+
+    <script defer src=" {% static '/frontend/js/VTKLoader.js' %} "></script>
 </head>
 <body>
-<<<<<<< HEAD:aitom/gui/remote/frontend/templates/frontend/display.html
     
-=======
-    <br />
-    <br />
-    <br />
->>>>>>> b75fc973a6f53ef3bcccca31402135ce7c7b5b6d:aitom/gui/remote/model/frontend/index.html
     <div id="canvas"></div>
     <script>
       //  server = 'http://localhost:8000/'
@@ -57,11 +49,7 @@
 
 	function check(){
 	if (sessionStorage['model'] != undefined){
-<<<<<<< HEAD:aitom/gui/remote/frontend/templates/frontend/display.html
 	reload('/download?path=' + sessionStorage['model'])
-=======
-	reload(sessionStorage['model'])
->>>>>>> b75fc973a6f53ef3bcccca31402135ce7c7b5b6d:aitom/gui/remote/model/frontend/index.html
 	sessionStorage.removeItem('model')
 	}
 	setTimeout(check,1000)

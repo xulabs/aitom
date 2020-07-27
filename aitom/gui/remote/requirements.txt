@@ -1,13 +1,5 @@
-<<<<<<< HEAD
 numpy==1.18.5
 mrcfile==1.1.2
 Django==3.0.8
 mayavi==4.7.1
 django2_resumable
-=======
-mayavi==4.7.1
-vtk==8.2.0
-mrcfile==1.1.2
-numpy==1.18.5
-Django==3.0.8
->>>>>>> b75fc973a6f53ef3bcccca31402135ce7c7b5b6d

@@ -8,11 +8,8 @@ import numpy as np
 import mrcfile
 from tqdm import tqdm
 from .PointMap import PointMap
-<<<<<<< HEAD:aitom/gui/remote/backend/slice/slice.py
 from io import BytesIO
 import base64
-=======
->>>>>>> b75fc973a6f53ef3bcccca31402135ce7c7b5b6d:aitom/gui/remote/slice/slice.py
 
 
 def get_rotation_matrix(center, x_rot: float, y_rot: float, z_rot: float, reverse=False):

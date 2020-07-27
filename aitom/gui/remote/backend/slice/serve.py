@@ -1,6 +1,5 @@
 from django.http import HttpRequest, HttpResponse
 from ..util import request_check
-<<<<<<< HEAD
 from .slice import slice3d
 from io import BytesIO
 import ast
@@ -59,11 +58,3 @@ def process(request: HttpRequest):
         return HttpResponse('error occured when processing files:{}'.format(str(e)), status=400)
 
     
-=======
-
-def process(request: HttpRequest):
-    check = request_check(request)
-    if check: return check
-
-    return HttpResponse('slice test')
->>>>>>> b75fc973a6f53ef3bcccca31402135ce7c7b5b6d

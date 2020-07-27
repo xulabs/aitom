@@ -8,6 +8,7 @@ console.warn( "THREE.VTKLoader: As part of the transition to ES6 Modules, the fi
  * @author Andrii Iudin https://github.com/andreyyudin
  * @author Paul Kibet Korir https://github.com/polarise
  * @author Sriram Somasundharam https://github.com/raamssundar
+ Source: https://github.com/mrdoob/three.js/blob/dev/examples/js/loaders/VTKLoader.js
  */
 
 THREE.VTKLoader = function ( manager ) {

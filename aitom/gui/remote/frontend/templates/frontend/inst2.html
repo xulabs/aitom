@@ -7,20 +7,22 @@
 <head>
   <meta charset="UTF-8">
   <title>AITom GUI</title>
-  <link rel="stylesheet" href="{% static '/frontend/css/icon.css' %}">
- <!-- <link rel="stylesheet" href="{% static '/frontend/css/material.indigo-pink.min.css' %}"> -->
+  
+  <!-- Next 6 references are for MDL stepper library -->
   <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-light_blue.min.css">
   <link rel="stylesheet" href=" {% static '/frontend/css/stepper.css' %} ">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link href="{% static '/frontend/css/iconcss.css' %}" rel='stylesheet' type='text/css'>
-  <link href="{% static '/frontend/css/styles.css' %}" rel='stylesheet' type='text/css'>
-  <link rel="shortcut icon" href=" {% static '/frontend/other/favicon.ico' %} " />
-  <script src="{% static '/frontend/js/jquery.min.js' %} "></script>
+  <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+  <script defer src=" {% static '/frontend/js/stepper.min.js' %} "></script> 
+  
 
-  <script src = " {% static '/frontend/js/resumable.js' %}"></script>
-  <script src="{% static '/frontend/js/material.min.js' %}"></script> 
-  <script src=" {% static '/frontend/js/stepper.min.js' %} "></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  
+
+  <script src = "https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
+
+  <link rel="shortcut icon" href=" {% static '/frontend/other/favicon.ico' %} " />
   
 </head>
 
