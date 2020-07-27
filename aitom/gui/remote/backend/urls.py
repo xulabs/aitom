@@ -6,7 +6,8 @@ all the backend url have prefix "api/"
 '''
 
 
-urlpatterns = [ 
-    path('model', model3d.process),
+urlpatterns = [
+    path('model', model3d.process,name='api-model'),
+    path('model-json', model3d.process_json),
     path('slice', slice.process),
-] 
+]

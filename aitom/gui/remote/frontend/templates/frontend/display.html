@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-﻿<html>
+<html>
 {% load static %}
 <head>
     <title>three.js webgl - loaders - vtk loader</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <script src=" {% static '/frontend/js/three.min.js' %} "></script>
-    <script src=" {% static '/frontend/js/stats.min.js' %} "></script>
-    <script src=" {% static '/frontend/js/TrackballControls.js' %} "></script>
-    <script src=" {% static '/frontend/js/VTKLoader.js' %} "></script>
+    <script src="https://cdn.jsdelivr.net/npm/stats-js@1.0.1/build/stats.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r118/three.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/js/loaders/VTKLoader.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/js/controls/TrackballControls.js"></script>
 </head>
 <body>
-    <br />
-    <br />
-    <br />
+    
     <div id="canvas"></div>
     <script>
       //  server = 'http://localhost:8000/'
@@ -49,7 +49,7 @@
 
 	function check(){
 	if (sessionStorage['model'] != undefined){
-	reload(sessionStorage['model'])
+	reload('/download?path=' + sessionStorage['model'])
 	sessionStorage.removeItem('model')
 	}
 	setTimeout(check,1000)

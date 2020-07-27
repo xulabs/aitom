@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+     
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #own
     'frontend',
-    'backend'
+    'backend',
+    'django_server',
+    
+    #for resumable file upload
+    'django2_resumable',
+    
 ]
 
 MIDDLEWARE = [
@@ -132,3 +138,5 @@ STATICFILES_DIRS = [
 # Uploaded files
 MEDIA_URL = '/uploads/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+
+FILE_UPLOAD_TEMP_DIR = '/tmp'
