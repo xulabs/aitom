@@ -11,30 +11,39 @@
 
 <!-- Next 5 references are for MDL stepper library which has been used to primarily build the GUI for this application -->
   <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-light_blue.min.css">
-  <link rel="stylesheet" href=" {% static '/frontend/css/stepper.css' %} ">
+  <link rel="stylesheet" href="https://rawcdn.githack.com/ahlechandre/mdl-stepper/76a68234b07a1ccbcfd008f9ab4db29aa37d01f2/stepper.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <script defer src=" {% static '/frontend/js/stepper.min.js' %} "></script> 
+  <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+  <script defer src="https://unpkg.com/mdl-stepper@1.1.6/stepper.min.js"></script> 
   
 
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   
 
   <script src = "https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
-<script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
   <link rel="shortcut icon" href=" {% static '/frontend/other/favicon.ico' %} " />
 
-  <style>
+  <style defer>
    
     
     .mdl-stepper-demo .mdl-stepper {
       margin: 0;
     }
-    .mdl-stepper > .mdl-step > .mdl-step__content {
-	  width: auto;
-	  height: auto;
-	}
-	
+    
+
+.mdl-step{
+margin:0;
+height:auto;
+width:auto;
+}
+.mdl-step__content
+{
+margin:0;
+height:auto;
+width:auto;
+}
     h1 {
 	font-size: 18px;
 	line-height: 24px;
@@ -164,7 +173,7 @@
                  <div class="mdl-step__content" id = "step4div"></div>
                  <div class="mdl-step__actions">
                    <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored mdl-button--raised" onclick="sessionStorage.clear();location.reload()">
-                     Start Again
+                     Reload
                    </button>
                   
                  </div>
