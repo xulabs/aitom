@@ -1,0 +1,19 @@
+
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    
+   <!-- <button type="submit" formaction="/api/model" >Upload</button> -->
+
+<script>
+var form = document.getElementById("id_select")
+sessionStorage["mrcSelect"] = form.value
+sessionStorage["method"] = 1 //library
+form.addEventListener("change", function(){
+
+//sessionStorage["model"] = '/uploads/vtk/' + form.value.replace(".mrc",".vtk")
+sessionStorage["mrcSelect"] = form.value
+});
+
+</script>
+

@@ -1,4 +1,0 @@
-'''
-GUI via network
-
-'''

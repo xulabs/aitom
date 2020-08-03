@@ -1,0 +1,19 @@
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    
+   <!-- <button type="submit" formaction="/api/model" >Upload</button> -->
+  </form>
+  
+<script>
+var form = document.getElementById("id_select")
+sessionStorage["method"] = 2 //upload
+
+form.addEventListener("change", function(){
+
+//sessionStorage["model"] = '/uploads/vtk' + form.value.replace(".mrc",".vtk")
+//sessionStorage["mrcSelect"] = form.value
+});
+
+</script>  

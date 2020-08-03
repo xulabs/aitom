@@ -1,0 +1,340 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>AITom GUI</title>
+
+ <!-- <link rel="stylesheet" href="{% static '/frontend/css/material.indigo-pink.min.css' %}"> -->
+
+<!-- Next 5 references are for MDL stepper library which has been used to primarily build the GUI for this application -->
+  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-light_blue.min.css">
+  <link rel="stylesheet" href="https://rawcdn.githack.com/ahlechandre/mdl-stepper/76a68234b07a1ccbcfd008f9ab4db29aa37d01f2/stepper.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+  <script defer src="https://unpkg.com/mdl-stepper@1.1.6/stepper.min.js"></script> 
+  
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  
+
+  <script src = "https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
+
+  <link rel="shortcut icon" href=" {% static '/frontend/other/favicon.ico' %} " />
+
+  <style defer>
+   
+    
+    .mdl-stepper-demo .mdl-stepper {
+      margin: 0;
+    }
+    
+
+.mdl-step{
+margin:0;
+height:auto;
+width:auto;
+}
+.mdl-step__content
+{
+margin:0;
+height:auto;
+width:auto;
+}
+    h1 {
+	font-size: 18px;
+	line-height: 24px;
+	font-weight: 500;
+}
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+  </style>
+</head>
+
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+     <header class="mdl-layout__header mdl-color--white-100 mdl-color-text--black-600">
+        <div class="mdl-layout__header-row">
+          <span class="mdl-layout-title">AITOM frontend</span>
+          <span>Utility for exploring MRC file</span>
+          <div class="mdl-layout-spacer"></div>
+          <!--
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+            <label class="mdl-button mdl-js-button mdl-button--icon" for="search">
+              <i class="material-icons">search</i>
+            </label>
+            <div class="mdl-textfield__expandable-holder">
+              <input class="mdl-textfield__input" type="text" id="search">
+              <label class="mdl-textfield__label" for="search">Enter your query...</label>
+            </div>
+          </div>
+          <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
+            <i class="material-icons">more_vert</i>
+          </button>
+          <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="hdrbtn">
+            <li class="mdl-menu__item">About</li>
+            <li class="mdl-menu__item">Contact</li>
+            <li class="mdl-menu__item">Legal information</li>
+          </ul>
+        </div> for adding a header in future -->
+      </header>  
+      <div class="mdl-layout__drawer mdl-color--black-900 mdl-color-text--black-50">
+        <header class="demo-drawer-header">    
+          </header>
+
+            <!-- <form method="post" enctype="multipart/form-data">
+         {% csrf_token %}
+         {{ form.as_p }}
+         
+         
+          <button type="submit" formaction="/api/model" >Upload</button> 
+         </form> -->
+         
+         <div class="mdl-grid">
+           <div class="mdl-cell mdl-cell--12-col">
+             <!-- Stepper for carrying out the process -->
+             <ul class="mdl-stepper mdl-stepper--feedback" id="demo-stepper-feedback">
+               <li class="mdl-step" id = "step1">
+                 <span class="mdl-step__label">
+                   <span class="mdl-step__title">
+                     <span class="mdl-step__title-text">Please select how would you like to proceed</span>
+                   </span>
+                 </span>
+                 <div class="mdl-step__content">
+                   <!--Step 1-->
+                   <form id ="inp">
+                   <input type="radio" name = 'type' value="library" class="mdl-radio__button" checked><label>Browse the library for stored MRC files</label> 
+                   <br><br>
+                   <input type="radio" name = 'type' value="upload" class="mdl-radio__button"><label>Upload a new MRC file</label> 
+                 </form>
+                 </div>
+                 <div class="mdl-step__actions">
+                   <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored mdl-button--raised" data-stepper-next>
+                     Continue
+                   </button>
+                  
+                 </div>
+               </li>
+               <li class="mdl-step">
+                                    <!--Step 2-->
+                 <span class="mdl-step__label">
+                   <span class="mdl-step__title">
+                     <span class="mdl-step__title-text">Choose MRC File</span>
+                   </span>
+                 </span>
+                 <div class="mdl-step__content" id = "step2div">
+         
+         
+             </div>
+                 <div class="mdl-step__actions">
+                   <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored mdl-button--raised" data-stepper-next>
+                     Continue
+                   </button>
+                 
+                 </div>
+               </li>
+                <li class="mdl-step">
+                              <!--Step 3-->
+                    <span class="mdl-step__label">
+                    <span class="mdl-step__title">
+                    <span class="mdl-step__title-text">Choose Your Desired Operation</span>
+                    </span>
+                    </span>
+                    <div class="mdl-step__content">
+                    <!--Step 1-->
+                    <form id ="op">
+                    <input type="radio" name = 'op' value="library" class="mdl-radio__button" checked onclick="sessionStorage['op'] = 1"><label>Zoom</label> 
+                    <br><br>
+                    <input type="radio" name = 'op' value="upload" class="mdl-radio__button" onclick="sessionStorage['op'] = 2"><label>Slice</label> 
+                    </form>
+                    </div>
+                    <div class="mdl-step__actions">
+                    <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored mdl-button--raised" data-stepper-next>
+                    Continue
+                    </button>
+                               
+                    </div>
+              </li>
+                 <li class="mdl-step">
+                                    <!--Step 4-->
+                 <span class="mdl-step__label">
+                   <span class="mdl-step__title">
+                     <span class="mdl-step__title-text">Input Values and submit</span>
+                   </span>
+                 </span>
+                 <div class="mdl-step__content" id = "step4div"></div>
+                 <div class="mdl-step__actions">
+                   <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored mdl-button--raised" onclick="sessionStorage.clear();location.reload()">
+                     Reload
+                   </button>
+                  
+                 </div>
+               </li>
+             </ul>
+           </div>
+         </div>
+         
+         
+         
+             
+      </div>
+      <main class="mdl-layout__content mdl-color--grey-100">
+        <div class="mdl-grid" style = "width:100%;height:100%" >
+      <iframe id="viewer" name="viewer" allowfullscreen allowvr onmousewheel="" src = "/inst1/"></iframe>
+        </div>
+      </main>
+        <!--Dialog Box For Errors-->
+
+      <dialog class="mdl-dialog">
+        <h4 class="mdl-dialog__title">An Error Occured</h4>
+        <div class="mdl-dialog__content">
+          <p id = "error">
+            
+          </p>
+        </div>
+        <div class="mdl-dialog__actions">
+          <button type="button" class="mdl-button close">Close</button>
+        </div>
+      </dialog>
+    </div>
+  <!-- script -->
+  <script defer>
+	  (function () {
+		var csrftoken = '{{ csrf_token }}';
+
+$.queryJSON = function(type,url, data, callback) {
+
+return $.ajax({ //Helper function for errors
+headers: { 
+  
+  'X-CSRFToken': csrftoken,  
+},
+'type': 'POST',
+'url': url,
+'data': JSON.stringify(data),
+
+'success': callback,
+
+'error': function(jqXHR, textStatus = 'error', errorThrown = 'Server Error') {
+//Show dialog box in case of error
+$('#error').html('<h1>' + errorThrown + '</h1><br><br>' + jqXHR.responseText )
+	var dialog = document.querySelector('dialog');
+    if (! dialog.showModal) {
+      dialogPolyfill.registerDialog(dialog);
+    }
+    dialog.showModal();
+    
+    dialog.querySelector('.close').addEventListener('click', function() {
+      dialog.close();
+    });
+}
+})
+}
+    //Add loader for AJAX Requests
+
+$('body').append($('<div/>', {
+  id: 'loadingDiv',
+  class: 'popup',
+  html: "<img src = '/static/frontend/other/ajax-loader.gif' alt = 'loading please wait'>"  
+}));
+var $loading = $('#loadingDiv').hide();
+$(document)
+  .ajaxStart(function () {
+    $loading.show();
+  })
+  .ajaxStop(function () {
+    $loading.hide();
+  });
+      // MDL IO Stepper Implementation for executing application flow
+      var demoFeedback = function (e) {
+
+        var element = document.querySelector('.mdl-stepper#demo-stepper-feedback');
+
+        if (!element) return;
+
+        var stepper = element.MaterialStepper;
+        var steps = element.querySelectorAll('.mdl-step');
+        var step;
+        var frame = document.getElementById("viewer")
+        for (var j = 0; j < steps.length; j++) {
+          
+          step = steps[j];
+          i = j+1 //to avoid confusion with div id naming
+          if (i==1){
+          step.addEventListener('onstepnext', function (e) {
+            
+            
+          choice = $('input[name=type]:checked', '#inp').val()
+		  console.log(choice)
+
+          if (choice == 'library')
+          { 
+		 $.queryJSON('POST','/getLibrary/',{}, function(result){ 
+			// console.log(result)
+		    $("#step2div").html(result);
+	  });
+		 }
+         else if (choice == 'upload'){ 
+		 $.queryJSON('POST','/getUploadForm/',{}, function(result){ 
+			// console.log(result)
+		    $("#step2div").html(result);
+	  });
+		 }
+          frame.src = '/inst2' //Update Instructions
+          stepper.next();
+          });
+		  }
+		  else if (i==2){
+			
+        step.addEventListener('onstepnext', function (e) {
+          frame.src = '/inst3' //just update the instructions page nothing else to do as choice for stepper 3 is a static radio form.
+         stepper.next();
+        })
+		  } 
+		  else if (i==3){
+        sessionStorage["op"] = 1 //set zoom as default, it will be updated by radio above if the user does change
+        step.addEventListener('onstepnext', function (e) {
+            
+            
+            if (sessionStorage['mrcSelect'] != null)
+          {	
+            $.queryJSON('POST','/getInputForm/',{filename:sessionStorage["mrcSelect"],method:sessionStorage["method"],op:sessionStorage["op"]}, function(result){ 
+             //console.log(result)
+             
+              $("#step4div").html(result);
+              frame.src = '/inst4'
+
+          });
+          stepper.next();
+          
+          }
+            else
+            alert("Please upload a file or select a file")
+            });
+      }
+      else if (i==4){
+      //Last Stepper, nothing to process.
+      step.addEventListener('onstepnext', function (e) {
+           stepper.next();
+
+            })      }
+        
+      };
+      }
+      window.addEventListener('load', demoFeedback);
+
+    })(); 
+   
+  </script>
+  
+</body>
+
+</html>
