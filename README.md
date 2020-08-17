@@ -12,6 +12,8 @@ AITom is originated from the tomominer library, adapted from an [extended versio
 
 ## [Question & Answer](https://github.com/xulabs/aitom/blob/master/doc/iQ_A.md)
 
+## [Publications](https://github.com/xulabs/aitom/blob/master/doc/publications.md)
+
 # About us
 ## Xulab at Carnegie Mellon University Computational Biology Department
 Code and data for projects developed and maintained by [Xu Lab](https://cs.cmu.edu/~mxu1) and [collaborators](https://github.com/xulabs/aitom/blob/master/doc/collaborators.md). 
