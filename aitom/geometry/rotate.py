@@ -51,16 +51,16 @@ def rotate3d_zyz(data, angle = None, rm = None, center=None, order=2, cval = 0.0
         (cx, cy, cz) = center
 
 
-    if rm == None:
+    if rm is None:
         Inv_R = AA.rotation_matrix_zyz(angle)
     else:
         Inv_R = rm    
     
     from scipy import mgrid
     grid = mgrid[-cx:data.shape[0]-cx, -cy:data.shape[1]-cy, -cz:data.shape[2]-cz]
-    temp = grid.reshape((3, grid.size / 3))
-    temp = np.dot(Inv_R, temp)
-    grid = np.reshape(temp, grid.shape)
+    temp = grid.reshape((3, N.int(grid.size/3)))
+    temp = N.dot(Inv_R, temp)
+    grid = N.reshape(temp, grid.shape)
     grid[0] += cx
     grid[1] += cy
     grid[2] += cz
@@ -90,9 +90,9 @@ def translate3d_zyz(data, dx=0, dy=0, dz=0, order=2, cval = 0.0):
     # return res
     from scipy import mgrid
     grid = mgrid[0.:data.shape[0], 0.:data.shape[1], 0.:data.shape[2]]
-    grid[0] -= dx - data.shape[0]/2
-    grid[1] -= dy - data.shape[1]/2
-    grid[2] -= dz - data.shape[2]/2
+    grid[0] -= dx 
+    grid[1] -= dy  
+    grid[2] -= dz  
     from scipy.ndimage import map_coordinates
     d = map_coordinates(data, grid, order=order, cval = cval)
     
@@ -105,7 +105,7 @@ def rotate_interpolate_pad_mean(v, angle=None, rm=None, loc_r=None):
 
     cval = v.mean()
     
-    vr = rotate3d_zyz(v, angle, cval = cval)
+    vr = rotate3d_zyz(v, angle = angle, cval = cval)
     
     vr = translate3d_zyz(vr, loc_r[0], loc_r[1], loc_r[2], cval = cval)
 
