@@ -2,7 +2,7 @@
 In this tutorial, an example run of template matching using AITom is shown in template_matching_demo.py. This tutorial uses actin filament template matching in lamellipodia as an example. With appropriate templates and adjustments to parameters, the same approach can be applied to the analysis of other cellular structures as well. For a description of template matching, see section 3.2.1 of by Zeng and Xu (2019). The demo data can be downloaded from https://cmu.app.box.com/s/e1jed7sionza8uehzzy59lcyzmmbhdp8.
 
 ## Map
-The lamellipodia tomogram data used in this tutorial were originally published by Vinzenz et al. (2012). The dataset can be downloaded from https://cellix.imba.oeaw.ac.at/lamellipodia/et. demo_map.rec is a subtomogram sliced from the dataset above. 
+The lamellipodia tomogram data used in this tutorial were originally published by Vinzenz et al. (2012). The dataset was downloaded from https://cellix.imba.oeaw.ac.at/lamellipodia/et. demo_map.rec is a subtomogram sliced from the dataset above. 
 
 ## Template
 The template used in this tutorial, demo_template.rec, is an cylindrical actin filament segment sliced from the lamellipodia tomogram. Rigort et al. (2012) described their template used for actin filament template matching as a cylinder with a length of 42nm. demo_template.rec roughly fits this description, but the template can be improved by denoising and averaging multiple filament segments.
