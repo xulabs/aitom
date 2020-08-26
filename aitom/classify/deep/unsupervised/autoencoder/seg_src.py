@@ -89,11 +89,21 @@ def decode_images(autoencoder, vs):
     
     
 def image_label_prepare(sel_clus, km):
+    # sel_clus = {0:[3,21,28,34,38], 1:[15,25,29]}
+    # km = {0:[uuid00,uuid01...], 1:[uuid10,uuid11...]}
     vs_lbl = {}
-    for lbl in sel_clus:
-        for clus_id in sel_clus[lbl]:
-            for k in km[clus_id]:
+    '''
+    for lbl in sel_clus:  # lbl = 0,1
+        for clus_id in sel_clus[lbl]:  # clus_id = 3,21,28...
+            for k in km[clus_id]:  #  k = ?
                 vs_lbl[k] = lbl
+            # for k in km[lbl]:  # k = uuid00,uuid01...
+                # vs_lbl[k] = lbl
+    '''
+    for lbl in sel_clus:  
+        for k in range(len(sel_clus[lbl])):
+            uid = km[lbl][sel_clus[lbl][k]]
+            vs_lbl[uid] = lbl
     return vs_lbl
 
 
