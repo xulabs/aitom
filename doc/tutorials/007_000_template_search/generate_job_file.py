@@ -59,13 +59,13 @@ print(len(angles) ," angle combinations in total for template rotation")
 
 #TODO: change file paths
 job_file = {	"id": "test_id",
-				"out_dir":"/Users/xueyaoguo/Desktop/template_matching_tutorial/results", #TODO
-				"template":"/Users/xueyaoguo/Desktop/template_matching_tutorial/demo_template.rec", #TODO
+				"out_dir":"./template_matching_tutorial/results", #TODO
+				"template":"./template_matching_tutorial/demo_template.rec", #TODO
 				"mode":"normalized-cor", 
 				"angles": angles,
-				"map_file":"/Users/xueyaoguo/Desktop/template_matching_tutorial/demo_map.rec",#TODO
-				"stat_out":"/Users/xueyaoguo/Desktop/template_matching_tutorial/results/out.p" #TODO
+				"map_file":"./template_matching_tutorial/demo_map.rec",#TODO
+				"stat_out":"./template_matching_tutorial/results/out.p" #TODO
 			}
 
-pickle.dump(job_file, open("/Users/xueyaoguo/Desktop/template_matching_tutorial/job_file.p", "wb")) #TODO
+pickle.dump(job_file, open("./template_matching_tutorial/job_file.p", "wb")) #TODO
 print("job_file.p generated")
