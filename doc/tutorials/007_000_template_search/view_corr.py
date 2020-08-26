@@ -2,10 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #load corr and orientation
-c = np.load('/Users/xueyaoguo/Desktop/template_matching_tutorial/results/test_id-c.npy') #(10, 400, 398)
-#phi = np.load('/Users/xueyaoguo/Desktop/template_matching_tutorial/results/test_id-phi.npy')
-#psi = np.load('/Users/xueyaoguo/Desktop/template_matching_tutorial/results/test_id-psi.npy')
-#theta = np.load('/Users/xueyaoguo/Desktop/template_matching_tutorial/results/test_id-theta.npy')
+c = np.load('./template_matching_tutorial/results/test_id-c.npy') #(10, 400, 398)
+#phi = np.load('./template_matching_tutorial/results/test_id-phi.npy')
+#psi = np.load('./template_matching_tutorial/results/test_id-psi.npy')
+#theta = np.load('./template_matching_tutorial/results/test_id-theta.npy')
 
 #view
 for i in range(c.shape[0]):
