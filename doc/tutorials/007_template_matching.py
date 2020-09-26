@@ -1,24 +1,13 @@
 #!/usr/bin/env python3
-
 '''
-arguments needed from job_file.p:
-	mode
-	template
-    map_file
-    job
-    angles
-    id
-    out_dir
-    stat_out
-Demo data came from: https://cellix.imba.oeaw.ac.at/lamellipodia/et
-
+Template matching pipeline
+Demo data from: https://cellix.imba.oeaw.ac.at/lamellipodia/et
 To run this script:
-python3 <filepath>/template_matching_demo.py <filepath>/job_file.py
-
-output: c.npy, phi.npy, theta.npy, psi.npy
+python3 <filepath>/template_matching_pipeline.py
+Output: c.npy, phi.npy, theta.npy, psi.npy
 '''
 
-import os, sys, json, time
+import os, sys, json, time, math
 import pickle
 import numpy as N
 import scipy.ndimage.filters as SNF
@@ -30,6 +19,31 @@ import aitom.filter.normalized_cross_correlation as FNCC #cross correlation
 import aitom.filter.local_extrema as FLE
 
 import mrcfile
+
+def generate_all_rotation_angles(increment):
+    '''
+    generates all the ZYZ rotation angle combinations for the template from a user-specified increment value
+    n^3 combinations in total for z, y, z 
+    e.g. (4.71238898038469, 4.1887902047863905, 1.5707963267948966) for (phi, theta, psi)
+    returns a python array of angle 3-tuples
+    '''
+    n = round( (2*math.pi) / increment) #number of rotations along one axis, assume int (e.g. 0, 45, 90, 135, 180, 225, 270, 315,  8 rotations, in radian)
+    print(n, "rotations along each axis")
+    print("generating template rotations...")
+
+    angles = [] # a python array of angle tuples
+    phi = 0.0
+    theta = 0.0
+    psi = 0.0
+    for i in range(n): #phi, rotation about Z
+        phi = i * increment
+        for j in range(n): #theta, rotation about Y
+            theta = j * increment
+            for k in range(n): #psi, rorarion about Z
+                psi = k * increment
+                angles.append((phi, theta, psi))
+
+    return angles
 
 def scan(op):
     '''
@@ -79,7 +93,7 @@ def scan(op):
     for i, (phi, theta, psi) in enumerate(op['angles']): 
         #print(i, (phi, theta, psi))
     
-    	#template rotation with affine transformation
+        #template rotation with affine transformation
         tr = GR.rotate(t, angle=(phi, theta, psi), default_val=t_mean) 
         tr = tr.astype(N.float)
         
@@ -131,14 +145,32 @@ def scan(op):
     if os.path.isfile(re['c']) and os.path.isfile(re['phi']) and os.path.isfile(re['theta']) and os.path.isfile(re['psi']):     return re
 
 def main(): 
-    #load input values from job_file.p
-    job_file = sys.argv[1]
-    print ('loading job from', job_file)
+    '''
+    demo increment = 30 degree
+    360/30 = 12 rotations along each of the 3 axes
+    12^3 = 1728 template rotations in total
+    run time ~70min
+    '''
+    increment = (1/6)*math.pi #TODO: adjust increment for more accuracy or better run time
+    print("angle increment: " , round(180.0*increment/math.pi), "degree" )
+	
+    angles = generate_all_rotation_angles(increment) #generate all angle combinations for template rotation
+    print(len(angles) ," angle combinations in total for template rotation")
 
-    with open(job_file, 'rb') as f:     jop = pickle.load(f)
+    #input parameters
+    #TODO: change file paths
+    jop = {	"id": "test_id", #TODO: id of the current job
+            "out_dir":"./template_matching_tutorial/results", #TODO: output directory
+            "template":"./template_matching_tutorial/demo_template.rec", #TODO: filepath of the template (a mrc or rec file)
+            "mode":"normalized-cor", #"convolve" or "normalized-cor" 
+            "angles": angles, #a list of (phi, theta, psi) tuples in the ZYZ convention for the template to be rotated (see Euler angles)
+            "map_file":"./template_matching_tutorial/demo_map.rec",#TODO: filepath to the subtomogram to be analized
+            "stat_out":"./template_matching_tutorial/results/out.p" #TODO: name or filepath of the output file generated with pickle.dump()
+            }
+
     print ('to process', len(jop['angles']), 'rotation angles')        ;       sys.stdout.flush()
 
-    #parse input parameters, see generate_job_file.py
+    #parse input parameters 
     sop = {'id': jop['id']}
     sop['out_dir'] = jop['out_dir']
     sop['template'] = jop['template']
