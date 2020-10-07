@@ -32,3 +32,6 @@ pip install -r requirements.txt
 3. clean && build library
 
 ## Singularity
+
+## Google Colab
+
