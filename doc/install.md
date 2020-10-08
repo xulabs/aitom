@@ -35,3 +35,5 @@ pip install -r requirements.txt
 
 ## Google Colab
 
+Please refer to AITom [Install_for_Google_Colab.ipynb](https://github.com/Shadowalker1995/aitom/blob/master/doc/Install_for_Google_Colab.ipynb)
+
