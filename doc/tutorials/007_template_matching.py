@@ -104,7 +104,7 @@ def scan(op):
             tmr = GR.rotate(tm, angle=(phi, theta, psi), default_val=0.0)
             tr[tmr < 0.5] = float('NaN')
 
-            c = FNCC.cor(v=v, t=tr) #calculate Pearson cross correlation
+            c = FC.pearson_correlation_simple(v=v, t=tr) #calculate Pearson cross correlation
         else:
             raise Exception('mode')
 
