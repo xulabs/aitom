@@ -1,14 +1,14 @@
 # Template Matching Tutorial
-In this tutorial, an example run of template matching using AITom is shown in template_matching_demo.py. This tutorial uses actin filament template matching in lamellipodia as an example. With appropriate templates and adjustments to parameters, the same approach can be applied to the analysis of other cellular structures as well. For a description of template matching, see section 3.2.1 of by Zeng and Xu (2019). The demo data can be downloaded from https://cmu.app.box.com/s/e1jed7sionza8uehzzy59lcyzmmbhdp8.
+In this tutorial, an example run of template matching using AITom is shown in 007_template_matching.py. This tutorial uses actin filament template matching in lamellipodia as an example. With appropriate templates and adjustments to parameters, the same approach can be applied to the analysis of other cellular structures as well. For a description of template matching, see section 3.2.1 of by Zeng and Xu (2019). The demo data can be downloaded from https://cmu.app.box.com/s/e1jed7sionza8uehzzy59lcyzmmbhdp8.
 
 ## Map
-The lamellipodia tomogram data used in this tutorial were originally published by Vinzenz et al. (2012). The dataset was downloaded from https://cellix.imba.oeaw.ac.at/lamellipodia/et. demo_map.rec is a subtomogram sliced from the dataset above. 
+The lamellipodia tomogram data used in this tutorial were originally published by Vinzenz et al. (2012). The dataset was downloaded from https://cellix.imba.oeaw.ac.at/lamellipodia/et. demo_map.rec is a subtomogram sliced from the dataset above.
 
 ## Template
 The template used in this tutorial, demo_template.rec, is an cylindrical actin filament segment sliced from the lamellipodia tomogram. Rigort et al. (2012) described their template used for actin filament template matching as a cylinder with a length of 42nm. demo_template.rec roughly fits this description, but the template can be improved by denoising and averaging multiple filament segments.
 
-## Input File and Parameters
-To generate the input file (job_file.p) for template_matching_demo.py, use generate_job_file.py. job_file.p contains the following input values:  
+## Input
+007_template_matching.py contains the following input values in main():  
 - id - id of the current job  
 - out_dir - output directory  
 - template - filepath of the template (a mrc or rec file)  
@@ -23,16 +23,16 @@ Note that AITom uses the ZYZ representation of Euler angles for template rotatio
 - theta: rotation angle about the y axis
 - psi: rotation angle about the z axis
 
-The generate_all_rotation_angles(increment) function generates all the ZYZ rotation angle combinations for the template from a user-specified increment value. The tutorial uses an increment value of 1/6 π for phi, theta, and psi, giving 12 rotations along each axis and 1728 template orientations in total. generate_job_file.py contains example input values and can be modified to generate custom job_file.p. Parameters to be modified are marked with \#TODO comments. The file paths should be change accordingly.
+The generate_all_rotation_angles(increment) function generates all the ZYZ rotation angle combinations for the template from a user-specified increment value. The tutorial uses an increment value of 1/6 π for phi, theta, and psi, giving 12 rotations along each axis and 1728 template orientations in total. 007_template_matching.py contains example input values and can be modified by the user. Parameters to be modified are marked with \#TODO comments. The file paths should be change accordingly.
 
 ## Tutorial Outline
-1. Generate job_file.p by running generate_job_file.py. The input parameters can be changed in generate_job_file.py. For a description of the input parameters, see Input File and Parameters.
-2. Run template_matching_demo.py:  
-python3 \<filepath\>/template_matching_demo.py \<filepath\>/job_file.p   
-Inside template_matching_demo.py, the steps for template matching are:
+1. Modify the input parameters marked by the \#TODO comments in 007_template_matching.py. For a description of the input parameters, see the Input section.
+2. Run 007_template_matching.py:  
+python3 \<filepath\>/template_matching_demo.py  
+Within 007_template_matching.py, the steps for template matching are:
   * load the template (demo_template.rec) and the map (demo_map.rec)
   * preprocess the template (see code, can be customized)
-  * template rotations as specified in job_file.p
+  * template rotations
   * calculate cross-correlation
   * obtain the correlation matrix (c_max) and the orientation matrices (phi_max, theta_max, psi_max)
 
@@ -42,12 +42,7 @@ Inside template_matching_demo.py, the steps for template matching are:
   * id-psi.npy
   * id-theta.npy  
 
-id-c.npy is the correlation matrix. id-phi.npy, id-psi.npy, id-theta.npy are the orientation matrices. For further analysis, the .npy files can be read with the numpy.load() function. For sample output files, go to the results folder at https://cmu.app.box.com/s/e1jed7sionza8uehzzy59lcyzmmbhdp8.
-
-
-## Example Results
-A visualization of the correlation matrix (view_corr.py):
-![image info](./c_max_30_degree_rotation.png)
+id-c.npy is the correlation matrix. id-phi.npy, id-psi.npy, id-theta.npy are the orientation matrices. For further analysis, the .npy files can be read with the numpy.load() function. 
 
 ## References
 
