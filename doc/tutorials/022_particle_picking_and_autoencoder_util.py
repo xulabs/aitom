@@ -1,10 +1,12 @@
-import os, shutil, uuid
+import os, shutil, uuid, time
 import aitom.io.file as io_file
 import aitom.image.vol.util as im_vol_util
 from aitom.filter.gaussian import smooth
 import matplotlib.pyplot as plt
 import numpy as np
 import aitom.io.file as AIF
+import ipywidgets as ipyw
+from ipywidgets import HBox, VBox, Label, widgets
 
 
 class ParticlePicking():
@@ -91,6 +93,15 @@ class ParticlePicking():
 
     def select(self,remove_particles,pick_num):
         d = io_file.pickle_load(os.path.join(self.dump_path,"demo_single_particle_subvolumes.pickle"))
+        if 'self.centers' not in dir():
+            centers = []
+            uuids = []
+            for k,v in d['vs'].items():
+                if v['v'] is not None:
+                    centers.append(v['center'])
+                    uuids.append(k)
+            self.centers = centers
+            self.uuids = uuids
         subvols_loc = os.path.join(self.dump_path,"selected_demo_single_particle_subvolumes.pickle")
         particles_num = pick_num
         result = {}
@@ -110,7 +121,71 @@ class ParticlePicking():
         subvols_loc = './tmp/picking/selected_demo_single_particle_subvolumes.pickle'
         AIF.pickle_dump(result, subvols_loc)
         print("Save subvolumes .pickle file to:", subvols_loc) 
+
+
+class ImageSliceViewer3D:
+    def __init__(self, path, picking_path, figsize=(6,6), cmap='gray'):
+        self.volume = io_file.read_mrc_data(path)
+        self.picking_path = picking_path
+        self.subvols_loc = os.path.join(self.picking_path,"demo_single_particle_subvolumes.pickle")
+        self.d = io_file.pickle_load(self.subvols_loc)
+        self.figsize = figsize
+        self.cmap = cmap
+        self.v = [np.min(self.volume), np.max(self.volume)]
+        ipyw.interact(self.view_selection)
+    
+    def plot_slice(self, z, sigma=2, R=10):
         
+        time1 = time.time()
+        d = self.d
+        a = self.volume
+        if sigma == 0:
+            a_smooth = a
+        else:
+            a_smooth = smooth(a,sigma)
+
+        if 'self.centers' not in dir():
+            centers = []
+            uuids = []
+            for k,v in d['vs'].items():
+                if v['v'] is not None:
+                    centers.append(v['center'])
+                    uuids.append(k)
+            self.centers = centers
+            self.uuids = uuids
+        
+        centers = np.array(centers)
+
+        slice_centers = centers[(centers[:,2]-z)**2<R**2]
+        img = a_smooth[:,:,z]
+        plt.rcParams['figure.figsize'] = self.figsize
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        for center_num in range(len(slice_centers)):
+            y, x = slice_centers[center_num][0:2]
+            r = np.sqrt(R**2 - (slice_centers[center_num][2]-z)**2)
+            circle = plt.Circle((x, y), r, color='b', fill=False)
+            plt.gcf().gca().add_artist(circle)
+        ax_u = ax.imshow(img, cmap = self.cmap)
+        print('plot_slice time',time.time()-time1)
+        
+    def view_selection(self):
+        self.vol = self.volume
+        maxZ = self.vol.shape[2] - 1
+        
+        style = {'description_width': 'initial'}
+
+        z=ipyw.IntSlider(min=0, max=maxZ, step=1, value=0, descritpion='z', style=style,continuous_update=False)
+        sigma=ipyw.FloatSlider(min=0, max=10, step=0.5, value=2.0, continuous_update=False)
+        R=ipyw.IntSlider(min=1, max=20, step=3, value=10, continuous_update=False)
+       
+        H1 = HBox([HBox([Label('sigma'),sigma]),HBox([Label('R'),R])])
+        H2 = HBox([Label('z'),z])
+        ui = VBox([H1,H2])
+        
+        out = widgets.interactive_output(self.plot_slice, {'z': z, 'sigma': sigma, 'R': R})
+        display(ui, out)
+
 
 def mkdir(path):
     if os.path.exists(path):
