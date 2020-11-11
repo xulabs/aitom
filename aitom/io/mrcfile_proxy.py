@@ -16,8 +16,14 @@ def read(path):
     return {'header':header, 'data': data}
 
 def read_data(path):
-    return read(path)['data']
 
+    mrc = mrcfile.open(path,mode='r+',permissive=True)
+    a = mrc.data
+    assert a.shape[0] > 0
+    a = a.astype(N.float32) 
+    a = a.transpose([2,1,0])
+    
+    return a
 
 def read_header(path):
     from mrcfile.mrcinterpreter import MrcInterpreter
