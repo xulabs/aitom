@@ -37,3 +37,6 @@ pip install -r requirements.txt
 
 Please refer to [Install_for_Google_Colab.ipynb](https://github.com/Shadowalker1995/aitom/blob/master/doc/Install_for_Google_Colab.ipynb)
 
+## Remarks
+
+For using the deep learning functions based on GPU, we recommend to use CUDA version 10 and up, together with cudaNN
