@@ -19,6 +19,7 @@ Zeng, Xiangrui, and Min Xu. "Gum-Net: Unsupervised Geometric Matching for Fast a
 ## Package versions
 * keras==2.2.4
 * tensorflow-gpu==1.12.0
+* h5py==2.10.0
 
 
 

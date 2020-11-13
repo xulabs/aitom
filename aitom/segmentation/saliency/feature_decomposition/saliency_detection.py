@@ -11,7 +11,7 @@ import gc
 from numba import jit
 from scipy.spatial.distance import cdist
 from scipy import signal
-
+import mrcfile
 
 '''
 saliency detection
@@ -29,9 +29,10 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
     a = SN.gaussian_filter(input=a, sigma=gaussian_sigma)  # de-noise
     end_time = time.time()
     print('de-noise takes', end_time - b_time, 's', ' sigma=', gaussian_sigma)
+    original_tom = a
     if save_flag:
         img = (a[:, :, int(a.shape[2] / 2)]).copy()
-        plt.imsave('./result/original.png', img, cmap='gray')
+        plt.imsave('Desktop/result/original.png', img, cmap='gray')
 
     # Step 2
     # Supervoxel over-segmentation
@@ -95,7 +96,7 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
     print('Supervoxel over-segmentation done,', end_time - start_time, 's')
 
     if save_flag:
-        np.save('./result/label', label)
+        np.save('Desktop/result/label', label)
         img = (a[:, :, int(a.shape[2] / 2)]).copy()
         k = int(a.shape[2] / 2)
         draw_color = np.min(a)
@@ -104,7 +105,7 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
                 if label[i][j][k] != label[i - 1][j][k] or label[i][j][k] != label[i + 1][j][k] or label[i][j][k] != \
                         label[i][j - 1][k] or label[i][j][k] != label[i][j + 1][k]:
                     img[i][j] = draw_color
-        plt.imsave('./result/SLIC.png', img, cmap='gray')
+        plt.imsave('Desktop/result/SLIC.png', img, cmap='gray')
     del distance
     gc.collect()
 
@@ -124,6 +125,7 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
     print('Feature extraction begins')
     # 3D Gabor filter based features
     res_pool = []
+    label = np.load('Desktop/result/label.npy')
     if multiprocessing_num > 1:
         pool = multiprocessing.Pool(processes=min(multiprocessing_num, multiprocessing.cpu_count()))
     else:
@@ -134,6 +136,9 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
             res_pool.append(pool.apply_async(func=gabor_feature_single_job,
                                              kwds={'a': a, 'filters': filters, 'fm_i': fm_i, 'label': label,
                                                    'cluster_center_number': cluster_center_number, 'save_flag': False}))
+            #res_pool.append(pool.apply_async(func=gabor_feature_single_job,
+                                             #kwds={'a': a, 'filters': filters, 'fm_i': fm_i, 'label': np.load('Desktop/result/label.npy'),
+                                                   #'cluster_center_number': cluster_center_number, 'save_flag': False}))
         pool.close()
         pool.join()
         del pool
@@ -149,7 +154,7 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
     print('Density features done')
 
     if save_flag:
-        np.save('./result/feature_matrix', feature_matrix)
+        np.save('Desktop/result/feature_matrix', feature_matrix)
 
     etime = time.time()
     print('Feature extraction done,', etime - stime, 's')
@@ -163,18 +168,25 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
     print('RPCA done, ', end_time - start_time, 's')
     supervoxel_saliency = np.sum(S, axis=0) / S.shape[0]
     if save_flag:
-        np.save('./result/supervoxel_saliency', supervoxel_saliency)
+        np.save('Desktop/result/supervoxel_saliency', supervoxel_saliency)
 
     # Step 5
     # Generate Saliency Map
-    a = generate_saliency_map(a=a,label=label,supervoxel_saliency=supervoxel_saliency,pick_num=pick_num)
+    saliency_map = generate_saliency_map(a=a,label=label,supervoxel_saliency=supervoxel_saliency,pick_num=pick_num)
     if save_flag:
         img = a[:, :, int(a.shape[2] / 2)].copy()
-        plt.imsave('./result/saliency_map.png', img, cmap='gray')
+        plt.imsave('Desktop/result/saliency_map.png', img, cmap='gray')
         # io_file.put_mrc_data(a, './saliency_map.mrc')
         print('saliency map saved')
 
-    return a
+    #return saliency_map
+
+    # Step 6
+    # save subtomograms
+    max_saliency = np.max(supervoxel_saliency)
+    min_saliency = np.min(supervoxel_saliency)
+    particle_picking(a=original_tom,saliency_map=saliency_map,ref_saliency_max = max_saliency ,ref_saliency_min = min_saliency)
+    print('subtomograms saved')
 
 
 def gabor_fn(sigma, theta, Lambda, psi, gamma, size):
@@ -340,7 +352,7 @@ def converged(M, L, S, initial_error):
     In practice, a fixed error may cause problems
     """
     error = frobeniusNorm(M - L - S) / frobeniusNorm(M)
-    print("error =", error)
+    #print("error =", error)
     return error <= initial_error * 10e-4
 
 
@@ -430,6 +442,52 @@ def generate_saliency_map(a, label, supervoxel_saliency, pick_num):
                 a[i][j][k] = supervoxel_saliency[label[i][j][k]]
     return a
 
+def particle_picking(a,saliency_map,ref_saliency_max,ref_saliency_min):
+    '''
+    a : the original tomogram
+    saliency_map: the modified output volume data a from step 5
+    ref_saliency_max: the maximum saliency value
+    ref_saliency_min: the minimun salienct value
+    '''
+    n=0 #subtom number iterator
+
+    dif = 8 #half of the frame size
+
+    for i in range(saliency_map.shape[0]):
+        for j in range(saliency_map.shape[1]):
+            for k in range(saliency_map.shape[2]):
+                # finding the saliency value that is greater or above 90% of the max saliency value
+                if saliency_map[i][j][k] >= 0.9*ref_saliency_max:
+                    #pass if it is on the edge
+                    #TODO: edge case handle
+                    if (i - dif < 0 or i + dif > saliency_map.shape[0] or 
+                        j - dif < 0 or j + dif > saliency_map.shape[1] or 
+                        k - dif < 0 or k + dif > saliency_map.shape[2]):
+                        pass
+
+                    else:
+
+                        # frame the 3d subarray from the original tomogram
+                        subtom=a[i-dif:i+dif,j-dif:j+dif,k-dif:k+dif] 
+
+                        print('x axis starting and end:',i-dif,"and",i+dif)
+                        print('y axis starting and end:',j-dif,"and",j+dif)
+                        print('z axis starting and end:',k-dif,"and",k+dif)
+                        print("the dimension of subtom is",subtom.shape[0],"by",subtom.shape[1],"by",subtom.shape[2])
+
+                        n+=1
+                        namemrc = "Desktop/result/saliency_map_subtomograms" + str(n) +".mrc"
+                        namepng = "Desktop/result/saliency_map_subtomograms" + str(n) +".png"
+                        io_file.put_mrc_data(subtom, namemrc) # save as the mrc file
+                        img = (subtom[:, :, int(subtom.shape[2]/2)]).copy()
+                        plt.imsave(namepng, img, cmap='gray')
+
+                        #update the saliency map by filling the "cut" subtomogram matrices with minimum saliency value
+                        saliency_map[i-dif:i+dif][j-dif:j+dif][k-dif:k+dif]=ref_saliency_min
+
+
+
+                    
 
 def gabor_feature_single_job(a, filters, fm_i, label, cluster_center_number, save_flag):
     # convolution
@@ -442,7 +500,7 @@ def gabor_feature_single_job(a, filters, fm_i, label, cluster_center_number, sav
     # show Gabor filter output
     if save_flag:
         img = (b[:, :, int(a.shape[2] / 2)]).copy()
-        plt.imsave('./result/gabor_output(%d).png' % fm_i, img, cmap='gray')  # save fig
+        plt.imsave('Desktop/result/gabor_output(%d).png' % fm_i, img, cmap='gray')  # save fig
 
     # generate feature vector
     start_time = time.time()
@@ -469,11 +527,8 @@ def generate_feature_vector(b, label, cluster_center_number):
 
 
 if __name__ == "__main__":
-    path = './aitom_demo_single_particle_tomogram.mrc'  # file path
-    mrc_header = io_file.read_mrc_header(path)
-    a = io_file.read_mrc_data(path)  # volume data
-    assert a.shape[0] > 0
-    a = a.astype(np.float32)
+    path = input("Enter data path: ")  # file path
+    a = mrcfile_proxy.read_data(path)
     print("file has been read, shape is", a.shape)
     start_time = time.time()
     saliency_detection(a=a, gaussian_sigma=2.5, gabor_sigma=14.0, gabor_lambda=13.0, cluster_center_number=10000, multiprocessing_num=0, pick_num=1000, save_flag=True)
