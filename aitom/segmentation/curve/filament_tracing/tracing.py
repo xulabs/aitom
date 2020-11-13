@@ -245,24 +245,3 @@ def trace(t1, t2, sigma_c, sigma_l, sigma_d, sc_path, out_path, c_path, phi_path
 		mrc.close()
 	print("TRACING DONE")
 	return bm
-
-'''
-#testing
-t1 = 0.000001 #threshold for similarity
-t2 = 0.0007 #threshold for correlation coefficient
-sigma_c = 1.0 #smootheness
-sigma_l = 1.0 #linearity
-sigma_d = 1.0 #distance
-sc_path = './search_cone.rec' #TODO: change filepaths
-out_path = './bm.rec'
-c_path = './results/test_id-c.npy'
-phi_path = './results/test_id-phi.npy'
-theta_path = './results/test_id-theta.npy'
-psi_path = './results/test_id-psi.npy'
-
-result = trace(t1, t2, sigma_c, sigma_l, sigma_d, sc_path, out_path, c_path, phi_path, theta_path, psi_path)
-'''
-
-
-
-
