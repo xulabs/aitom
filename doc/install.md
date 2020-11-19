@@ -3,7 +3,8 @@
 
 1. install dependencies and build
 ```bash
-sudo apt-get install python python3-dev fftw3-dev libblas3 liblapack3 libarmadillo-dev
+sudo apt-get install -y build-essential    # optional step
+sudo apt-get install -y python python3-dev fftw3-dev libblas3 liblapack3 libarmadillo-dev
 pip install -r requirements.txt
 sh clean.sh
 sh build.sh
