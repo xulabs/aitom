@@ -6,7 +6,7 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.conf import settings
 from django_server.models import Document
 from django_server.forms import DocumentForm,zoomForm,sliceForm
-from django.http import StreamingHttpResponse
+from django.http import StreamingHttpResponse, Http404
 from wsgiref.util import FileWrapper
 from django import forms
 import glob
@@ -48,6 +48,25 @@ def inst3(request):
 def inst4(request):
 #third instruction page     
     return render(request,PROJECT_APP_PATH + '/frontend/templates/frontend/inst4.html')                 
+    
+def particle_picking_index(request):
+    return render(request, PROJECT_APP_PATH + '/frontend/templates/frontend/particle-picking.html', {
+        'form': MyForm(),
+    })
+
+@xframe_options_exempt
+def pp_inst(request, inst_index):
+    try:
+        inst_index = int(inst_index)
+    except ValueError:
+        return Http404()
+    html_path = PROJECT_APP_PATH + \
+        '/frontend/templates/frontend/particle-picking-inst/inst{}.html'.format(
+            inst_index)
+    if not os.path.exists(html_path):
+        return Http404
+    return render(request, html_path)
+
 
 # Function for serving VTK files chunk by chunk, this method is more efficient than loading entire VTK file into memory at once    
 #Implemented with help from: https://stackoverflow.com/questions/43591440/django-1-11-download-file-chunk-by-chunk     
@@ -80,8 +99,7 @@ class MyForm(forms.Form):
     documents = glob.glob(PROJECT_APP_PATH + "/library/mrc/*.mrc")
     
     for doc in documents:    
-     name = doc.split('/')[-1]
-     #print(name)
+     name = doc.split('/')[-1].split('\\')[-1] # in different OS
      names.append([name,name])
 	#build a <select> element with file names as options derived from above for loop
     select = forms.ChoiceField(widget=forms.Select, choices=names)
@@ -91,6 +109,7 @@ def getLibrary(request):
     return render(request, PROJECT_APP_PATH + '/frontend/templates/frontend/list.html', {
         'form': MyForm()
     })
+
 
 def getInputForm(request):
 
