@@ -1,0 +1,44 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>AITom GUI</title>
+<!-- Next 5 references are for MDL stepper library which has been used to primarily build the GUI for this application -->
+<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-light_blue.min.css">
+<link rel="stylesheet"
+    href="https://rawcdn.githack.com/ahlechandre/mdl-stepper/76a68234b07a1ccbcfd008f9ab4db29aa37d01f2/stepper.css">
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<script src="https://unpkg.com/mdl-stepper@1.1.6/stepper.min.js"></script>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
+<script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+<link rel="shortcut icon" href=" {% static '/frontend/other/favicon.ico' %} " />
+
+</head>
+
+<body>
+    <!-- Simple list -->
+    <style>
+        .demo-list-item {
+            width: 300px;
+        }
+    </style>
+    <div id='ae_train'>
+        <p>Please wait</p>
+    </div>
+    <div id='ae_result' hidden>
+        <p>this is result</p>
+        <img id='ae_result_vis'>
+    </div>
+</body>
+
+</html>
