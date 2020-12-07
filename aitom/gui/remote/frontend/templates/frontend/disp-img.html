@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+{% load static %}
+<head>
+    <title> Scale Result View </title>
+</head>
+<body>
+    <img id="res" style = "width:80%;height:80%"></div>
+    <script>
+      var res = document.getElementById("res")
+  function reload(){
+
+
+  }
+
+	function check(){
+	if (sessionStorage['img'] != undefined){
+  	res.src = sessionStorage['img']
+	sessionStorage.removeItem('img')
+	}
+	setTimeout(check,1000)
+	}
+	setTimeout(check,1000)
+      
+
+
+    </script>
+
+</body>
+</html>

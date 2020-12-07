@@ -16,17 +16,17 @@ import aitom.image.vol.util as im_vol_util
 from bisect import bisect
 from pprint import pprint
 
-def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessing_process_num=0):
+def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessing_process_num=0, pick_num=None):
     '''
     parameters:
     path:file path  s1:sigma1  s2:sigma2  t:threshold level  find_maxima:peaks appears at the maximum/minimum  multiprocessing_process_num: number of multiporcessing
     partition_op: partition the volume for multithreading, is a dict consists 'nonoverlap_width', 'overlap_width' and 'save_vg'
+    pick_num: the max number of particles to pick out
     # Take a two-dimensional image as an example, if the image size is 210*150(all in pixels), nonoverlap_width is 60 and overlap_width is 30.
     # It will be divided into 6 pieces for different threads to process. The ranges of their X and Y are
     # (first line)  (0-90)*(0-90) (60-150)*(0-90) (120-210)*(0-90) (0-90)
     # (second line) (0-90)*(60-150) (60-150)*(60-150) (120-210)*(60-150)
     In general, s2=1.1*s1, s1 and t depend on particle size and noise. In practice, s1 should be roughly equal to the particle radius(in pixels). In related paper, the model achieves highest comprehensive score when s1=7 and t=3. 
-
     return:
     a list including all peaks information (in descending order of value),  each element in the return list looks like: 
     {'val': 281.4873046875, 'x': [1178, 1280, 0], 'uuid': '6ad66107-088c-471e-b65f-0b3b2fdc35b0'}
@@ -51,6 +51,14 @@ def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessin
     peak_vals_neg = [-peak['val']*find_maxima for peak in peaks]
     res = peaks[:bisect(peak_vals_neg, -T*find_maxima)-1]
     assert res[-1]['val'] >= T
+    print("%d particles detected, containing redundant peaks" % len(res))
+    result = do_filter(pp=res, peak_dist_min=s1, op=None)  # remove redundant peaks
+    print("peak number reduced to %d" % len(result))
+    if pick_num is None:
+        pass
+    elif pick_num < len(res):
+        res = res[:pick_num]
+
     print("T=m+t*(M-m)/20 \nT=%f m=%f t=%f M=%f" %(T,m,t,M))
     return res
 

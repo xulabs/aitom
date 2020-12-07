@@ -3,7 +3,8 @@
 
 1. install dependencies and build
 ```bash
-sudo apt-get install python python3-dev fftw3-dev libblas3 liblapack3 libarmadillo-dev
+sudo apt-get install -y build-essential    # optional step
+sudo apt-get install -y python python3-dev fftw3-dev libblas3 liblapack3 libarmadillo-dev
 pip install -r requirements.txt
 sh clean.sh
 sh build.sh
@@ -32,3 +33,11 @@ pip install -r requirements.txt
 3. clean && build library
 
 ## Singularity
+
+## Google Colab
+
+Please refer to [Install_for_Google_Colab.ipynb](https://github.com/Shadowalker1995/aitom/blob/master/doc/Install_for_Google_Colab.ipynb)
+
+## Remarks
+
+For using the deep learning functions based on GPU, we recommend to use CUDA version 10 and up, together with cudaNN

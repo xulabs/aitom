@@ -1,0 +1,145 @@
+<!-- source https://github.com/leriomaggio/django2-resumable/blob/master/django2_resumable/templates/django2_resumable/file_input.html 
+MIT License
+
+Copyright (c) 2019 Valerio Maggio
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+
+<script type="text/javascript">
+(function($) {
+
+    compose = function(path) {
+
+        var filename = path.split('/').reverse()[0];
+        sessionStorage["mrcSelect"] = filename
+        var dirpath = path.split('/').slice(0, -1).join('/');
+        //var mid =  " Temporary Uploaded in ";
+       // console.log(filename.concat(mid, dirpath))
+        return ("Stored as: ").concat(filename);
+   
+    };
+
+    $(function() {
+
+        $('form').submit(function() {
+            if($(this).hasClass('{{ name }}_disabled')) {
+                return false;
+            }
+        });
+
+        if (!(new Resumable().support)) {
+            alert("No uploader support");
+        }
+        var r = new Resumable({
+            target: '{% url 'api-model' %}',
+            chunkSize: {{ chunkSize }},
+            query: {
+                csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+                field_name: '{{ field_name }}',
+                content_type_id: '{{ content_type_id }}'
+            },
+        });
+        r.assignBrowse($('#{{ id }}_input_file'));
+        r.on('fileAdded', function(file) {
+            r.upload();
+            $("form").addClass("{{ name }}_disabled");
+        });
+        r.on('fileSuccess', function(file, message) {
+     //   console.log(message)
+    sessionStorage['model'] = message
+            $('#{{ id }}').val(message);
+            var uploaded_message = compose(message);
+            $("#{{ id }}_uploaded_status").html(uploaded_message);
+            $("form").removeClass("{{ name }}_disabled");
+        });
+        r.on('fileError', function(file, message) {
+            $("#{{ id }}_uploaded_status").html(message);
+        });
+        r.on('progress', function(file, message) {
+            $('#{{ id }}_progress').val(r.progress());
+        });
+
+        // FORMSET ADD
+        $(document).on('formset:added', function(event, $row, formsetName) {
+        if (!(new Resumable().support)) {
+            alert("No uploader support");
+        }
+        var r = new Resumable({
+            target: '{% url 'api-model' %}',
+            chunkSize: {{ chunkSize }},
+            query: {
+                csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+                field_name: '{{ field_name }}',
+                content_type_id: '{{ content_type_id }}'
+            },
+        });
+
+        r.assignBrowse($row.find("input[id$='_input_file']"));
+        r.on('fileAdded', function(file) {
+            r.upload();
+            $("form").addClass("{{ name }}_disabled");
+        });
+        r.on('fileSuccess', function(file, message) {
+            $row.find("input[class='hidden_file']").val(message);
+            var uploaded_message = compose(message);
+
+            $row.find("span[id$='_uploaded_status']").html(uploaded_message);
+            $("form").removeClass("{{ name }}_disabled");
+        });
+        r.on('fileError', function(file, message) {
+            $row.find("span[id$='_uploaded_status']").html(message);
+        });
+        r.on('progress', function(file, message) {
+            $row.find("progress[id$='_progress']").val(r.progress());
+        });
+    });
+
+    });
+
+})(jQuery);
+//(django.jQuery);
+
+
+</script>
+<div id="container">
+    <p class="file-upload">
+        {% if value %}
+            Currently:
+            {% if file_url %}
+                <a id="{{ id }}_link" target="_new" href="{{ file_url }}">{{ file_url }}</a>
+                {% if show_thumb %}
+                    <img src="{{ file_url }}" style="width:250px;" alt="File Preview Thumbnail">
+                {% endif %}
+            {% else %}
+                {{ value }}
+            {% endif %}
+            {{ clear_checkbox }}
+            <br>
+            Change:
+        {% endif %}
+
+        <span id="{{ id }}_uploaded_status"></span>
+        <br/>
+        <input type="file" id="{{ id }}_input_file">
+    </p>
+    <progress id="{{ id }}_progress" value="0" max="1" style="width:500px"></progress>
+</div>
+
+<input type="hidden" class="hidden_file" name="{{ name }}" id="{{ id }}" value="{{ value }}">

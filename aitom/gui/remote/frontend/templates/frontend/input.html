@@ -1,0 +1,41 @@
+<form method="post" enctype="multipart/form-data" id = "inpCord">
+  Selected File is
+  <input readonly="readonly"  name="filename" value= {{filename }}>
+  <input type="hidden" name = "method" value="{{ method }}">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+
+    <button type="click" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Submit</button> 
+  </form>
+   
+<script>
+  $('#inpCord').submit(function () {
+    //console.log($('#inpCord').serializeArray())
+    var frame = document.getElementById("viewer")
+    op = "{{ op }}"
+    url = "{{ request_url }}"
+	console.log(op,url)
+    if (op == 1){ //zoom
+    frame.src = '/display'
+    $.queryJSON('POST',url,[$('#inpCord').serializeArray()], function(result){ 
+			 
+       sessionStorage['model'] = result
+   });
+    }
+    
+    else if (op == 2){ //scale
+      frame.src = '/disp-img'
+    $.queryJSON('POST',url,[$('#inpCord').serializeArray()], function(result){ 
+	//console.log('data:image/png;base64,' + result)		 
+       sessionStorage['img'] = 'data:image/png;base64,' + result
+   });
+
+
+    }
+ return false;
+
+
+});
+	
+</script>   

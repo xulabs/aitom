@@ -11,6 +11,11 @@ from Cython.Build import cythonize
 from codecs import open
 import numpy as N
 
+# Make sure to use gcc compiler instead of x86_64-conda_cos6-linux-gnu-cc or x86_64-linux-gnu-gcc
+os.environ["CC"] = "gcc"
+os.environ["CXX"] = "gcc"
+
+
 compile_extra_args = ['-std=c++11']
 link_extra_args = []
 if platform.system() == "Darwin":
