@@ -46,3 +46,8 @@ Scale bar:
   
 Background color:
   Tools (upper bar) -> Preferences -> Background (select in Category)
+  
+
+
+Save PDB file:
+  Download pdb format-like files (tar.gz) from PDB if the macromolecule is of verg large structure. Open multiple pdb files in chimera and save a single one using  File (upper bar) -> Save PDB.
