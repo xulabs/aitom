@@ -3,11 +3,15 @@
 .DS_Store
 .cache
 build
+aitom.egg-info
+dist
 ext
 .vscode
 aitom/tomominer/core/cython/core.cpp
 __pycache__
 data
+result
+tmp
 .ipynb_checkpoints
 *.so
 
