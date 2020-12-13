@@ -1,7 +1,7 @@
 # Build library
 ## Ubuntu
 
-1. install dependencies and build
+1. install dependencies, build ext_modules, and install to the system python folder
 ```bash
 sudo apt-get install -y build-essential    # optional step
 sudo apt-get install -y python python3-dev fftw3-dev libblas3 liblapack3 libarmadillo-dev
