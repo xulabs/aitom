@@ -6,8 +6,9 @@ import torchvision
 import time
 import numpy as np
 
+
 class SSN3DED(nn.Module):
-    def __init__(self,mode):
+    def __init__(self, mode):
         super(SSN3DED, self).__init__()
         self.mode = mode
 
@@ -55,8 +56,8 @@ class SSN3DED(nn.Module):
             nn.ConvTranspose3d(32, 32, kernel_size=2, stride=2),
             nn.Conv3d(32, 2, kernel_size=3, padding=1))
 
-        self.softmax = nn.Softmax(dim=1)#(NCDHW)
-        self.loss = nn.BCEWithLogitsLoss()#nn.CrossEntropyLoss()
+        self.softmax = nn.Softmax(dim=1)    # (NCDHW)
+        self.loss = nn.BCEWithLogitsLoss()  # nn.CrossEntropyLoss()
 
     def forward(self, *input):
         if len(input) == 2:
@@ -87,5 +88,5 @@ class SSN3DED(nn.Module):
 
         loss = 0
         if self.mode == 'train':
-            loss = self.loss(output[:,0],tar[:,0])
-        return output,loss
+            loss = self.loss(output[:, 0], tar[:, 0])
+        return output, loss

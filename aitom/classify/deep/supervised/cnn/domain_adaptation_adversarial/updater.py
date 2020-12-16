@@ -1,13 +1,11 @@
-
-# modify from https://github.com/pfnet-research/chainer-ADDA.git
-
 import chainer
 from chainer import training, reporter, Variable
 import chainer.functions as F
 
+# modify from https://github.com/pfnet-research/chainer-ADDA.git
+
 
 class ADDAUpdater(training.StandardUpdater):
-
     def __init__(self, iterator_source, iterator_target,
                  source_cnn, optimizer_target, optimizer_discriminator, args):
         iterators = {"main": iterator_source,
@@ -46,8 +44,8 @@ class ADDAUpdater(training.StandardUpdater):
         D_source = self.discriminator(source_encoding)
         D_target = self.discriminator(target_encoding)
 
-        D_loss = - F.sum(F.log_softmax(D_source)[:, 0]) / self.args.batchsize \
-                 - F.sum(F.log_softmax(D_target)[:, 1]) / self.args.batchsize
+        D_loss = -F.sum(F.log_softmax(D_source)[:, 0]) / self.args.batchsize \
+                 -F.sum(F.log_softmax(D_target)[:, 1]) / self.args.batchsize
 
         self.discriminator.cleargrads()
         D_loss.backward()

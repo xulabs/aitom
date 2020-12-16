@@ -1,5 +1,5 @@
 from __future__ import division
-from ssnr3d import SSNR3D
+from .ssnr3d import SSNR3D
 import pickle
 import time
 import random
@@ -7,8 +7,11 @@ from pyExcelerator import *
 from xlrd import open_workbook
 from xlutils.copy import copy
 
-BETA = 0.5 # beta used in F-meature
-RATIO = 0.1 # ratio = number of homogeneous image / number of heterogeneous image
+# beta used in F-meature
+BETA = 0.5
+# ratio = number of homogeneous image / number of heterogeneous image
+RATIO = 0.1
+
 
 def img(fileName):
     pkl_file = open(fileName, 'rb')
@@ -24,6 +27,7 @@ def img(fileName):
     data.append(img)
     data.append(mask)
     return data
+
 
 def matching(ratio):
     imgs = {}
@@ -41,17 +45,17 @@ def matching(ratio):
     for i in range(100):
         img_set.append(img_rotate[i])
         mask.append(mask_rotate[i])
-        if i < int(100*ratio):
+        if i < int(100 * ratio):
             img_set.append(img_true[i])
             mask.append(mask_true[i])
-            true_image_set.append(len(img_set)-1)
+            true_image_set.append(len(img_set) - 1)
 
-    #img_siz = (40, 40)
+    # img_siz = (40, 40)
     for i in range(len(img_set)):
         imgs[i] = img_set[i]
         masks[i] = mask[i]
     s = SSNR3D(imgs, masks)
-    
+
     start = time.clock()
 
     while True:
@@ -66,11 +70,9 @@ def matching(ratio):
             if e > 6.8:
                 break
     center = center_num1
-    result = []
-    result.append(center)
-    temp = []
-    temp.append(center)
-    
+    result = [center]
+    temp = [center]
+
     while True:
         distance = []
         for i in range(len(img_set)):
@@ -81,8 +83,7 @@ def matching(ratio):
             else:
                 distance.append(-1)
         center = distance.index(max(distance))
-        temp = []
-        temp.append(center)
+        temp = [center]
 
         if center in result:
             break
@@ -101,8 +102,7 @@ def matching(ratio):
                 else:
                     distance.append(-1)
             center = distance.index(max(distance))
-            temp = []
-            temp.append(center)
+            temp = [center]
 
             if center in result:
                 break
@@ -114,13 +114,13 @@ def matching(ratio):
     resolution = s.get_fsc_sum()
     t = end - start
     measure = cal_accuracy(result, true_image_set)
-    print "Resolution = " + str(resolution)
-    print "Result: " + ", ".join(result)
+    print("Resolution = " + str(resolution))
+    print("Result: " + ", ".join(result))
 
-    #sheet = 2
+    # sheet = 2
     sheet = 0
     start_y = 1
-    #start_y = 1 + int(10*ratio-1)
+    # start_y = 1 + int(10*ratio-1)
 
     write_to_excel(sheet, 0, start_y, ratio)
     write_to_excel(sheet, 1, start_y, resolution)
@@ -130,13 +130,15 @@ def matching(ratio):
     write_to_excel(sheet, 5, start_y, t)
 
 
-def write_to_excel(sheet, x, y, value): #x->col, y->row
+# x->col, y->row
+def write_to_excel(sheet, x, y, value):
     rb = open_workbook('record.xls')
     rs = rb.sheet_by_index(sheet)
     wb = copy(rb)
     ws = wb.get_sheet(sheet)
     ws.write(y, x, value)
     wb.save('record.xls')
+
 
 def cal_accuracy(result, true_image_set):
     return_list = []
@@ -147,12 +149,12 @@ def cal_accuracy(result, true_image_set):
             n_right += 1
         else:
             n_wrong += 1
-    precision = n_right/len(result)
-    recall = n_right/len(true_image_set)
-    print "precision = " + str(precision*100) + " %"
-    print "recall = " + str(recall*100) + " %"
+    precision = n_right / len(result)
+    recall = n_right / len(true_image_set)
+    print("precision = " + str(precision * 100) + " %")
+    print("recall = " + str(recall * 100) + " %")
     if (precision != 0.0) and (recall != 0.0):
-        f = (1+pow(BETA,2)) * (precision*recall) / (precision*pow(BETA,2)+recall)
+        f = (1 + pow(BETA, 2)) * (precision * recall) / (precision * pow(BETA, 2) + recall)
     else:
         f = 0.0
     return_list.append(precision)
@@ -161,13 +163,10 @@ def cal_accuracy(result, true_image_set):
 
     return return_list
 
+
 def main():
     matching(RATIO)
-    
+
+
 if __name__ == '__main__':
     main()
-
-
-
-
-

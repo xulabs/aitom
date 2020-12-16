@@ -3,28 +3,32 @@ import copy as C
 import numpy as N
 from numpy.fft import fftn, ifftn, fftshift, ifftshift
 
-class SSNR3D:
-    '''
-    input: images is a dictionary of 3D images indexed by keys; masks is a dictionary of 3D images of binary values
-    '''
-    def __init__(self, images, masks, band_width_radius=1.0):
 
-        im_f = {}
+class SSNR3D:
+    """
+    input: images is a dictionary of 3D images indexed by keys;
+    masks is a dictionary of 3D images of binary values
+    """
+    def __init__(self, images, masks, band_width_radius=1.0):
+        im_f = dict()
         for k in images:
             im = images[k]
             im = fftshift(fftn(im))
             im_f[k] = im
 
-        self.im_f = im_f        # fft transformed images
-        self.ms = masks         # masks
+        # fft transformed images
+        self.im_f = im_f
+        # masks
+        self.ms = masks
         self.ks = set()
         self.img_siz = im_f[k].shape
         self.set_fft_mid_co()
         self.set_rad()
         self.band_width_radius = band_width_radius
-        
+
     def set_img_set(self, ks):
-        for k in ks:    assert k in self.im_f
+        for k in ks:
+            assert k in self.im_f
         self.ks = C.deepcopy(ks)
         self.ks = set(self.ks)
         self.update_summary_statistics()
@@ -47,13 +51,16 @@ class SSNR3D:
 
     def update_summary_statistics(self):
         sum_v = N.zeros(self.img_siz, dtype=N.complex)
-        for k in self.ks:    sum_v += self.im_f[k]
+        for k in self.ks:
+            sum_v += self.im_f[k]
 
         prod_sum_v = N.zeros(self.img_siz, dtype=N.complex)
-        for k in self.ks:    prod_sum_v += self.im_f[k] * N.conj(self.im_f[k])
+        for k in self.ks:
+            prod_sum_v += self.im_f[k] * N.conj(self.im_f[k])
 
         mask_sum_v = N.zeros(self.img_siz, dtype=float)
-        for k in self.ks:    mask_sum_v += self.ms[k]
+        for k in self.ks:
+            mask_sum_v += self.ms[k]
 
         self.sum_v = sum_v
         self.prod_sum_v = prod_sum_v
@@ -61,15 +68,15 @@ class SSNR3D:
 
     def set_fft_mid_co(self):
         siz = self.img_siz
-        assert(N.all(N.mod(siz, 1) == 0))
-        assert(N.all(N.array(siz) > 0))
+        assert (N.all(N.mod(siz, 1) == 0))
+        assert (N.all(N.array(siz) > 0))
 
         mid_co = N.zeros(len(siz))
 
         # according to following code that uses numpy.fft.fftshift()
         for i in range(len(mid_co)):
             m = siz[i]
-            mid_co[i] = N.floor(m/2)
+            mid_co[i] = N.floor(m / 2)
         self.mid_co = mid_co
 
     def grid_displacement_to_center(self):
@@ -107,7 +114,7 @@ class SSNR3D:
 
     # get index within certain frequency band
     def rad_ind(self, r):
-        return ( abs(self.rad - r) <= self.band_width_radius )
+        return abs(self.rad - r) <= self.band_width_radius
 
     def get_ssnr(self):
         ind = self.mask_sum_v > 2
@@ -115,18 +122,21 @@ class SSNR3D:
         avg[ind] = self.sum_v[ind] / self.mask_sum_v[ind]
 
         avg_abs_sq = N.zeros(self.sum_v.shape, dtype=N.complex) + N.nan
-        avg_abs_sq[ind] = avg[ind] * N.conj( avg[ind] )
+        avg_abs_sq[ind] = avg[ind] * N.conj(avg[ind])
 
         var = N.zeros(self.sum_v.shape, dtype=N.complex) + N.nan
-        var[ind] = (self.prod_sum_v[ind] - self.mask_sum_v[ind] * avg_abs_sq[ind]) / (self.mask_sum_v[ind] - 1)
+        var[ind] = (self.prod_sum_v[ind] -
+                    self.mask_sum_v[ind] * avg_abs_sq[ind]) / (self.mask_sum_v[ind] - 1)
         var = N.real(var)
-        
-        vol_rad = int( N.floor( N.min(self.img_siz) / 2.0 ) + 1)
-        ssnr = N.zeros(vol_rad) + N.nan     # this is the SSNR of the AVERAGE image
+
+        vol_rad = int(N.floor(N.min(self.img_siz) / 2.0) + 1)
+        # this is the SSNR of the AVERAGE image
+        ssnr = N.zeros(vol_rad) + N.nan
 
         # the interpolation can also be performed using scipy.ndimage.interpolation.map_coordinates()
         for r in range(vol_rad):
-            ind = self.rad_ind(r=r)         # in order to use it as an index or mask, must convert to a bool array, not integer array!!!!
+            # in order to use it as an index or mask, must convert to a bool array, not integer array!!!!
+            ind = self.rad_ind(r=r)
             ind[N.logical_not(N.isfinite(avg))] = False
             ind[N.logical_not(N.isfinite(var))] = False
 
@@ -144,9 +154,9 @@ class SSNR3D:
         fsc = ssnr / (2.0 + ssnr)
         return fsc
 
-    '''
-    this is the objective function to be minimized
-    '''
-    def get_fsc_sum(self):
-        return self.get_fsc().sum()
 
+    def get_fsc_sum(self):
+        """
+        this is the objective function to be minimized
+        """
+        return self.get_fsc().sum()

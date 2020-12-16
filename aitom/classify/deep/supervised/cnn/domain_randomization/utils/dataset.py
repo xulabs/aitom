@@ -4,6 +4,7 @@ import torch.utils.data as data
 import mrcfile as mrc
 import numpy as np
 
+
 class CustomDataset(data.Dataset):
     def __init__(self, root_dir):
         self.image_dir = "./data/subtomogram_mrc/"
@@ -15,12 +16,12 @@ class CustomDataset(data.Dataset):
 
     def __getitem__(self, item):
         img_name = os.path.join(self.image_dir, self.image_list[item])
-        mask_name = os.path.join(self.mask_dir, self.image_list[item].replace('tomo','pack'))
+        mask_name = os.path.join(self.mask_dir, self.image_list[item].replace('tomo', 'pack'))
         with mrc.open(img_name, permissive=True) as f:
             img = f.data  # (32, 32, 32)
         with mrc.open(mask_name, permissive=True) as f:
             mask = f.data  # (32, 32, 32)
-        img = np.expand_dims(img,0)
+        img = np.expand_dims(img, 0)
         mask = np.expand_dims(mask, 0)
         sample = {'image': img, 'mask': mask}
         return sample
