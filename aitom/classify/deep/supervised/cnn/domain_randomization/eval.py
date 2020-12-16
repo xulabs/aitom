@@ -2,14 +2,17 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
-from dice_loss import dice_coeff
+from .dice_loss import dice_coeff
 
 
 def eval_net(net, loader, device):
-    """Evaluation without the densecrf with the dice coefficient"""
+    """
+    Evaluation without the densecrf with the dice coefficient
+    """
     net.eval()
     mask_type = torch.float32 if net.n_classes == 1 else torch.long
-    n_val = len(loader)  # the number of batch
+    # the number of batch
+    n_val = len(loader)
     tot = 0
 
     with tqdm(total=n_val, desc='Validation round', unit='batch', leave=False) as pbar:

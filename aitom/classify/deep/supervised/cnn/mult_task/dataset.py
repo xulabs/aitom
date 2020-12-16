@@ -4,6 +4,7 @@ import torch.utils.data as data
 import numpy as np
 import mrcfile as mrc
 
+
 class CustomDataset(data.Dataset):
     def __init__(self, root_dir):
         self.image_dir = "./data/subtomogram_mrc/"
@@ -25,6 +26,7 @@ class CustomDataset(data.Dataset):
         img = torch.from_numpy(img)
         sample = {'image': img, 'mask': mask}
         return sample
+
 
 if __name__ == '__main__':
     ds = DUTSDataset('../DUTS-TR')

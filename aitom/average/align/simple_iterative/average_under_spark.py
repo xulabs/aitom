@@ -1,14 +1,16 @@
-'''
+"""
 a simple implementation of subtomogram averaging under Apache spark
+"""
 
-'''
-
-
+import os
 import pickle
-import os, sys, copy, uuid, shutil
-import aitom.io.file as AIF
-import aitom.io.db.lsm_db as TIDL
+import shutil
+import uuid
+
 import numpy as N
+
+import aitom.io.db.lsm_db as TIDL
+import aitom.io.file as AIF
 
 
 def cub_img(v, view_dir=2):
@@ -28,13 +30,14 @@ def cub_img(v, view_dir=2):
     im = N.zeros((row_num * disp_len, col_num * disp_len)) + float('nan')
     for i in range(disp_len):
         for j in range(disp_len):
-            im[(i * row_num): ((i + 1) * row_num - 1), (j * col_num): ((j + 1) * col_num - 1)] = vt[:, :, slide_count]
+            im[(i * row_num):((i + 1) * row_num - 1),
+            (j * col_num):((j + 1) * col_num - 1)] = vt[:, :, slide_count]
             slide_count += 1
 
-            if (slide_count >= slide_num):
+            if slide_count >= slide_num:
                 break
 
-        if (slide_count >= slide_num):
+        if slide_count >= slide_num:
             break
 
     im_v = im[N.isfinite(im)]
@@ -62,23 +65,24 @@ def save_png(m, name, normalize=True, verbose=False):
     m = N.ceil(m * 65534)
     m = N.array(m, dtype=N.uint16)
 
-    import png  # in pypng package
+    # in pypng package
+    import png
     png.from_array(m, 'L').save(name)
 
 
 def pickle_load(path):
-    with open(path, 'rb') as f:     o = pickle.load(f)
+    with open(path, 'rb') as f:
+        o = pickle.load(f)
     return o
 
 
 def single_average(subtom):
-    print('subtom_type=',type(subtom))
-    assert len(subtom)==100
-    print('subtom[0]_type=',type(subtom[0]))
+    print('subtom_type=', type(subtom))
+    assert len(subtom) == 100
+    print('subtom[0]_type=', type(subtom[0]))
     average = True
-    
 
-    test_dir = './tmp/cls-test/'+str(uuid.uuid4())  # test dir
+    test_dir = './tmp/cls-test/' + str(uuid.uuid4())
     if os.path.exists(test_dir):
         shutil.rmtree(test_dir)
     os.makedirs(test_dir)
@@ -86,26 +90,40 @@ def single_average(subtom):
     dj_file = os.path.join(test_dir, 'data.pickle')
     img_db_file = os.path.join(test_dir, 'image.db')
 
-    v_num = 100  # the number of each class
+    # number of each class
+    v_num = 100
     v_dim_siz = 32
     wedge_angle = 30
     mask_id = str(uuid.uuid4())
     dj = []
     class_num = 1
-        
+
     for model_id in range(class_num):
         for v_i in range(v_num):
             ang_t = [_ for _ in N.random.random(3) * (N.pi * 2)]
             # loc_t = TGA.random_translation(size=[v_dim_siz]*3, proportion=0.2)
             loc_t = [0.0, 0.0, 0.0]
             v_id = str(uuid.uuid4())
-            dj.append({'subtomogram': v_id, 'mask': mask_id, 'angle': ang_t, 'loc': loc_t, 'model_id': model_id})
+            dj.append({'subtomogram': v_id,
+                       'mask': mask_id,
+                       'angle': ang_t,
+                       'loc': loc_t,
+                       'model_id': model_id})
     AIF.pickle_dump(dj, dj_file)
 
     sim_op = {
-        'model': {'missing_wedge_angle': wedge_angle, 'titlt_angle_step': 1, 'SNR': 1000, 'band_pass_filter': False,
-                  'use_proj_mask': False},
-        'ctf': {'pix_size': 1.0, 'Dz': -5.0, 'voltage': 300, 'Cs': 2.0, 'sigma': 0.4}}
+        'model': {
+            'missing_wedge_angle': wedge_angle,
+            'titlt_angle_step': 1,
+            'SNR': 1000,
+            'band_pass_filter': False,
+            'use_proj_mask': False},
+        'ctf': {
+            'pix_size': 1.0,
+            'Dz': -5.0,
+            'voltage': 300,
+            'Cs': 2.0,
+            'sigma': 0.4}}
 
     img_db = TIDL.LSM(img_db_file)
     index = 0
@@ -119,16 +137,17 @@ def single_average(subtom):
     print('file generation complete')
 
     out_dir = os.path.join(test_dir, 'out')
-    if os.path.exists(out_dir):    shutil.rmtree(out_dir)
+    if os.path.exists(out_dir):
+        shutil.rmtree(out_dir)
     os.makedirs(out_dir)
     from aitom.classify.align.simple_iterative.classify import randomize_orientation
     from aitom.classify.align.simple_iterative.classify import export_avgs
     if average:
         import aitom.average.align.simple_iterative.average as avg
-        op = {}
+        op = dict()
         op['option'] = {'pass_num': 20}  # the number of iterations
         op['data_checkpoint'] = os.path.join(out_dir, 'djs.pickle')
-        op['average'] = {}
+        op['average'] = dict()
         op['average']['mask_count_threshold'] = 2
         op['average']['checkpoint'] = os.path.join(out_dir, 'avgs.pickle')
 
@@ -138,50 +157,49 @@ def single_average(subtom):
         randomize_orientation(dj)
         avg.average(dj_init=dj, img_db=img_db, op=op)
 
-        export_avgs(AIF.pickle_load(os.path.join(out_dir, 'avgs.pickle')), out_dir=os.path.join(out_dir, 'avgs-export'))
+        export_avgs(AIF.pickle_load(os.path.join(out_dir, 'avgs.pickle')),
+                    out_dir=os.path.join(out_dir, 'avgs-export'))
         print('averaging done')
 
     # visualization
-    # test_dir = './tmp/cls-test/'+str(uuid.uuid4())  # test dir
-    avgs = pickle_load(os.path.join(test_dir,'out/avgs.pickle'))
+    # test_dir = './tmp/cls-test/'+str(uuid.uuid4())
+    avgs = pickle_load(os.path.join(test_dir, 'out/avgs.pickle'))
     out_dir = os.path.join(test_dir, 'image')
-    if os.path.exists(out_dir):    shutil.rmtree(out_dir)
+    if os.path.exists(out_dir):
+        shutil.rmtree(out_dir)
     os.makedirs(out_dir)
     for i in avgs.keys():
         v = avgs[i]['v']
         file_name = str(avgs[i]['pass_i']) + '_' + str(i) + '.png'
         save_png(cub_img(v)['im'], os.path.join(out_dir, file_name))
-    print('images saved in',out_dir)
-    
+    print('images saved in', out_dir)
+
 
 if __name__ == '__main__':
-
     # generate image.db and data.pickle from existing pickle file
-    path = './aitom_demo_subtomograms.pickle'  # Download from: https://cmu.box.com/s/9hn3qqtqmivauus3kgtasg5uzlj53wxp
+    # Download from: https://cmu.box.com/s/9hn3qqtqmivauus3kgtasg5uzlj53wxp
+    path = './aitom_demo_subtomograms.pickle'
     with open(path, 'rb') as f:
+        # 'data' is a dict containing several different subtomograms.
+        # 'data['5T2C_data']' is a list containing 100 three-dimensional arrays (100 subtomograms).
         data = pickle.load(f, encoding='iso-8859-1')
-    # 'data' is a dict containing several different subtomograms.
-    # 'data['5T2C_data']' is a list containing 100 three-dimensional arrays (100 subtomograms).
     # for key in data:
-    # print(key) # 1KP8_data
-    
+    #     print(key)  # 1KP8_data
 
     from pyspark.sql import SparkSession
-    spark = SparkSession\
-        .builder\
-        .appName("PythonPi")\
+
+    spark = SparkSession \
+        .builder \
+        .appName("PythonPi") \
         .getOrCreate()
 
     # generate RDD
-    subtom = []
-    subtom.append(data['5T2C_data'])
-    subtom.append(data['1KP8_data'])
+    subtom = [data['5T2C_data'], data['1KP8_data']]
     assert len(subtom) > 0
     print(len(subtom), subtom[0][0].shape)
-    subtom_RDD=spark.sparkContext.parallelize(subtom)
+    subtom_RDD = spark.sparkContext.parallelize(subtom)
     print('RDD generated')
     # print(type(subtom_RDD.take(1)),type(subtom_RDD.take(1)[0]),type(subtom_RDD.take(1)[0][0]))
 
-    # average subtomograms in parallel 
+    # average subtomograms in parallel
     subtom_RDD.map(single_average).collect()
-

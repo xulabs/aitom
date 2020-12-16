@@ -2,8 +2,9 @@ import os
 import json
 import subprocess
 
-from protonets.utils import format_opts, merge_dict
-from protonets.utils.log import load_trace
+from .protonets.utils import format_opts, merge_dict
+from .protonets.utils.log import load_trace
+
 
 def main(opt):
     result_dir = os.path.dirname(opt['model.model_path'])

@@ -3,8 +3,9 @@ from torch.autograd import Function
 
 
 class DiceCoeff(Function):
-    """Dice coeff for individual examples"""
-
+    """
+    Dice coeff for individual examples
+    """
     def forward(self, input, target):
         self.save_for_backward(input, target)
         eps = 0.0001
@@ -16,7 +17,6 @@ class DiceCoeff(Function):
 
     # This function has only a single output, so it gets only one gradient
     def backward(self, grad_output):
-
         input, target = self.saved_variables
         grad_input = grad_target = None
 
@@ -30,7 +30,9 @@ class DiceCoeff(Function):
 
 
 def dice_coeff(input, target):
-    """Dice coeff for batches"""
+    """
+    Dice coeff for batches
+    """
     if input.is_cuda:
         s = torch.FloatTensor(1).cuda().zero_()
     else:

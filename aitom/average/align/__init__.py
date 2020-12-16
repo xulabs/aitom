@@ -1,4 +1,3 @@
-'''
+"""
 Alignment based subtomogram averaging
-'''
-
+"""

@@ -1,4 +1,3 @@
-'''
+"""
 Maximum likelihood based averaging
-'''
-
+"""
