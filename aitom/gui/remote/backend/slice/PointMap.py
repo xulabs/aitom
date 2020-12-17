@@ -24,9 +24,9 @@ class PointMap:
         self.ys -= np.min(self.ys)
 
         N, M = floor(np.max(self.xs)) + 2, floor(np.max(self.ys)) + 2
-        gray_map = [[],] * N
+        gray_map = [[], ] * N
         for i in range(N):
-            gray_map[i] = [None,] * M
+            gray_map[i] = [None, ] * M
 
         _max = float('-inf')
         _min = float('+inf')
@@ -39,15 +39,15 @@ class PointMap:
                     gray_map[int_x][int_y] = [gray, dis]
                     _max = max(_max, gray)
                     _min = min(_min, gray)
-        
-        #for x in range(N):
+
+        # for x in range(N):
         #    print(x)
         #    for y in range(M):
         #        gray_map[x][y] = interpolate(gray_map[x][y])
-        bg =  _max * 0.9 + _min * 0.1
+        bg = _max * 0.9 + _min * 0.1
         ret = np.full((N, M), bg)
         for x in range(N):
             for y in range(M):
-                if gray_map[x][y] != None:
+                if gray_map[x][y] is not None:
                     ret[x, y] = gray_map[x][y][0]
         return ret

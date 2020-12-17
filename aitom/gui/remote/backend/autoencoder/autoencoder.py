@@ -1,14 +1,17 @@
+"""
+Computing is synchronized.
+It should be changed to an asynchronized version later.
+"""
+
 from .proto import AESingleRequest, AESingleResponse, AEResultRequest, AEResultResponse
-from .particle_picking_and_autoencoder_util import mkdir,view_clusters
+from .particle_picking_and_autoencoder_util import mkdir, view_clusters
 from .pool import particlePickingPool
 import aitom.classify.deep.unsupervised.autoencoder.autoencoder as AE
 import aitom.io.file as AIF
 import os
 import base64
-'''
-Computing is synchronized.
-It should be changed to an asynchronized version later.
-'''
+
+
 def autoencoder_single_main(request: AESingleRequest):
     item = particlePickingPool.get(request.path)
 
@@ -23,6 +26,7 @@ def autoencoder_single_main(request: AESingleRequest):
     AE.encoder_simple_conv_test(d=d, pose=None, img_org_file=False, out_dir=output_dir, clus_num=1)
     AE.kmeans_centers_plot(AE.op_join(output_dir, 'clus-center'))
     return AESingleResponse()
+
 
 def autoencoder_result_main(request: AEResultRequest):
     item = particlePickingPool.get(request.path)

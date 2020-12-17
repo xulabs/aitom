@@ -1,4 +1,3 @@
-'''
+"""
 graphical user interfaces
-
-'''
+"""

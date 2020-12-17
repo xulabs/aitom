@@ -6,7 +6,8 @@ import json
 
 def show_center_img(x, y, z):
     print("Show distribution img of protein's center")
-    ax = plt.subplot(111, projection='3d')  # create project
+    # create project
+    ax = plt.subplot(111, projection='3d')
     ax.scatter(x, y, z, c='r')  # draw
 
     ax.set_zlabel('Z')  # aix
@@ -16,7 +17,7 @@ def show_center_img(x, y, z):
 
 
 def show_sum_img(sumlist, protein_num, pdb_id):
-    ##process sumlist
+    # process sumlist
     stride = int(len(sumlist) / protein_num)
     newlist = process_sumlist(sumlist, protein_num, stride)
     print('Show sum img')
@@ -39,8 +40,10 @@ def process_sumlist(sumlist, protein_num, stride):
 
 
 def get_packing_and_plot_ball(optimal_result, boundary_shpere):
-    # optimal_result is data read from json file by instruction "json.load(file)"
-    # boundary_shpere is a list of the radius of each protein
+    """
+    optimal_result is data read from json file by instruction "json.load(file)"
+    boundary_shpere is a list of the radius of each protein
+    """
     pdb_id = optimal_result['pdb_id']
     x_loc = optimal_result['x']
     y_loc = optimal_result['y']
@@ -57,8 +60,10 @@ def get_packing_and_plot_ball(optimal_result, boundary_shpere):
 
 
 def drawing_center_with_ball(radius_list, loc_list):
-    # for loc_list row 0,1,2 of the matrix represent x,y,z, colum 0,1,... represent location of each protein
-
+    """
+    for loc_list row 0, 1, 2 of the matrix represent x,y,z,
+    column 0,1,... represent location of each protein
+    """
     # draw one ball
     center = [loc_list[0][0], loc_list[1][0], loc_list[2][0]]
     radius = radius_list[0]
@@ -89,8 +94,10 @@ def drawing_center_with_ball(radius_list, loc_list):
 
 
 def get_json_and_plot_ball(file):
-    # input the path of the json file, then the function will read information in
-    # json file and call the drawing function
+    """
+    input the path of the json file, then the function will read information in
+    json file and call the drawing function
+    """
     with open(file) as f:
         packing_result = json.load(f)
         pdb_id = packing_result['optimal_result']['pdb_id']  # list of the protein id
@@ -107,7 +114,7 @@ def get_json_and_plot_ball(file):
     print(center_list)
     drawing_center_with_ball(radius_list, center_list)
 
-# ######################### test part ####################
-# file='../IOfile/packing.json'
-# get_json_and_plot_ball(file)
-#
+
+if __name__ == "__main__":
+    file = '../IOfile/packing.json'
+    get_json_and_plot_ball(file)

@@ -1,24 +1,27 @@
+"""
+Computes a list of hypervolumes of the voronoi regions given
+a list of points in n dimensional space and a list of boundaries
+"""
+
 import aitom.geometry.ang_loc as TGA
 import numpy as np
-#import tomominer.hypervolume.hyper as hyper
-# Computes a list of hypervolumes of the voronoi regions given
-# a list of points in n dimensional space and a list of boundaries
+# import tomominer.hypervolume.hyper as hyper
 
 
 def voronoi_hypervolumes(points, boundaries=None):
     n = len(points)
     d = len(points[0])
-    if (boundaries == None):
+    if boundaries is None:
         # Initialize the boundaries
         # so that the minimum and maximum along each dimension
         # is determined by the minimum and maximum values amoung the points
         boundaries = [{'type': 'clip'} for _ in range(d)]
 
-    if (len(boundaries) != d):
+    if len(boundaries) != d:
         print("Error in voronoi_hypervolumes: dimension mismatch!\n")
         exit(1)
 
-    prefix = [None, d+1.0]
+    prefix = [None, d + 1.0]
 
     wrap = [False for _ in range(d)]
     for i in range(d):
@@ -49,7 +52,7 @@ def voronoi_hypervolumes(points, boundaries=None):
         for j in range(n):
             if i != j:
                 info = info + get_hyperplanes(points[i], points[j], wrap)
-        info[0] = (len(info) - 2) / (d+1)
+        info[0] = (len(info) - 2) / (d + 1)
         print("Number of planes: %d" % info[0])
         result[i] = hyper.compute_hypervolume(np.asarray(info))
 
@@ -95,10 +98,9 @@ def voronoi_weights_6d(phis):
     sample_range = [[min(xl), max(xl)],
                     [min(yl), max(yl)],
                     [min(zl), max(zl)],
-                    [0, np.pi*2],
-                    [0, np.pi*2],
-                    [0, np.pi*2]
-                    ]
+                    [0, np.pi * 2],
+                    [0, np.pi * 2],
+                    [0, np.pi * 2]]
     points = []
     for phi in phis:
         p = [phi['q_x'], phi['q_y'], phi['q_z'],
@@ -116,22 +118,20 @@ def voronoi_weights_6d(phis):
     for i in range(n):
         p = points[i]
         d = distance_6d_sq__frobenius(p, p_)
-        if best_d == None or d < best_d:
+        if best_d is None or d < best_d:
             best_i = i
             best_d = d
     result[best_i] += 1
     result = result / np.sum(result)
-    #print (result)
+    # print (result)
     return result
 
 
-'''
-square of the distance defined on the manifold of the 6D rigid transformation parameter space, the distance between rotations are calculated using Frobenius norm
-'''
-
-
 def distance_6d_sq__frobenius(p1, p2, weight=1.0):
-
+    """
+    square of the distance defined on the manifold of the 6D rigid transformation parameter space, the distance between
+    rotations are calculated using Frobenius norm
+    """
     loc1 = np.array(p1[:3])
     assert len(loc1) == 3
     ang1 = p1[3:]
@@ -147,7 +147,7 @@ def distance_6d_sq__frobenius(p1, p2, weight=1.0):
     d_rm = np.square(np.eye(3) - rm1.transpose().dot(rm2)).sum()
     d_loc = np.square(loc1 - loc2).sum()
 
-    return d_rm + weight*d_loc
+    return d_rm + weight * d_loc
 
 
 def voronoi_weights_6d_rlass(phis):
