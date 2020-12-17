@@ -12,7 +12,7 @@ if not os.path.exists(PP_DUMP_PATH):
     os.mkdir(PP_DUMP_PATH)
 
 
-class ParticlePickingPoolItem():
+class ParticlePickingPoolItem:
     dump_name = 'item.pickle'
 
     def __init__(self, name, uid):
@@ -52,7 +52,7 @@ class ParticlePickingPoolItem():
             pickle.dump(self, f)
 
 
-class ParticlePickingPool():
+class ParticlePickingPool:
     def __init__(self, max_num=20, clean_num=5):
         assert clean_num < max_num, 'clean num should be lower than max num'
         self.max_num = max_num

@@ -6,10 +6,12 @@ op = {'mrcfile': '../IOfile/tomo/mrc/tomo_SNR04.mrc',
       'pngdir': '../IOfile/tomo/png/tomo2/SNR04/',
       'pngname': 'SNR04',
       'view_dir': 1}
-#view_dir =  0, 1, 2
 
-# convert a 3D cube to a 2D image of slices
+# view_dir =  0, 1, 2
+
+
 def cub_img(v, view_dir=2):
+    """convert a 3D cube to a 2D image of slices"""
     if view_dir == 0:
         vt = N.transpose(v, [1, 2, 0])
     elif view_dir == 1:
@@ -29,10 +31,10 @@ def cub_img(v, view_dir=2):
             im[(i * row_num): ((i + 1) * row_num - 1), (j * col_num): ((j + 1) * col_num - 1)] = vt[:, :, slide_count]
             slide_count += 1
 
-            if (slide_count >= slide_num):
+            if slide_count >= slide_num:
                 break
 
-        if (slide_count >= slide_num):
+        if slide_count >= slide_num:
             break
 
     im_v = im[N.isfinite(im)]
@@ -42,8 +44,9 @@ def cub_img(v, view_dir=2):
 
     return {'im': im, 'vt': vt}
 
-# format a 2D array for png saving
+
 def format_png_array(m, normalize=True):
+    """format a 2D array for png saving"""
     m = N.array(m, dtype=N.float)
 
     mv = m[N.isfinite(m)]
@@ -78,7 +81,7 @@ def save_png(m, name, normalize=True, verbose=False):
 
 
 def mrc2singlepic(op):
-    import iomap as IM
+    from . import iomap as IM
     data = IM.readMrcMap(op['mrcfile'])
     if op['view_dir'] == 0:
         data = N.transpose(data, [1, 2, 0])
@@ -96,9 +99,9 @@ def mrc2singlepic(op):
         save_png(d, name)
         print('save' + name)
 
+
 if __name__ == '__main__':
     try:
         mrc2singlepic(sys.argv[1])
     except:
         mrc2singlepic(op)
-

@@ -1,6 +1,7 @@
 from abc import abstractmethod
 import json
 
+
 class BaseRequestProto:
     @abstractmethod
     def __init__(self, *args, **kwargs):
@@ -13,6 +14,7 @@ class BaseRequestProto:
                 as_type = type(getattr(self, k[:-4]))
                 setattr(self, k[:-4], as_type(json_dict[v]))
         return self
+
 
 class BaseResponseProto:
     @abstractmethod

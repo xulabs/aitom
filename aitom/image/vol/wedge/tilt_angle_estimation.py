@@ -1,21 +1,25 @@
 #!/usr/bin/env python
+"""
+given a tomogram/subtomogram, guess the tilt angle range and light axis
+"""
 
-
-# given a tomogram/subtomogram, guess the tilt angle range and light axis
-
-import os, sys, gc, multiprocessing, itertools
+import gc
+import itertools
+import multiprocessing
+import sys
 import time
+
 import numpy as N
-import aitom.model.util as MU
-import aitom.image.vol.util as IVU
 from scipy.stats.stats import pearsonr
+
+import aitom.model.util as MU
+from .. import util as IVU
 
 
 def wedge_mask_cor(v_abs, ops):
-
     for op in ops:
         m = tilt_mask(size=v_abs.shape, tilt_ang1=op['ang1'], tilt_ang2=op['ang2'], tilt_axis=op['tilt_axis'],
-                            light_axis=op['light_axis'])
+                      light_axis=op['light_axis'])
         # m = TIVWU.wedge_mask(size=v_abs.shape, ang1=op['ang1'], ang2=op['ang2'], tilt_axis=op['direction'])
         m = m.astype(N.float)
 
@@ -33,7 +37,8 @@ def scan(tilt_angle_scan_range, v_abs, n_proc=0, n_chunk=20):
     for ang1, ang2, tilt_axis, light_axis in itertools.product(
             range(-tilt_angle_scan_range[1], -tilt_angle_scan_range[0] + 1),
             range(tilt_angle_scan_range[0], tilt_angle_scan_range[1] + 1), range(3), range(3)):
-        if tilt_axis == light_axis: continue
+        if tilt_axis == light_axis:
+            continue
         tasks.append({'ang1': ang1, 'ang2': ang2, 'tilt_axis': tilt_axis, 'light_axis': light_axis})
 
     while tasks:
@@ -44,7 +49,8 @@ def scan(tilt_angle_scan_range, v_abs, n_proc=0, n_chunk=20):
     best = None
     for re in pool_results:
         for r in re.get(9999999):
-            print ('\r', r['ang1'], r['ang2'], r['tilt_axis'], r['light_axis'], r['cor'], '        ',  )# print this info so that we know the scanning is inside correct range, by looking at updated examples
+            # print this info so that we know the scanning is inside correct range, by looking at updated examples
+            print('\r', r['ang1'], r['ang2'], r['tilt_axis'], r['light_axis'], r['cor'], '        ')
             sys.stdout.flush()
 
             if best is None:
@@ -93,8 +99,8 @@ def tilt_mask(size, tilt_ang1, tilt_ang2=None, tilt_axis=1, light_axis=2, sphere
 
     g = IVU.grid_displacement_to_center(size=size, mid_co=IVU.fft_mid_co(siz=size))
 
-    plane_axis = set([0,1,2])
-    plane_axis.difference_update([light_axis,tilt_axis])
+    plane_axis = {0, 1, 2}
+    plane_axis.difference_update([light_axis, tilt_axis])
     assert len(plane_axis) == 1
     plane_axis = list(plane_axis)[0]
 
@@ -103,24 +109,26 @@ def tilt_mask(size, tilt_ang1, tilt_ang2=None, tilt_axis=1, light_axis=2, sphere
 
     m = N.zeros(size, dtype=float)
 
-    m[ N.logical_and(x_light <= (N.tan(tilt_ang1) * x_plane), x_light >= (N.tan(tilt_ang2) * x_plane))] = 1.0
-    m[ N.logical_and(x_light >= (N.tan(tilt_ang1) * x_plane), x_light <= (N.tan(tilt_ang2) * x_plane))] = 1.0
+    m[N.logical_and(x_light <= (N.tan(tilt_ang1) * x_plane), x_light >= (N.tan(tilt_ang2) * x_plane))] = 1.0
+    m[N.logical_and(x_light >= (N.tan(tilt_ang1) * x_plane), x_light <= (N.tan(tilt_ang2) * x_plane))] = 1.0
 
-    if sphere_mask_bool:    m *= MU.sphere_mask(m.shape)
+    if sphere_mask_bool:
+        m *= MU.sphere_mask(m.shape)
 
     return m
 
 
 if __name__ == '__main__':
-    n_proc = 50  # number of processes
+    # number of processes
+    n_proc = 50
     n_proc = min(n_proc, multiprocessing.cpu_count())
     print('using', n_proc, 'cpus')
 
     from numpy.fft import fftshift, fftn
-    import aitom.io.file as IF
     import pickle
 
-    path = './aitom_demo_subtomograms.pickle'  # Download from: https://cmu.box.com/s/9hn3qqtqmivauus3kgtasg5uzlj53wxp
+    # Download from: https://cmu.box.com/s/9hn3qqtqmivauus3kgtasg5uzlj53wxp
+    path = './aitom_demo_subtomograms.pickle'
     with open(path, 'rb') as f:
         data = pickle.load(f, encoding='iso-8859-1')
 
@@ -130,8 +138,11 @@ if __name__ == '__main__':
     start_time = time.time()
     v = data['5T2C_data'][0]  # 32x32x32 volume
     v = v.astype(N.float)
-    v = N.log(N.abs(fftshift(fftn(v))))  # it is very important to use log scale!!
-    gc.collect()  # clean up memory before forking
-    tilt_angle_scan_range = N.array([1,89])  # scan range
+    # it is very important to use log scale!!
+    v = N.log(N.abs(fftshift(fftn(v))))
+    # clean up memory before forking
+    gc.collect()
+    # scan range
+    tilt_angle_scan_range = N.array([1, 89])
     tom_wedge = scan(tilt_angle_scan_range=tilt_angle_scan_range, v_abs=v, n_proc=n_proc)
-    print('best tom_wedge: ', tom_wedge, time.time()-start_time,'s')
+    print('best tom_wedge: ', tom_wedge, time.time() - start_time, 's')

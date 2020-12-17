@@ -4,6 +4,7 @@ import zipfile
 import os
 from random import randint
 
+
 class MrcLoader:
     def __init__(self, path):
         self.path = path
@@ -18,15 +19,14 @@ class MrcLoader:
     def read(self, leftDown, rightUp, scale, base_path='', require_zip=False):
         x0, y0, z0 = leftDown
         x1, y1, z1 = rightUp
-        temp_data = self.reader_list[scale][x0 : x1, y0 : y1, z0 : z1]
+        temp_data = self.reader_list[scale][x0: x1, y0: y1, z0: z1]
         temp_path = 'temp{}.mrc'.format(randint(1, 10000))
         with mrcfile.new(os.path.join(base_path, temp_path), overwrite=True) as temp_mrc:
-           temp_mrc.set_data(temp_data)
+            temp_mrc.set_data(temp_data)
         if not require_zip:
-           return temp_path
+            return temp_path
         else:
-           return self._zipmrc(temp_path)
-
+            return self._zipmrc(temp_path)
 
     def _zipmrc(self, mrc):
         z = zipfile.ZipFile(mrc + '.zip', 'w', zipfile.ZIP_DEFLATED)

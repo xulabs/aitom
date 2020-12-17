@@ -1,5 +1,6 @@
-# functions for calculating different kinds of differentials in 2D and 3D images
-
+"""
+functions for calculating different kinds of differentials in 2D and 3D images
+"""
 
 import numpy as N
 
@@ -32,7 +33,8 @@ def diff_3d(v):
 # the square of gradient magnitude, d=diff_3d(v)
 def gradient_magnitude_square(d):
     s = N.zeros(d[0].shape)
-    for dt in d:        s += N.square(dt)
+    for dt in d:
+        s += N.square(dt)
 
     return s
 
@@ -56,18 +58,21 @@ def directional_derivative_along_gradient(v, d):
     vd = diff_3d(v)
 
     dd = N.zeros(v.shape)
-    for dim in range(len(d)):        dd += vd[dim] * d[dim]
+    for dim in range(len(d)):
+        dd += vd[dim] * d[dim]
 
     return dd
 
 
 def hessian_3d(v, d=None):
-    if d is None:    d = diff_3d(v)
+    if d is None:
+        d = diff_3d(v)
 
     h = [[None] * 3] * 3
     for dim0 in range(3):
         for dim1 in range(3):
-            if dim0 > dim1: continue
+            if dim0 > dim1:
+                continue
             h[dim0][dim1] = diff_one_axis(d[dim0], dim1)
 
     return h
@@ -77,19 +82,23 @@ def hessian_3d__max_magnitude(h):
     m = 0
     for ht in h:
         for htt in ht:
-            if htt is None:     continue
+            if htt is None:
+                continue
             m = N.max((m, N.abs(htt).max()))
 
     return float(m)
 
 
-# dividing the max magnitude so that all entries have less than 1.0 magnitude, this is needed by linalg.eigen.eigen_value_3_symmetric_batch()
 def hessian_3d__normalize(h, magnitude):
+    """
+    dividing the max magnitude so that all entries have less than 1.0 magnitude, this is needed by
+    linalg.eigen.eigen_value_3_symmetric_batch()
+    """
     ht = [[None] * 3] * 3
     for dim0 in range(3):
         for dim1 in range(3):
-            if h[dim0][dim1] is None:      continue
+            if h[dim0][dim1] is None:
+                continue
             ht[dim0][dim1] = h[dim0][dim1] / magnitude
 
     return ht
-
