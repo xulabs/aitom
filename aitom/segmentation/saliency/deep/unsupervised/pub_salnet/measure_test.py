@@ -4,8 +4,8 @@ from torch.utils.data import DataLoader
 from tensorboardX import SummaryWriter
 from tqdm import tqdm
 
-from network import Unet
-from dataset import CustomDataset
+from .network import Unet
+from .dataset import CustomDataset
 
 torch.set_printoptions(profile='full')
 if __name__ == '__main__':
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     beta_square = 0.3
     if config['logdir'] is not None:
         writer = SummaryWriter(config['logdir'])
-    model = Unet(cfg,config['mode']).cuda()
+    model = Unet(cfg, config['mode']).cuda()
     for model_name in models:
         model_iter = int(model_name.split('epo_')[1].split('step')[0])
         if model_iter % config['step'] != 0:
@@ -67,7 +67,8 @@ if __name__ == '__main__':
                 y_temp = (pred >= thlist[j]).float()
                 tp = (y_temp * mask).sum(dim=-1).sum(dim=-1)
                 # avoid prec becomes 0
-                prec[:, j], recall[:, j] = (tp + 1e-10) / (y_temp.sum(dim=-1).sum(dim=-1) + 1e-10), (tp + 1e-10) / (mask.sum(dim=-1).sum(dim=-1) + 1e-10)
+                prec[:, j], recall[:, j] = (tp + 1e-10) / (y_temp.sum(dim=-1).sum(dim=-1) + 1e-10), (tp + 1e-10) / (
+                            mask.sum(dim=-1).sum(dim=-1) + 1e-10)
             # (batch, threshold)
             precs.append(prec)
             recalls.append(recall)
@@ -79,12 +80,12 @@ if __name__ == '__main__':
         print("Max F_score :", torch.max(f_score))
         print("Max_F_threshold :", thlist[torch.argmax(f_score)])
         if config['logdir'] is not None:
-            writer.add_scalar("Max F_score", torch.max(f_score),global_step=model_iter)
-            writer.add_scalar("Max_F_threshold", thlist[torch.argmax(f_score)],global_step=model_iter)
+            writer.add_scalar("Max F_score", torch.max(f_score), global_step=model_iter)
+            writer.add_scalar("Max_F_threshold", thlist[torch.argmax(f_score)], global_step=model_iter)
         pred = torch.cat(preds, 0)
         mask = torch.cat(masks, 0).round().float()
         if config['logdir'] is not None:
             writer.add_pr_curve('PR_curve', mask, pred, global_step=model_iter)
             writer.add_scalar('MAE', torch.mean(torch.abs(pred - mask)), global_step=model_iter)
-        print("MAE :", torch.mean(torch.abs(pred-mask)))
+        print("MAE :", torch.mean(torch.abs(pred - mask)))
         # Measure method from https://github.com/AceCoooool/DSS-pytorch solver.py

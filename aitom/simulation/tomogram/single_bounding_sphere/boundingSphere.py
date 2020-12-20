@@ -4,40 +4,40 @@ import scipy
 from scipy.spatial import ConvexHull
 import sys
 import aitom.io.file as AIF
+from scipy import linalg
+
 
 def ldivide(array, vector):
     return np.linalg.solve(array, vector)
 
 
-'''def convexHull(v, L):
-    points = []
-    density_max = v.max()
-    contour_level = L * density_max
-    for ijk in np.ndindex(v.shape):
-        if v[ijk] >= contour_level:
-            points.append([float(ijk[0]), float(ijk[1]), float(ijk[2])])
-
-    hull = ConvexHull(points)
-    return hull, points'''
-
-
-
-from scipy import linalg
+# def convexHull(v, L):
+#     points = []
+#     density_max = v.max()
+#     contour_level = L * density_max
+#     for ijk in np.ndindex(v.shape):
+#         if v[ijk] >= contour_level:
+#             points.append([float(ijk[0]), float(ijk[1]), float(ijk[2])])
+#
+#     hull = ConvexHull(points)
+#     return hull, points
 
 
 def fit_sphere_2_points(array):
-    """Fit a sphere to a set of 2, 3, or at most 4 points in 3D space. Note that
+    """
+    Fit a sphere to a set of 2, 3, or at most 4 points in 3D space. Note that
     point configurations with 3 collinear or 4 coplanar points do not have
     well-defined solutions (i.e., they lie on spheres with inf radius).
 
-    - X     : M-by-3 array of point coordinates, where M<=4.
-    - R     : radius of the sphere. R=Inf when the sphere is undefined, as
-                specified above.
-    - C     : 1-by-3 vector specifying the centroid of the sphere.
-                C=nan(1,3) when the sphere is undefined, as specified above.
+    @params:
+        X: M-by-3 array of point coordinates, where M<=4.
+        R: radius of the sphere. R=Inf when the sphere is undefined, as specified above.
+        C: 1-by-3 vector specifying the centroid of the sphere.
+            C=nan(1,3) when the sphere is undefined, as specified above.
 
     Matlab code author: Anton Semechko (a.semechko@gmail.com)
-    Date: Dec.2014"""
+    Date: Dec.2014
+    """
 
     N = len(array)
 
@@ -68,12 +68,13 @@ def fit_sphere_2_points(array):
         uniq, index = np.unique(array, axis=0, return_index=True)
         array_nd = uniq[index.argsort()]
         if not np.array_equal(array, array_nd):
-            #print("found duplicate")
-            #print(array_nd)
+            # print("found duplicate")
+            # print(array_nd)
             R, C = fit_sphere_2_points(array_nd)
             return R, C
 
-        tol = 0.01  # collinearity/co-planarity threshold (in degrees)
+        # collinearity/co-planarity threshold (in degrees)
+        tol = 0.01
         if N == 3:
             # Check for collinearity
             D12 = array[1] - array[0]
@@ -90,19 +91,20 @@ def fit_sphere_2_points(array):
             # Make plane formed by the points parallel with the xy-plane
             n = np.cross(D13, D12)
             n = n / np.linalg.norm(n)
-            ##print("n", n)
+            # print("n", n)
             r = np.cross(n, np.array([0, 0, 1]))
-            r = np.arccos(n[2]) * r / np.linalg.norm(r)  # Euler rotation vector
-            ##print("r", r)
+            # Euler rotation vector
+            r = np.arccos(n[2]) * r / np.linalg.norm(r)
+            # print("r", r)
             Rmat = linalg.expm(np.array([
                 [0., -r[2], r[1]],
                 [r[2], 0., -r[0]],
                 [-r[1], r[0], 0.]
             ]))
-            ##print("Rmat", Rmat)
+            # print("Rmat", Rmat)
             # Xr = np.transpose(Rmat*np.transpose(array))
             Xr = np.transpose(np.dot(Rmat, np.transpose(array)))
-            ##print("Xr", Xr)
+            # print("Xr", Xr)
 
             # Circle centroid
             x = Xr[:, :2]
@@ -193,7 +195,7 @@ def fit_2_points(vertices):
 
             chk = np.clip(np.abs(np.dot(dist1, dist2)), 0., 1.)
 
-            if np.arccos(chk) / np.pi*180 < 0.01:
+            if np.arccos(chk) / np.pi * 180 < 0.01:
                 R = np.inf
                 C = np.array([np.nan, np.nan, np.nan])
                 return R, C
@@ -257,11 +259,11 @@ def fit_2_points(vertices):
         return R, C
 
 
-
 def B_min_sphere(P, B):
     eps = 1E-6
     if len(B) == 4 or len(P) == 0:
-        R, C = fit_2_points(B)  # fit sphere to boundary points
+        # fit sphere to boundary points
+        R, C = fit_2_points(B)
         return R, C, P
 
     # Remove the last (i.e., end) point, p, from the list
@@ -288,29 +290,29 @@ def B_min_sphere(P, B):
 
 def exact_min_bound_sphere_3D(array):
     """
- Compute exact minimum bounding sphere of a 3D point cloud (or a
- triangular surface mesh) using Welzl's algorithm.
+    Compute exact minimum bounding sphere of a 3D point cloud (or a
+    triangular surface mesh) using Welzl's algorithm.
 
-   - X     : M-by-3 list of point co-ordinates or a triangular surface
-             mesh specified as a TriRep object.
-   - R     : radius of the sphere.
-   - C     : 1-by-3 vector specifying the centroid of the sphere.
-   - Xb    : subset of X, listing K-by-3 list of point coordinates from
-             which R and C were computed. See function titled
-             'FitSphere2Points' for more info.
+    @params:
+        X: M-by-3 list of point co-ordinates or a triangular surface mesh specified as a TriRep object.
+        R: radius of the sphere.
+        C: 1-by-3 vector specifying the centroid of the sphere.
+        Xb: subset of X, listing K-by-3 list of point coordinates from which R and C were computed.
+            See function titled 'FitSphere2Points' for more info.
 
- REREFERENCES:
- [1] Welzl, E. (1991), 'Smallest enclosing disks (balls and ellipsoids)',
-     Lecture Notes in Computer Science, Vol. 555, pp. 359-370
+    REREFERENCES:
+        [1] Welzl, E. (1991), 'Smallest enclosing disks (balls and ellipsoids)',
+        Lecture Notes in Computer Science, Vol. 555, pp. 359-370
 
- Matlab code author: Anton Semechko (a.semechko@gmail.com)
- Date: Dec.2014"""
+    Matlab code author: Anton Semechko (a.semechko@gmail.com)
+    Date: Dec.2014
+    """
 
     # Get the convex hull of the point set
     hull = ConvexHull(array)
     hull_array = [array[i] for i in hull.vertices]
     hull_array = np.unique(hull_array, axis=0)
-    #print(len(hull_array))
+    # print(len(hull_array))
 
     # Randomly permute the point set
     hull_array = np.random.permutation(hull_array)
@@ -340,16 +342,16 @@ def exact_min_bound_sphere_3D(array):
         M = len(hull_array)
         dM = min([M // 4, 300])
         # unnecessary ?
-        #		res = M % dM
-        #		n = np.ceil(M/dM)
-        #		idx = dM * np.ones((1, n))
-        #		if res > 0:
-        #			idx[-1] = res
+        # res = M % dM
+        # n = np.ceil(M / dM)
+        # idx = dM * np.ones((1, n))
+        # if res > 0:
+        #     idx[-1] = res
         #
-        #		if res <= 0.25 * dM:
-        #			idx[n-2] = idx[n-2] + idx[n-1]
-        #			idx = idx[:-1]
-        #			n -= 1
+        # if res <= 0.25 * dM:
+        #     idx[n - 2] = idx[n - 2] + idx[n - 1]
+        #     idx = idx[:-1]
+        #     n -= 1
 
         hull_array = np.array_split(hull_array, dM)
         Xb = np.empty([0, 3])
@@ -362,14 +364,15 @@ def exact_min_bound_sphere_3D(array):
             Xb = Xi[idx[:40]]
 
         D = np.sort(D, axis=0)[:4]
-        #print(Xb)
-        #print(D)
-        #print(np.where(D / R < 1e-3)[0])
+        # print(Xb)
+        # print(D)
+        # print(np.where(D / R < 1e-3)[0])
         Xb = np.take(Xb, np.where(D / R < 1e-3)[0], axis=0)
         Xb = np.sort(Xb, axis=0)
-        #print(Xb)
+        # print(Xb)
 
         return R, C, Xb
+
 
 def bounding_sphere(hull, points):
     vertices = [points[i] for i in hull.vertices]
@@ -412,16 +415,11 @@ def find_min_bounding_sphere(path, L):
             points.append([float(ijk[0]), float(ijk[1]), float(ijk[2])])
 
     R, C, Xb = exact_min_bound_sphere_3D(points)
-    #print(R)
-    #print(C)
-    #print(Xb)
-    #print(R, C, Xb)
+    # print(R)
+    # print(C)
+    # print(Xb)
+    # print(R, C, Xb)
     return R, C
 
-
-
-#R, C = find_min_bounding_sphere('./1W6T.mrc', 0.2)
-#print(R, C)
-
-
-
+# R, C = find_min_bounding_sphere('./1W6T.mrc', 0.2)
+# print(R, C)

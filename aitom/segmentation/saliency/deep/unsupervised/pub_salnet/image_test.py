@@ -5,8 +5,8 @@ import os
 from tqdm import tqdm
 from tensorboardX import SummaryWriter
 
-from network import Unet
-from dataset import CustomDataset
+from .network import Unet
+from .dataset import CustomDataset
 
 torch.set_printoptions(profile='full')
 if __name__ == '__main__':
@@ -17,18 +17,18 @@ if __name__ == '__main__':
            'loss_ratio': [0.5, 0.5, 0.5, 0.8, 0.8, 1]}
     config = {
         'mode': 'test',
-        'model_dir':"./models/state_dict/07031644/10epo_200step.ckpt",
-        'logdir':"./log/",#logdir, log on tensorboard
-        'save_dir':"./save/",#save result images as .jpg file. If None -> Not save
-        'dataset': '',# Directory of your Dataset
-        'batch_size': 20,# batchsize, default = 1
+        'model_dir': "./models/state_dict/07031644/10epo_200step.ckpt",
+        'logdir': "./log/",  # logdir, log on tensorboard
+        'save_dir': "./save/",  # save result images as .jpg file. If None -> Not save
+        'dataset': '',  # Directory of your Dataset
+        'batch_size': 20,  # batchsize, default = 1
     }
     if config['logdir'] is None and config['save_dir'] is None:
         print("You should specify either config['logdir'] or config['save_dir'] to save results!")
         assert 0
     # print(os.getcwd())
     state_dict = torch.load(config['model_dir'])
-    model = Unet(cfg,config['mode']).cuda()
+    model = Unet(cfg, config['mode']).cuda()
     model.load_state_dict(state_dict)
     custom_dataset = CustomDataset(root_dir=config['dataset'])
     dataloader = DataLoader(custom_dataset, config['batch_size'], shuffle=False)
@@ -49,6 +49,7 @@ if __name__ == '__main__':
         if config['save_dir'] is not None:
             for j in range(img.shape[0]):
                 torchvision.utils.save_image(img[j], os.path.join(config['save_dir'], 'img', '{}_{}.jpg'.format(i, j)))
-                torchvision.utils.save_image(pred[j], os.path.join(config['save_dir'], 'mask', '{}_{}.jpg'.format(i, j)))
+                torchvision.utils.save_image(pred[j],
+                                             os.path.join(config['save_dir'], 'mask', '{}_{}.jpg'.format(i, j)))
     if config['logdir'] is not None:
         writer.close()

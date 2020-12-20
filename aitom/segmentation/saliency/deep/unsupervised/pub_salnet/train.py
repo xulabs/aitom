@@ -2,13 +2,14 @@ import torch
 from torch.utils.data import DataLoader
 import torchvision
 import datetime
+import time
 import os
 import numpy as np
 from tensorboardX import SummaryWriter
 from tqdm import tqdm
 
-from network import Unet
-from dataset import CustomDataset
+from .network import Unet
+from .dataset import CustomDataset
 
 cfg = {'PicaNet': "GGLLL",
        'Size': [4, 4, 4, 4, 8, 6],
@@ -35,7 +36,7 @@ if __name__ == '__main__':
     start_epo = 0
 
     duts_dataset = CustomDataset(config['dataset'])
-    model = Unet(cfg,config['mode']).cuda()
+    model = Unet(cfg, config['mode']).cuda()
     # vgg = torchvision.models.vgg16(pretrained=True)
     # model.encoder.seq.load_state_dict(vgg.features.state_dict())
     # del vgg
@@ -43,8 +44,8 @@ if __name__ == '__main__':
     if config['load'] is not None:
         state_dict = torch.load(config['load'], map_location='cuda')
 
-        start_iter = 1#int(config['load'].split('epo_')[1].strip('step.ckpt')) + 1
-        start_epo = 0#int(config['load'].split('/')[3].split('epo')[0])
+        start_iter = 1  # int(config['load'].split('epo_')[1].strip('step.ckpt')) + 1
+        start_epo = 0  # int(config['load'].split('/')[3].split('epo')[0])
         now = time.strftime('%Y%m%d-%H%M%S', time.localtime())
 
         print("Loading Model from {}".format(config['load']))
@@ -91,15 +92,18 @@ if __name__ == '__main__':
 
             if iterate % 200 == 0:
                 if i != 0:
-                    torch.save(model.state_dict(), os.path.join(weight_save_dir, '{}epo_{}step.ckpt'.format(epo, iterate)))
+                    torch.save(model.state_dict(),
+                               os.path.join(weight_save_dir, '{}epo_{}step.ckpt'.format(epo, iterate)))
             if iterate % 1000 == 0 and i != 0:
                 for file in weight_save_dir:
                     if '00' in file and '000' not in file:
                         os.remove(os.path.join(weight_save_dir, file))
             if i + epo * len(dataloader) % config['decay_step'] == 0 and i != 0:
                 learning_rate *= config[lr_decay]
-                opt_en = torch.optim.SGD(model.encoder.parameters(), lr=learning_rate, momentum=0.9, weight_decay=0.0005)
-                opt_dec = torch.optim.SGD(model.decoder.parameters(), lr=learning_rate * 10, momentum=0.9, weight_decay=0.0005)
+                opt_en = torch.optim.SGD(model.encoder.parameters(), lr=learning_rate, momentum=0.9,
+                                         weight_decay=0.0005)
+                opt_dec = torch.optim.SGD(model.decoder.parameters(), lr=learning_rate * 10, momentum=0.9,
+                                          weight_decay=0.0005)
             iterate += config['batch_size']
             del loss
         start_iter = 0

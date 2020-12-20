@@ -1,14 +1,11 @@
-
-
-'''
+"""
 Code automatically generated with cleaning of non-relevant contents
 Please cite: Xu et al. De novo visual proteomics of single cells through pattern mining
-'''
-
-
+"""
 
 import numpy as N
-import aitom.tomominer.geometry.rotate as GR
+import aitom.tomominer.rotate as GR
+
 
 def center_mass(v):
     assert N.all((v >= 0))
@@ -21,6 +18,7 @@ def center_mass(v):
     for dim_i in range(v.ndim):
         c[dim_i] = (g[dim_i] * v).sum()
     return N.array(c)
+
 
 def pca(v, c, do_flip=False):
     assert N.all((v >= 0))
