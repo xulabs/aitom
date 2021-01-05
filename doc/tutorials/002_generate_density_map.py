@@ -20,8 +20,8 @@ op = {'situs_pdb2vol_program':'/shared/opt/local/img/em/et/util/situs/Situs_2.7.
 
 # convert to density maps, save to situs_maps.pickle
 import aitom.structure.pdb.situs_pdb2vol__batch as TSPS
-TSPS.batch_processing(op)
-
+re = TSPS.batch_processing(op)
+with open(op['out_file'], 'wb') as f:   pickle.dump(re, f, protocol=-1)
 
 
 '''
