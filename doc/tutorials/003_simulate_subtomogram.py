@@ -13,7 +13,7 @@ Because simated data will consume large amount of storage. Please construct a ge
 import aitom.tomominer.io.file as TIF
 import numpy as N
 import pickle
-import aitom.tomominer.simulation.reconstruction__simple_convolution as TSRSC
+import aitom_core.simulation.reconstruction__simple_convolution as TSRSC
 import aitom.model.util as MU
 import aitom.geometry.ang_loc as GAL
 import aitom.geometry.rotate as GR
