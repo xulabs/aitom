@@ -26,3 +26,7 @@ Specifically, we explain some of the parameters of main.py:
 * classes_num: the total of category
 
 * CORAL_batch_size：the minibatch of Deep CORAL
+
+## Reference
+
+Yu L, Li R, Zeng X, Wang H, Jin J, Yang G, Jiang R, Xu M. Few Shot Domain Adaptation Macromolecule Classification]{Few Shot Domain Adaptation for in situ Macromolecule Structural Classification in Cryo-electron Tomograms. Bioinformatics (2020). [doi:10.1093/bioinformatics/btaa671](https://doi.org/10.1093/bioinformatics/btaa671). [arXiv:2007.15422](https://arxiv.org/abs/2007.15422). [code](https://github.com/xulabs/aitom/tree/master/aitom/classify/deep/supervised/cnn/few_shot/domain_adaptation)
