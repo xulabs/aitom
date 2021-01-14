@@ -1,0 +1,15 @@
+H:\Mitochondria\JPEGImages_denoise+equalize\2016.06.01_Unstim_20k_mito_1.st_10.jpg,48,66,3470,3662,mitochondria
+H:\Mitochondria\JPEGImages_denoise+equalize\2016.06.01_Unstim_20k_mito_1.st_14.jpg,1,1,3520,3674,mitochondria
+H:\Mitochondria\JPEGImages_denoise+equalize\2016.06.01_Unstim_20k_mito_1.st_15.jpg,1,1,3562,3694,mitochondria
+H:\Mitochondria\JPEGImages_denoise+equalize\2016.06.01_Unstim_20k_mito_1.st_16.jpg,1,1,3544,3686,mitochondria
+H:\Mitochondria\JPEGImages_denoise+equalize\2016.06.01_Unstim_20k_mito_1.st_17.jpg,1,1,3616,3686,mitochondria
+H:\Mitochondria\JPEGImages_denoise+equalize\2016.06.01_Unstim_20k_mito_1.st_18.jpg,1,1,3608,3696,mitochondria
+H:\Mitochondria\JPEGImages_denoise+equalize\2016.06.01_Unstim_20k_mito_1.st_19.jpg,1,4,3458,3714,mitochondria
+H:\Mitochondria\JPEGImages_denoise+equalize\2016.06.01_Unstim_20k_mito_1.st_20.jpg,1,1,3462,3682,mitochondria
+H:\Mitochondria\JPEGImages_denoise+equalize\2016.06.01_Unstim_20k_mito_1.st_21.jpg,1,1,3488,3690,mitochondria
+H:\Mitochondria\JPEGImages_denoise+equalize\2016.06.01_Unstim_20k_mito_1.st_22.jpg,1,1,3518,3680,mitochondria
+H:\Mitochondria\JPEGImages_denoise+equalize\2016.06.01_Unstim_20k_mito_1.st_23.jpg,1,1,3568,3672,mitochondria
+H:\Mitochondria\JPEGImages_denoise+equalize\2016.06.01_Unstim_20k_mito_1.st_24.jpg,1,1,3608,3704,mitochondria
+H:\Mitochondria\JPEGImages_denoise+equalize\2016.06.01_Unstim_20k_mito_1.st_25.jpg,1,1,3626,3706,mitochondria
+H:\Mitochondria\JPEGImages_denoise+equalize\2016.06.01_Unstim_20k_mito_1.st_26.jpg,1,1,3652,3684,mitochondria
+H:\Mitochondria\JPEGImages_denoise+equalize\2016.06.01_Unstim_20k_mito_1.st_27.jpg,1,1,3326,3730,mitochondria
