@@ -1,23 +1,21 @@
 #!/usr/bin/env python
-
-'''
-calculate surface feature values for each voxels in a Gaussian smoothed volume, then generate a corresponding feature strength map that can be used to filter peaks
+"""
+calculate surface feature values for each voxels in a Gaussian smoothed volume, then generate a corresponding feature
+strength map that can be used to filter peaks
 
 The method is described in the following paper
-
 A differential structure approach to membrane segmentation in electron tomography
 Antonio Martinez-Sanchez, Inmaculada Garcia, Jose-Jesus Fernandez
 Journal of Structural Biology 175 (2011) 372–383
-
-'''
+"""
 
 import numpy as N
 
 import aitom.filter.differential as FD
 import aitom.linalg.eigen as LE
 
-def feature(vg, gradient_normalize=False):
 
+def feature(vg, gradient_normalize=False):
     print('# calculate hessian matrices')
     dif = FD.diff_3d(vg)
     h = FD.hessian_3d(vg, d=dif)
@@ -27,23 +25,26 @@ def feature(vg, gradient_normalize=False):
 
     print('# calculate eignevalues of hessian matrices')
     e = LE.eigen_value_3_symmetric_batch(h)
-    for i in range(len(e)):    e[i] = e[i] * hmm        # scale back
+    for i in range(len(e)):
+        e[i] = e[i] * hmm  # scale back
 
-    del h       # save some space
+    del h  # save some space
 
     print('# calculate membrane strength')
-    # see paper        Martinez-Sanchez11 A differential structure approach to membrane segmentation in electron tomography
+    # see paper Martinez-Sanchez11 A differential structure approach to membrane segmentation in electron
+    # tomography
     ind = e[0] < 0
     R = N.zeros(e[0].shape)
-    R[ind] = N.abs(e[0][ind]) - N.sqrt(N.abs(e[1][ind]*e[2][ind]))
+    R[ind] = N.abs(e[0][ind]) - N.sqrt(N.abs(e[1][ind] * e[2][ind]))
 
-    del e       # save some space
+    del e  # save some space
 
     Rsq = N.square(R)
     del R
 
     if gradient_normalize:
-        # see equation 5 of paper Martinez-Sanchez13 A ridge-based framework for segmentation of 3D electron microscopy datasets
+        # see equation 5 of paper Martinez-Sanchez13 A ridge-based framework for segmentation of 3D electron
+        # microscopy datasets
         dif_ms = FD.gradient_magnitude_square(dif)
         ind = dif_ms > 0
         M = N.zeros(Rsq.shape)
@@ -54,34 +55,36 @@ def feature(vg, gradient_normalize=False):
 
 
 if __name__ == '__main__':
-
     import json
-    with open('surface_feature__op.json') as f:     op = json.load(f)
+    import aitom.io.file as IF
+    import aitom.filter.gaussian as FG
 
-    import tomominer.io.file as IF
+    with open('surface_feature__op.json') as f:
+        op = json.load(f)
+
     im = IF.read_mrc(op['vol_file'])
-    voxel_spacing = (im['header']['MRC']['xlen'] / im['header']['MRC']['nx']) * 0.1          # voxel spacing in nm unit
+    # voxel spacing in nm unit
+    voxel_spacing = (im['header']['MRC']['xlen'] / im['header']['MRC']['nx']) * 0.1
     print('voxel_spacing', voxel_spacing)
 
     v = im['value']
 
     if 'debug' in op:
         se = N.array(op['debug']['start_end'])
-        v = v[se[0,0]:se[0,1], se[1,0]:se[1,1], se[2,0]:se[2,1]]
+        v = v[se[0, 0]:se[0, 1], se[1, 0]:se[1, 1], se[2, 0]:se[2, 1]]
 
     v = v.astype(N.float)
     v -= v.mean()
 
     IF.put_mrc(v, '/tmp/v.mrc', overwrite=True)
 
-    if op['inverse_intensity']:         v = -v
+    if op['inverse_intensity']:
+        v = -v
     print('intensity distribution of v', 'max', v.max(), 'min', v.min(), 'mean', v.mean())
 
-
-
     print('# gaussian smoothing')
-    import tomominer.filter.gaussian as FG
-    vg = FG.smooth(v, sigma=float(op['sigma'])/voxel_spacing)
+
+    vg = FG.smooth(v, sigma=float(op['sigma']) / voxel_spacing)
 
     print('intensity distribution of vg', 'max', vg.max(), 'min', vg.min(), 'mean', vg.mean())
 
@@ -90,7 +93,6 @@ if __name__ == '__main__':
     R = feature(vg)
 
     IF.put_mrc(R, op['out_file'], overwrite=True)
-
 
 '''
     IF.put_mrc(R, '/tmp/r.mrc', overwrite=True)
@@ -107,4 +109,3 @@ if __name__ == '__main__':
     M /= M[ind].mean()
     IF.put_mrc(M, op['out_file'], overwrite=True)
 '''
-

@@ -2,6 +2,7 @@
 import os
 from .MrcWriter import MrcWriter
 
+
 class MrcReader:
     def __init__(self, path, scale_rate=0):
         self.base_path = path
@@ -35,6 +36,7 @@ class MrcReader:
 
     def __getitem__(self, key):
         return self.mrc.data[key]
+
 
 if __name__ == '__main__':
     m = MrcReader('test.mrc')

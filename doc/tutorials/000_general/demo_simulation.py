@@ -2,7 +2,8 @@ import pickle, uuid, os, sys, gc, multiprocessing, itertools
 import numpy as N                                                                                                                                                                                           
 import tomominer.geometry.rotate as GR                                                                                                                                                                      
 import tomominer.geometry.ang_loc as AAL                                                                                                                                                                    
-import tomominer.simulation.reconstruction__eman2 as TSRE                                                                                                                                                   
+import tomominer.simulation.reconstruction__eman2 as TSRE
+# import tomominer.simulation.reconstruction__simple_convolution as TSRSC
 import tomominer.image.vol.util as TIVU                                                                                                                                                                     
 import tomominer.io.file as TIF                                                                                                                                                                             
 
@@ -27,7 +28,7 @@ def simulation(num, SNR, missing_wedge_angle, MCs, dense_map_file):
             'ctf':{'pix_size':1.2, 'Dz':-2.0, 'voltage':300, 'Cs':2.7, 'sigma':0.4}}                                                                                                               
             op['model']['SNR'] = SNR
             op['model']['missing_wedge_angle'] = missing_wedge_angle                                                                                                                        
-            vb = do_reconstruction(vrr, op, verbose=True)['vb']                                                                                                                                         
+            vb = TSRE.do_reconstruction(vrr, op, verbose=True)                                                                                                                                         
             subtomograms.append(vb)                                                                                                                                                                     
                                                                                                                                                                                                             
     return(subtomograms)                                                                                                                                                                                
@@ -42,7 +43,7 @@ if __name__ == '__main__':
     b['5T2C_template'] = simulation(1, N.float('Inf'), 0, ['5T2C'], dense_map_file)[0]
     b['1KP8_template'] = simulation(1, N.float('Inf'), 0, ['1KP8'], dense_map_file)[0]
                                                                      
-    TIF.pickle.dump(b, 'aitom_demo_subtomograms.pickle')                                                                                      
+    TIF.pickle_dump(b, 'aitom_demo_subtomograms.pickle')                                                                                      
                                                                                                                                                                                                             
                                                                                                                                                                                                         
 

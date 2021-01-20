@@ -1,15 +1,20 @@
 import keras
-from keras.layers import Input, Dense, Conv3D, MaxPooling3D, UpSampling3D, Cropping3D, Dropout, Add, Reshape, \
-    concatenate
+from keras.layers import Input, Dense, Conv3D, MaxPooling3D, UpSampling3D,\
+    Cropping3D, Dropout, Add, Reshape, concatenate
 from keras.models import Sequential, Model, load_model
 from keras.layers.core import Activation
 import numpy as np
+
 
 # Model  2AWB
 def FCN8(img_shape, class_n=None):
     input_shape = (None, img_shape[0], img_shape[1], img_shape[2], 1)
 
-    # use relu activation for hidden layer to guarantee non-negative outputs are passed to the max pooling layer. In such case, as long as the output layer is linear activation, the network can still accomodate negative image intendities, just matter of shift back using the bias term
+    # use relu activation for hidden layer to guarantee non-negative
+    # outputs are passed to the max pooling layer. In such case,
+    # as long as the output layer is linear activation,
+    # the network can still accomodate negative image intendities,
+    # just matter of shift back using the bias term
     input_img = Input(shape=input_shape[1:])
 
     conv1_1 = Conv3D(32, 3, padding='same', activation='relu')(input_img)
@@ -54,11 +59,15 @@ def FCN8(img_shape, class_n=None):
 
     return model
 
+
 # Model  2AWB
 def FCN1(img_shape, class_n=None):
     input_shape = (None, img_shape[0], img_shape[1], img_shape[2], 1)
 
-    # use relu activation for hidden layer to guarantee non-negative outputs are passed to the max pooling layer. In such case, as long as the output layer is linear activation, the network can still accomodate negative image intendities, just matter of shift back using the bias term
+    # use relu activation for hidden layer to guarantee non-negative outputs
+    # are passed to the max pooling layer. In such case,
+    # as long as the output layer is linear activation, the network can still
+    # accomodate negative image intendities, just matter of shift back using the bias term
     input_img = Input(shape=input_shape[1:])
 
     conv1_1 = Conv3D(32, 3, padding='same', activation='relu')(input_img)
@@ -105,9 +114,14 @@ def FCN1(img_shape, class_n=None):
 
     return model
 
+
 def FCN_ed(img_shape, class_n=None):
     input_shape = (None, img_shape[0], img_shape[1], img_shape[2], 1)
-    # use relu activation for hidden layer to guarantee non-negative outputs are passed to the max pooling layer. In such case, as long as the output layer is linear activation, the network can still accomodate negative image intendities, just matter of shift back using the bias term
+    # use relu activation for hidden layer to guarantee non-negative
+    # outputs are passed to the max pooling layer. In such case,
+    # as long as the output layer is linear activation, the network can
+    # still accomodate negative image intendities,
+    # just matter of shift back using the bias term
     input_img = Input(shape=input_shape[1:])
 
     conv1_1 = Conv3D(32, 3, padding='same', activation='relu')(input_img)
@@ -154,11 +168,15 @@ def FCN_ed(img_shape, class_n=None):
 
     return model
 
+
 # Model  2AWB
 def FCN_aspp(img_shape, class_n=None):
     input_shape = (None, img_shape[0], img_shape[1], img_shape[2], 1)
 
-    # use relu activation for hidden layer to guarantee non-negative outputs are passed to the max pooling layer. In such case, as long as the output layer is linear activation, the network can still accomodate negative image intendities, just matter of shift back using the bias term
+    # use relu activation for hidden layer to guarantee non-negative outputs
+    # are passed to the max pooling layer. In such case, as long as
+    # the output layer is linear activation, the network can still accomodate
+    # negative image intendities, just matter of shift back using the bias term
     input_img = Input(shape=input_shape[1:])
 
     conv1_1 = Conv3D(32, 3, padding='same', activation='relu')(input_img)
@@ -193,11 +211,15 @@ def FCN_aspp(img_shape, class_n=None):
 
     return model
 
+
 # test the dilated conv
 def FCN_ed2(img_shape, class_n=None):
     input_shape = (None, img_shape[0], img_shape[1], img_shape[2], 1)
 
-    # use relu activation for hidden layer to guarantee non-negative outputs are passed to the max pooling layer. In such case, as long as the output layer is linear activation, the network can still accomodate negative image intendities, just matter of shift back using the bias term
+    # use relu activation for hidden layer to guarantee non-negative outputs
+    # are passed to the max pooling layer. In such case, as long as the output
+    # layer is linear activation, the network can still accomodate negative
+    # image intendities, just matter of shift back using the bias term
     input_img = Input(shape=input_shape[1:])
 
     conv1_1 = Conv3D(32, 3, padding='same', activation='relu')(input_img)

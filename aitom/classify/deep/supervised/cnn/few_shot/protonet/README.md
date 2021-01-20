@@ -40,7 +40,7 @@ The code presents two models proposed in the paper: a basic ProtoNet3D for subto
 
 ### Train the model
 
-* Run `python run_train.py`. This will run training and place the results into `results`. 
+* Run `python run_train.py`. This will run training and place the results into `results`.
   * You can specify a different output directory by passing in the option `--log.exp_dir EXP_DIR`, where `EXP_DIR` is your desired output directory.
   * You can specify the dataset directory by passing in the option `--data.path DATAPATH`, where `DATAPATH` is your desired dataset directory.
   * If you are running on a GPU you can pass in the option `--data.cuda`.

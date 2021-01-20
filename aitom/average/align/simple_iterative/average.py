@@ -1,27 +1,36 @@
-'''
+"""
 Simple iterative subtomogram alignment and averaging
+"""
 
-'''
+import copy
+import os
+import uuid
 
-import os, sys, copy, uuid, shutil
 import numpy as N
 import numpy.fft as NF
-import math
-import aitom.io.file as AIF
+
 import aitom.geometry.rotate as GR
-import aitom.io.db.lsm_db as TIDL
+import aitom.io.file as AIF
 
-'''
-average
 
-parameters:     
-dj_init: a list of dicts, where each element looks like: 
-{'subtomogram':v_id, 'mask':mask_id, 'angle':ang_t, 'loc':loc_t, 'model_id':model_id} 
-img_db: a dict to find subtomogram data by its uuid (img_db[uuid] is a 3D np array), it contains only one class
+def average(dj_init=None, img_db=None, djs_file=None,
+            avgs_file=None, pcas_file=None, op=None):
+    """
+    parameters:
+    dj_init:
+        a list of dicts, where each element looks like:
+        {'subtomogram':v_id,
+         'mask':mask_id,
+          'angle':ang_t,
+          'loc':loc_t,
+          'model_id':model_id}
+    img_db:
+        a dict to find subtomogram data by its uuid (img_db[uuid] is a 3D np array)
+        it contains only one class
 
-result(pickle file): average result, the same shape as original subtomogram 
-'''
-def average(dj_init=None, img_db=None, djs_file=None, avgs_file=None, pcas_file=None, op=None):
+    result(pickle file):
+        average result, the same shape as original subtomogram
+    """
     djs = load_dict(op['data_checkpoint'])
     avgs = load_dict(op['average']['checkpoint'])
 
@@ -38,7 +47,8 @@ def average(dj_init=None, img_db=None, djs_file=None, avgs_file=None, pcas_file=
             dj = djs[pass_i]
             continue
 
-        dj = copy.deepcopy(dj)  # make a copy of the previous pass, for an update
+        # make a copy of the previous pass, for an update
+        dj = copy.deepcopy(dj)
 
         c = str(uuid.uuid4())
         avg_t = vol_avg(dj=dj, op=op['average'], img_db=img_db)
@@ -72,14 +82,12 @@ def load_dict(path):
     return d
 
 
-'''
-simplified from
-tomominer.pursuit.multi.util.vol_avg__local
-'''
-
-
 def vol_avg(dj, op, img_db):
-    if len(dj) < op['mask_count_threshold']:        return None
+    """
+    simplified from tomominer.pursuit.multi.util.vol_avg__local
+    """
+    if len(dj) < op['mask_count_threshold']:
+        return None
 
     vol_sum = None
     mask_sum = None
@@ -89,19 +97,22 @@ def vol_avg(dj, op, img_db):
         v = img_db[d['subtomogram']]
         vm = img_db[d['mask']]
 
-        v_r = GR.rotate_pad_mean(v, angle=d['angle'], loc_r=d['loc']);
+        v_r = GR.rotate_pad_mean(v, angle=d['angle'], loc_r=d['loc'])
         assert N.all(N.isfinite(v_r))
-        vm_r = GR.rotate_mask(vm, angle=d['angle']);
+        vm_r = GR.rotate_mask(vm, angle=d['angle'])
         assert N.all(N.isfinite(vm_r))
 
-        if vol_sum is None:     vol_sum = N.zeros(v_r.shape, dtype=N.float64, order='F')
+        if vol_sum is None:
+            vol_sum = N.zeros(v_r.shape, dtype=N.float64, order='F')
         vol_sum += v_r
 
-        if mask_sum is None:        mask_sum = N.zeros(vm_r.shape, dtype=N.float64, order='F')
+        if mask_sum is None:
+            mask_sum = N.zeros(vm_r.shape, dtype=N.float64, order='F')
         mask_sum += vm_r
 
     ind = mask_sum >= op['mask_count_threshold']
-    if ind.sum() <= 0:  return None
+    if ind.sum() <= 0:
+        return None
 
     vol_sum = NF.fftshift(NF.fftn(vol_sum))
     avg = N.zeros(vol_sum.shape, dtype=N.complex)
@@ -111,21 +122,19 @@ def vol_avg(dj, op, img_db):
     return {'v': avg, 'm': mask_sum / float(len(dj))}
 
 
-'''
-because python variables are references, it is fine to prepare large amount of tasks, whose prameters points to a small numbers of images
-'''
-
-
 def align_all_pairs(avgs, dj, img_db, n_chunk=1000, redis_host=None):
+    """
+    because python variables are references, it is fine to prepare
+    large amount of tasks, whose prameters points to a small numbers of images
+    """
     # print 'align_all_pairs'
-
     ts = {}
     for d in dj:
         v = img_db[d['subtomogram']]
         m = img_db[d['mask']]
 
         for k in avgs:
-            t = {}
+            t = dict()
             t['uuid'] = str(uuid.uuid4())
             # t['module'] = 'tomominer.align.util'
             t['module'] = 'aitom.align.fast.util'
@@ -134,7 +143,7 @@ def align_all_pairs(avgs, dj, img_db, n_chunk=1000, redis_host=None):
             t['subtomogram_id'] = d['subtomogram']
             t['template_id'] = k
 
-            a_t = {}
+            a_t = dict()
             a_t['v1'] = avgs[k]['v']
             a_t['m1'] = avgs[k]['m']
             a_t['v2'] = v
@@ -150,13 +159,10 @@ def align_all_pairs(avgs, dj, img_db, n_chunk=1000, redis_host=None):
     from collections import defaultdict
     al = defaultdict(dict)
 
+    import aitom.parallel.multiprocessing.util as PARALLEL
     if redis_host is None:
-        # import tomominer.parallel.multiprocessing.util as PARALLEL
-        import aitom.parallel.multiprocessing.util as PARALLEL
         tr_s = [_ for _ in PARALLEL.run_iterator(ts)]
     else:
-        # import tomominer.parallel.redis.job_queue.batch_run as PARALLEL
-        import aitom.parallel.multiprocessing.util as PARALLEL
         tr_s = [_ for _ in PARALLEL.run_iterator(ts, n_chunk=n_chunk, redis_host=redis_host)]
 
     for tr in tr_s:
@@ -173,11 +179,12 @@ def align_all_pairs__select_best(al):
     for i in al:
         km = None
         for k in al[i]:
-            if km is None:                km = k
-            if al[i][k]['score'] < al[i][km]['score']:  continue
+            if km is None:
+                km = k
+            if al[i][k]['score'] < al[i][km]['score']:
+                continue
             km = k
         a[i] = al[i][km]
-
     return a
 
 
@@ -188,7 +195,8 @@ def randomize_orientation(dj):
 
 
 def export_avgs(avgs, out_dir):
-    if not os.path.isdir(out_dir):      os.makedirs(out_dir)
+    if not os.path.isdir(out_dir):
+        os.makedirs(out_dir)
 
     for k in avgs:
         AIF.put_mrc(avgs[k]['v'], os.path.join(out_dir, '%03d--%s.mrc' % (avgs[k]['pass_i'], k)))

@@ -1,21 +1,24 @@
-from master_models import *
-import h5py, os, sys
+import h5py
+import os
 import numpy as np
 from functools import partial
+
+from .master_models import *
 
 from keras.models import Model, Sequential
 from keras.layers import Input, Dense, Reshape, Flatten
 from keras.layers.merge import _Merge
-from keras.layers.convolutional import Convolution2D, Conv2DTranspose
-from keras.layers.normalization import BatchNormalization
-from keras.layers.advanced_activations import LeakyReLU
+# from keras.layers.convolutional import Convolution2D, Conv2DTranspose
+# from keras.layers.normalization import BatchNormalization
+# from keras.layers.advanced_activations import LeakyReLU
 from keras.optimizers import Adam
-from keras.datasets import mnist
+# from keras.datasets import mnist
 from keras import backend as K
 
 
 def wasserstein_loss(y_true, y_pred):
     return K.mean(y_true * y_pred)
+
 
 def gradient_penalty_loss(y_true, y_pred, averaged_samples, gradient_penalty_weight):
     gradients = K.gradients(K.sum(y_pred), averaged_samples)
@@ -23,21 +26,24 @@ def gradient_penalty_loss(y_true, y_pred, averaged_samples, gradient_penalty_wei
     gradient_penalty = gradient_penalty_weight * K.square(1 - gradient_l2_norm)
     return gradient_penalty
 
+
 class RandomWeightedAverage(_Merge):
     def _merge_function(self, inputs):
         weights = K.random_uniform((BATCH_SIZE, 1, 1, 1, 1))
         return (weights * inputs[0]) + ((1 - weights) * inputs[1])
 
+
 def train(X_train, paths):
-    assert('generator_save_path' in paths and 'discriminator_save_path' in paths)
-    if not os.path.isdir(paths['generator_save_path']): os.makedirs(paths['generator_save_path'])
-    if not os.path.isdir(paths['discriminator_save_path']): os.makedirs(paths['discriminator_save_path'])
+    assert ('generator_save_path' in paths and 'discriminator_save_path' in paths)
+    if not os.path.isdir(paths['generator_save_path']):
+        os.makedirs(paths['generator_save_path'])
+    if not os.path.isdir(paths['discriminator_save_path']):
+        os.makedirs(paths['discriminator_save_path'])
 
     # Now we initialize the generator and discriminator.
     print("Initializing networks... ")
     generator = make_generator()
     discriminator = make_discriminator()
-
 
     # The generator_model is used when we want to train the generator layers.
     # As such, we ensure that the discriminator layers are not trainable.
@@ -52,8 +58,8 @@ def train(X_train, paths):
     discriminator_layers_for_generator = discriminator(generator_layers)
     generator_model = Model(inputs=[generator_input], outputs=[discriminator_layers_for_generator])
     # We use the Adam paramaters from Gulrajani et al.
-    generator_model.compile(optimizer=Adam(LR, beta_1=BETA_1, beta_2=BETA_2), 
-                        loss=[wasserstein_loss])
+    generator_model.compile(optimizer=Adam(LR, beta_1=BETA_1, beta_2=BETA_2),
+                            loss=[wasserstein_loss])
 
     # Now that the generator_model is compiled, we can make the discriminator layers trainable.
     for layer in discriminator.layers:
@@ -110,11 +116,11 @@ def train(X_train, paths):
     positive_y = np.ones((BATCH_SIZE, 1), dtype=np.float32)
     negative_y = -positive_y
     dummy_y = np.zeros((BATCH_SIZE, 1), dtype=np.float32)
-    
+
     transform_vector = get_random_vector(10)
     discriminator_loss = []
     generator_loss = []
-    for epoch in range(1, NUM_EPOCHS+1):
+    for epoch in range(1, NUM_EPOCHS + 1):
         print("Epoch: ", epoch)
         print("Number of batches: ", int(X_train.shape[0] // BATCH_SIZE))
         minibatches_size = BATCH_SIZE * TRAINING_RATIO
@@ -127,12 +133,12 @@ def train(X_train, paths):
                 image_batch = discriminator_minibatches[j * BATCH_SIZE:(j + 1) * BATCH_SIZE]
                 noise = get_random_vector(BATCH_SIZE)
                 discriminator_batch_loss = discriminator_model.train_on_batch([image_batch, noise],
-                                                                             [positive_y, negative_y, 
-                                                                                 dummy_y])
-            
+                                                                              [positive_y, negative_y,
+                                                                               dummy_y])
+
             generator_batch_loss = generator_model.train_on_batch(
-                                        get_random_vector(BATCH_SIZE), 
-                                        positive_y) 
+                get_random_vector(BATCH_SIZE),
+                positive_y)
             print('generator loss', generator_batch_loss, 'discriminator loss', discriminator_batch_loss)
             generator_loss.append(generator_batch_loss)
             discriminator_loss.append(discriminator_batch_loss)
@@ -147,12 +153,12 @@ def train(X_train, paths):
 def load_my_data(data_source):
     with h5py.File(data_source, 'r') as data_file:
         X_train = data_file['interpolated_shapes'][:]
-        print("Loaded data of size %s from %s" % (X_train.shape, data_source))        
+        print("Loaded data of size %s from %s" % (X_train.shape, data_source))
         for i in range(len(X_train)):
             X_train[i] = (X_train[i] - X_train[i].min()) / (X_train[i].max() - X_train[i].min())
         np.random.shuffle(X_train)
         X_train = np.reshape(X_train, (X_train.shape + (1,)))
-        return X_train[:,:,:,:,:]
+        return X_train[:, :, :, :, :]
 
 
 def parse_args():
@@ -166,8 +172,9 @@ def parse_args():
 
 if __name__ == "__main__":
     BATCH_SIZE = 32
-    TRAINING_RATIO = 10 # training ratio between discriminator and generator 
-    GRADIENT_PENALTY_WEIGHT = 10 
+    # training ratio between discriminator and generator
+    TRAINING_RATIO = 10
+    GRADIENT_PENALTY_WEIGHT = 10
     LR = 0.0001
     BETA_1 = 0.5
     BETA_2 = 0.99
@@ -177,15 +184,11 @@ if __name__ == "__main__":
     ROOT_PATH = args.result_dir
     NUM_EPOCHS = args.epochs
 
-    if not os.path.isdir(ROOT_PATH):    
+    if not os.path.isdir(ROOT_PATH):
         os.makedirs(ROOT_PATH)
 
     X_train = load_my_data(data_source)
     train(X_train, {
-        'generator_save_path':  os.path.join(ROOT_PATH, 'generator'),
+        'generator_save_path': os.path.join(ROOT_PATH, 'generator'),
         'discriminator_save_path': os.path.join(ROOT_PATH, 'discriminator'),
-        })
-
-
-
-
+    })

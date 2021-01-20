@@ -8,7 +8,7 @@ AITom is originated from the tomominer library, adapted from an [extended versio
 
 ## [Tutorials](https://github.com/xulabs/aitom/tree/master/doc/tutorials)
 
-## [Install](https://github.com/xulabs/aitom/blob/master/doc/install.md)
+## [Install](https://github.com/xulabs/aitom/blob/master/doc/install/install.md)
 
 ## [Question & Answer](https://github.com/xulabs/aitom/blob/master/doc/iQ_A.md)
 

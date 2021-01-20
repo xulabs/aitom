@@ -1,103 +1,104 @@
-'''
+"""
 a tutorial on using morphsnake and RANSC for membrane segmentation
+"""
 
-'''
-
-
-import os, shutil
+import os
+import shutil
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.optimize import leastsq
+
 import aitom.io.file as AIF
 import aitom.filter.gaussian as FG
 import aitom.image.vol.util as AIVU
+
 from morphsnakes import circle_level_set
 from morphsnakes import checkerboard_level_set
 from morphsnakes import morphological_chan_vese as ACWE
 
 
-'''
-sphere_seg: membrane segmentation by sphere fitting
+def sphere_seg(v, sigma, init_level_set=None, out_dir='./output', save_flag=False):
+    """
+    sphere_seg: membrane segmentation by sphere fitting
 
-parameters:     
-v: volume data  sigma: gaussian sigma for denoising  
-init_level_set: initial level set for morphsnake
+    @params:
+        v: volume data  sigma: gaussian sigma for denoising
+        init_level_set: initial level set for morphsnake
 
-return:
-[x, y, z, R]: coordinates and radius of the sphere
+    @return:
+        [x, y, z, R]: coordinates and radius of the sphere
 
-'''
-def sphere_seg(v, sigma, init_level_set=None, out_dir = './output', save_flag=False):
+    """
     np.random.seed(12345)
     if save_flag:
         if os.path.exists(out_dir):
             shutil.rmtree(out_dir)
         os.makedirs(out_dir)
-    
+
     # morphsnake
     if init_level_set:
         init = init_level_set
     else:
-        circle_set = circle_level_set(v.shape[:2],(80,80),60)
+        circle_set = circle_level_set(v.shape[:2], (80, 80), 60)
         init_mask = np.zeros(v.shape)
         for i in range(init_mask.shape[2]):
-            init_mask[:,:,i] = circle_set
+            init_mask[:, :, i] = circle_set
         init = checkerboard_level_set(v.shape)
-        init = np.multiply(init,init_mask)
-    
+        init = np.multiply(init, init_mask)
+
     v_im = AIVU.cub_img(v)['im']
-    if save_flag: plt.imsave(os.path.join(out_dir, 'original.png'), v_im, cmap='gray')
+    if save_flag:
+        plt.imsave(os.path.join(out_dir, 'original.png'), v_im, cmap='gray')
     vg = FG.smooth(v, sigma)
     mask_v = ACWE(image=vg, iterations=25, init_level_set=init)
-    mask_im = AIVU.cub_img(mask_v)['im']   
-    if save_flag: plt.imsave(os.path.join(out_dir, 'morphsnake_result.png'), mask_im, cmap='gray')
+    mask_im = AIVU.cub_img(mask_v)['im']
+    if save_flag:
+        plt.imsave(os.path.join(out_dir, 'morphsnake_result.png'), mask_im, cmap='gray')
 
     # RANSC
     coords = np.array(np.where(mask_v == 1))
     coords = coords.T  # (N,3)
-    
+
     # robustly fit line only using inlier data with RANSAC algorithm
     xyz = coords
-    
+
     model_robust, inliers = ransac(xyz, CircleModel3D, min_samples=20, residual_threshold=3, max_trials=50)
     outliers = inliers == False
     # print('inliers_num = ', sum(inliers), 'inliers_num = ', sum(outliers))
-    x,y,z,R = model_robust.params
+    x, y, z, R = model_robust.params
     v_RANSC = np.zeros(mask_v.shape)
     assert len(inliers) == coords.shape[0]
-    if save_flag: 
+    if save_flag:
         for i in range(len(inliers)):
             if inliers[i]:
                 v_RANSC[coords[i][0]][coords[i][1]][coords[i][2]] = 2
             else:
                 v_RANSC[coords[i][0]][coords[i][1]][coords[i][2]] = 1
         vim_RANSC = AIVU.cub_img(v_RANSC)['im']
-        plt.imsave(os.path.join(out_dir, 'RANSC_result.png'), vim_RANSC, cmap='gray') 
-        
+        plt.imsave(os.path.join(out_dir, 'RANSC_result.png'), vim_RANSC, cmap='gray')
+
         a = FG.smooth(v, sigma)
         a.flags.writeable = True
         color = np.min(a)
         thickness = 1
-        center = (x,y,z)
+        center = (x, y, z)
         grid = np.mgrid[[slice(i) for i in a.shape]]
         grid = (grid.T - center).T
-        phi1 = R - np.sqrt(np.sum((grid)**2, 0))
-        phi2 = np.max(R-thickness, 0) - np.sqrt(np.sum((grid)**2, 0))
+        phi1 = R - np.sqrt(np.sum((grid) ** 2, 0))
+        phi2 = np.max(R - thickness, 0) - np.sqrt(np.sum((grid) ** 2, 0))
         res = np.int8(phi1 > 0) - np.int8(phi2 > 0)
         a[res == 1] = color
-        vim = AIVU.cub_img(a)['im'] 
+        vim = AIVU.cub_img(a)['im']
         plt.imsave(os.path.join(out_dir, 'result.png'), vim, cmap='gray')
-    return  model_robust.params
-
+    return model_robust.params
 
 
 class BaseModel(object):
     def __init__(self):
         self.params = None
-  
+
 
 class CircleModel3D(BaseModel):
-
 
     def estimate(self, data):
         assert data.shape[1] == 3
@@ -105,15 +106,15 @@ class CircleModel3D(BaseModel):
         def fitfunc(p, coords):
             x0, y0, z0, R = p
             x, y, z = coords.T
-            return np.sqrt((x-x0)**2 + (y-y0)**2 + (z-z0)**2)
+            return np.sqrt((x - x0) ** 2 + (y - y0) ** 2 + (z - z0) ** 2)
+
         p0 = [0, 0, 0, 1]
-    
+
         errfunc = lambda p, x: fitfunc(p, x) - p[3]
-        
+
         p1, flag = leastsq(errfunc, p0, args=(data,))
         self.params = p1
         return True
-    
 
     def residuals(self, data):
         assert data.shape[1] == 3
@@ -124,8 +125,8 @@ class CircleModel3D(BaseModel):
         y = data[:, 1]
         z = data[:, 2]
 
-        return r - np.sqrt((x - xc)**2 + (y - yc)**2 + (z - zc)**2)
-    
+        return r - np.sqrt((x - xc) ** 2 + (y - yc) ** 2 + (z - zc) ** 2)
+
 
 def check_random_state(seed):
     if seed is None or seed is np.random:
@@ -159,13 +160,12 @@ def _dynamic_max_trials(n_inliers, n_samples, min_samples, probability):
         return 0
 
     return int(np.ceil(nom / denom))
-    
+
 
 def ransac(data, model_class, min_samples, residual_threshold,
            is_data_valid=None, is_model_valid=None,
            max_trials=100, stop_sample_num=np.inf, stop_residuals_sum=0,
            stop_probability=1, random_state=None):
-
     best_model = None
     best_inlier_num = 0
     best_inlier_residuals_sum = np.inf
@@ -207,7 +207,8 @@ def ransac(data, model_class, min_samples, residual_threshold,
 
         success = sample_model.estimate(*samples)
 
-        if success is not None:  # backwards compatibility
+        # backwards compatibility
+        if success is not None:
             if not success:
                 continue
 
@@ -219,7 +220,7 @@ def ransac(data, model_class, min_samples, residual_threshold,
         sample_model_residuals = np.abs(sample_model.residuals(*data))
         # consensus set / inliers
         sample_model_inliers = sample_model_residuals < residual_threshold
-        sample_model_residuals_sum = np.sum(sample_model_residuals**2)
+        sample_model_residuals_sum = np.sum(sample_model_residuals ** 2)
 
         # choose as new best model if number of inliers is maximal
         sample_inlier_num = np.sum(sample_model_inliers)
@@ -227,20 +228,15 @@ def ransac(data, model_class, min_samples, residual_threshold,
             # more inliers
             sample_inlier_num > best_inlier_num
             # same number of inliers but less "error" in terms of residuals
-            or (sample_inlier_num == best_inlier_num
-                and sample_model_residuals_sum < best_inlier_residuals_sum)
+            or (sample_inlier_num == best_inlier_num and sample_model_residuals_sum < best_inlier_residuals_sum)
         ):
             best_model = sample_model
             best_inlier_num = sample_inlier_num
             best_inlier_residuals_sum = sample_model_residuals_sum
             best_inliers = sample_model_inliers
-            if (
-                best_inlier_num >= stop_sample_num
-                or best_inlier_residuals_sum <= stop_residuals_sum
-                or num_trials
-                    >= _dynamic_max_trials(best_inlier_num, num_samples,
-                                           min_samples, stop_probability)
-            ):
+            if best_inlier_num >= stop_sample_num or best_inlier_residuals_sum <= stop_residuals_sum or num_trials >=\
+                    _dynamic_max_trials(
+                    best_inlier_num, num_samples, min_samples, stop_probability):
                 break
 
     # estimate final model using all inliers
@@ -256,6 +252,6 @@ def ransac(data, model_class, min_samples, residual_threshold,
 if __name__ == '__main__':
     path = "/ldap_shared/home/v_zhenxi_zhu/membrane/aitom/membrane.mrc"  # file path
     v = AIF.read_mrc_data(path)
-    print(v.shape)  
-    params = sphere_seg(v=v, sigma=1, out_dir = './output', save_flag=True)
+    print(v.shape)
+    params = sphere_seg(v=v, sigma=1, out_dir='./output', save_flag=True)
     print('x,y,z,R = ', params)

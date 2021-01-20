@@ -1,3 +1,1 @@
-﻿
-
-SCALE_BASE = 2
+﻿SCALE_BASE = 2

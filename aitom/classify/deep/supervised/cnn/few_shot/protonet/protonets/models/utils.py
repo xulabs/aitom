@@ -1,5 +1,6 @@
 import torch
 
+
 def euclidean_dist(x, y):
     # x: N x D
     # y: M x D

@@ -1,6 +1,6 @@
 import argparse
 
-from trainval import main
+from .trainval import main
 
 parser = argparse.ArgumentParser(description='Re-run prototypical networks training in trainval mode')
 

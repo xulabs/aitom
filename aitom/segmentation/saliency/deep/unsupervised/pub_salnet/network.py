@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -6,6 +5,7 @@ import torchvision
 import time
 import numpy as np
 from skimage.segmentation import slic
+
 
 class Unet(nn.Module):
     def __init__(self, cfg, mode):
@@ -43,20 +43,21 @@ class Unet(nn.Module):
         loss = 0
         if self.mode == 'pre_train':
             for i in range(6):
-                loss += F.binary_cross_entropy(pred[5 - i], tar,reduction='mean') * self.cfg['loss_ratio'][5 - i]
+                loss += F.binary_cross_entropy(pred[5 - i], tar, reduction='mean') * self.cfg['loss_ratio'][5 - i]
                 if tar.size()[2] > 4:
                     tar = F.max_pool2d(tar, 2, 2)
                 # print(float(loss))
         elif self.mode == 'self_train':
             temp = pred[-1].detach().cpu().numpy()
-            temp = temp.transpose([0,3,2,1])
+            temp = temp.transpose([0, 3, 2, 1])
             pred_tar = slic(temp, n_segments=10000, compactness=100)
             pred_tar = pred_tar.astype(np.float32)
-            pred_tar = torch.from_numpy(np.expand_dims(pred_tar,1))
+            pred_tar = torch.from_numpy(np.expand_dims(pred_tar, 1))
             pred_tar = pred_tar.cuda()
             loss = F.binary_cross_entropy(pred[-1], pred_tar, reduction='mean') * self.cfg['loss_ratio'][-1]
             # print(float(loss))
         return pred, loss
+
 
 def make_layers(cfg, in_channels):
     layers = []
@@ -76,6 +77,7 @@ def make_layers(cfg, in_channels):
             in_channels = v
     return nn.Sequential(*layers)
 
+
 class Encoder(nn.Module):
     def __init__(self):
         super(Encoder, self).__init__()
@@ -94,6 +96,7 @@ class Encoder(nn.Module):
         conv6 = self.conv6(conv5)
         conv7 = self.conv7(conv6)
         return conv1, conv2, conv3, conv4, conv5, conv7
+
 
 class DecoderCell(nn.Module):
     def __init__(self, size, in_channel, out_channel, mode):
@@ -148,6 +151,7 @@ class DecoderCell(nn.Module):
 
         return dec_out, _y
 
+
 class PicanetG(nn.Module):
     def __init__(self, size, in_channel):
         super(PicanetG, self).__init__()
@@ -159,12 +163,13 @@ class PicanetG(nn.Module):
         size = x.size()
         kernel = self.renet(x)
         kernel = F.softmax(kernel, 1)
-        kernel = kernel.reshape(size[0], 100, -1)#([9, 100, 16])
-        x = F.unfold(x, [1, 1],padding=[3,3]) #(x, [10, 10], dilation=[3, 3])
+        kernel = kernel.reshape(size[0], 100, -1)  # ([9, 100, 16])
+        x = F.unfold(x, [1, 1], padding=[3, 3])  # (x, [10, 10], dilation=[3, 3])
         x = x.reshape(size[0], size[1], 10 * 10)
         x = torch.matmul(x, kernel)
         x = x.reshape(size[0], size[1], size[2], size[3])
         return x
+
 
 class PicanetL(nn.Module):
     def __init__(self, in_channel):
@@ -188,6 +193,7 @@ class PicanetL(nn.Module):
         x = torch.sum(x, dim=3)
         x = x.reshape(size[0], size[1], size[2], size[3])
         return x
+
 
 class Renet(nn.Module):
     def __init__(self, size, in_channel, out_channel):
@@ -218,6 +224,7 @@ class Renet(nn.Module):
         x = self.conv(x)
         return x
 
+
 if __name__ == '__main__':
     vgg = torchvision.models.vgg16(pretrained=True)
 
@@ -232,4 +239,3 @@ if __name__ == '__main__':
     print('Time: {}'.format(time.clock()))
     _, loss = model(noise, target)
     loss.backward()
-
