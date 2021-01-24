@@ -1,3 +1,7 @@
+'''
+# Reference:
+Adapted from code contributed by Yann Henon in 2017 (https://github.com/yhenon/keras-frcnn).
+'''
 import numpy as np
 import pdb
 import math

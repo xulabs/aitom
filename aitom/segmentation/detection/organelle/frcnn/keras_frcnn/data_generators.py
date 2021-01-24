@@ -1,3 +1,7 @@
+'''
+# Reference:
+Adapted from code contributed by Yann Henon in 2017 (https://github.com/yhenon/keras-frcnn).
+'''
 from __future__ import absolute_import
 import numpy as np
 import cv2

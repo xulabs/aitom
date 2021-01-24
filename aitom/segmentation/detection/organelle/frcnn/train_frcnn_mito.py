@@ -1,5 +1,7 @@
 """
 this code will train on mito data set
+# Reference:
+Adapted from code contributed by Yann Henon in 2017 (https://github.com/yhenon/keras-frcnn).
 """
 from __future__ import division
 import random

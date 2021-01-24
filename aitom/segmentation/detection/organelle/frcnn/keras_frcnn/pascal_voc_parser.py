@@ -1,3 +1,7 @@
+'''
+# Reference:
+Adapted from code contributed by Yann Henon in 2017 (https://github.com/yhenon/keras-frcnn).
+'''
 import os
 import cv2
 import xml.etree.ElementTree as ET

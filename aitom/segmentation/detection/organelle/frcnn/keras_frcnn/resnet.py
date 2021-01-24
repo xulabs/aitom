@@ -3,6 +3,7 @@
 # Reference:
 - [Deep Residual Learning for Image Recognition](https://arxiv.org/abs/1512.03385)
 Adapted from code contributed by BigMoyan.
+Adapted from code contributed by Yann Henon in 2017 (https://github.com/yhenon/keras-frcnn).
 '''
 
 from __future__ import print_function

@@ -2,6 +2,7 @@
 """VGG16 model for Keras.
 # Reference
 - [Very Deep Convolutional Networks for Large-Scale Image Recognition](https://arxiv.org/abs/1409.1556)
+Adapted from code contributed by Yann Henon in 2017 (https://github.com/yhenon/keras-frcnn).
 """
 from __future__ import print_function
 from __future__ import absolute_import

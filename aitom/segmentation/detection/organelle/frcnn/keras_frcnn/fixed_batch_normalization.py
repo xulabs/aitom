@@ -1,3 +1,7 @@
+'''
+# Reference:
+Adapted from code contributed by Yann Henon in 2017 (https://github.com/yhenon/keras-frcnn).
+'''
 from keras.engine import Layer, InputSpec
 from keras import initializers, regularizers
 from keras import backend as K

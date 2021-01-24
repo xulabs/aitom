@@ -35,7 +35,7 @@ def data_split(input_path,train_path,test_path):
         print('train set:{}\ntest set:{}\n'.format(train_num,test_num))
                     
                 
-input_path = './mito_simple_label_d+e.txt'
-train_path = './mito_train_label_d+e.txt'
-test_path = './mito_test_label_d+e.txt'
+input_path = './mito_simple_label.txt'
+train_path = './mito_train_label.txt'
+test_path = './mito_test_label.txt'
 data_split(input_path,train_path,test_path)

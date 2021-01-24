@@ -13,7 +13,7 @@ except ImportError:
   import xml.etree.ElementTree as ET 
   
 xmlpath = 'H:/Mitochondria/Annotations/'
-smfpath = './mito_simple_label_d+e.txt'
+smfpath = './mito_simple_label.txt'
 simplefile = open(smfpath,'w')
 for file in os.listdir(xmlpath):
     filepath = xmlpath + file

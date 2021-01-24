@@ -1,6 +1,8 @@
 """
 this is common visualize utils to show boxes in detection or tracking,
 this file support both cv2 or PIL library, with separately methods
+# Reference:
+Adapted from code contributed by Yann Henon in 2017 (https://github.com/yhenon/keras-frcnn).
 """
 import cv2
 import numpy as np

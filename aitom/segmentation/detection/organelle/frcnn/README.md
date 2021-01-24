@@ -19,10 +19,10 @@ The images will be preprocessed, first Bilateral filtering, then Histogram Equal
 xml2simplefile.py
 The annotation files(.xml file for me) should be converted into this format:
 `/path/to/img.jpg,x1,y1,x2,y2,class_name`
-where x1,y1,x2,y2 is the coordinates of the bounding box. All the annotations will be saved into a TXT file.(like `mito_simple_label_d+e.txt`)
+where x1,y1,x2,y2 is the coordinates of the bounding box. All the annotations will be saved into a TXT file.(like [mito_simple_label.txt](https://github.com/xulabs/aitom/files/5862323/mito_simple_label.txt))
 
 data_split.py
-The dataset will be splited into training set and test set in a ratio of 5:1, and saved into two TXT files.(`mito_train_label_d+e.txt` and `mito_test_label_d+e.txt` for example)
+The dataset will be splited into training set and test set in a ratio of 5:1, and saved into two TXT files.([mito_train_label.txt](https://github.com/xulabs/aitom/files/5862325/mito_train_label.txt) and [mito_test_label.txt](https://github.com/xulabs/aitom/files/5862324/mito_test_label.txt) for example)
 
 (You may need to make some adjustments to the paths in the .py files above and regenerate the simple files since the path to the images are changed.)
 
@@ -42,7 +42,7 @@ You can also use `-p` to choose a single image to predict, or send a path contai
 A model trained to detect mitochondria is saved in ./model.
 
 ## Evaluate
-The measure_map.py file can help you to get the mAP, F1 score, mIoU and precision-recall curve for the model and dataset you provide. You can use `-p` to choose the path to test data, which can be either a simple file or in the format of pascal voc( I chose a simple file `mito_test_label_d+e.txt` as default), and `-m` is for the path to the model you want to evaluate.
+The measure_map.py file can help you to get the mAP, F1 score, mIoU and precision-recall curve for the model and dataset you provide. You can use `-p` to choose the path to test data, which can be either a simple file or in the format of pascal voc( I chose a simple file `mito_test_label.txt` as default), and `-m` is for the path to the model you want to evaluate.
 
 ## Else
 visualization.py can help to plot the model we used if you need.
