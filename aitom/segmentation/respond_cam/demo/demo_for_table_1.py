@@ -53,7 +53,7 @@ configs = [
 lines = []
 for config in configs:
     # Below generating the raw data.
-    print 'Now evaluating on:', config['msg']
+    print('Now evaluating on:', config['msg'])
     lines.append(config['msg'] + '\n')
     cnn = config['cnn']
     dj = config['dj']

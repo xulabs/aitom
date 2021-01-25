@@ -85,7 +85,7 @@ def get_all_scores_and_camsums(cnn_model, target_layer_name, dj):
     camsums_respond = []
     scores = []
     for i, d in enumerate(dj):
-        print '\x1b[2K%d / %d\x1b[1A' % (i, len(dj))
+        print('\x1b[2K%d / %d\x1b[1A' % (i, len(dj)))
         data = d['v']
         data_expanded = np.expand_dims([data], axis=-1)
         values = func([data_expanded, 0])
