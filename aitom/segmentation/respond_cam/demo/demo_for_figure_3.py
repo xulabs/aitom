@@ -1,6 +1,5 @@
 '''
 Author: Guanan Zhao
-License: ACADEMIC OR NON-PROFIT ORGANIZATION NONCOMMERCIAL RESEARCH USE ONLY
 '''
 
 # Figure 3: Three cases in which Respond-CAM displays significant improvement. In each

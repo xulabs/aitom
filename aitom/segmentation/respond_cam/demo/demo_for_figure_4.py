@@ -1,6 +1,5 @@
 '''
 Author: Guanan Zhao
-License: ACADEMIC OR NON-PROFIT ORGANIZATION NONCOMMERCIAL RESEARCH USE ONLY
 '''
 
 # Figure 4: CNN-1 intermediate layer results of Respond-CAM. Each sub-figure is 

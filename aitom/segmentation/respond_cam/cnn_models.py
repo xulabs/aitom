@@ -1,6 +1,5 @@
 '''
 Author: Guanan Zhao
-License: ACADEMIC OR NON-PROFIT ORGANIZATION NONCOMMERCIAL RESEARCH USE ONLY
 '''
 
 import numpy as N

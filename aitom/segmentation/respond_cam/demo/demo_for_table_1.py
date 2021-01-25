@@ -1,6 +1,5 @@
 '''
 Author: Guanan Zhao
-License: ACADEMIC OR NON-PROFIT ORGANIZATION NONCOMMERCIAL RESEARCH USE ONLY
 '''
 
 # Table 1: Comparison between Grad-CAM and Respond-CAM on L1 error and

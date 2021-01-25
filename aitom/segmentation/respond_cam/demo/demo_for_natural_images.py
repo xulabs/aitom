@@ -1,6 +1,5 @@
 '''
 Author: Guanan Zhao
-License: ACADEMIC OR NON-PROFIT ORGANIZATION NONCOMMERCIAL RESEARCH USE ONLY
 '''
 
 # Experiment in Appendix:
