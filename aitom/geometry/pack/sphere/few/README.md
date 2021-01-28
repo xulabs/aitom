@@ -7,6 +7,10 @@ a simple packing function that implements 'single ball model' and 'multiple-ball
 
 ###### 2. map_tomo: obtain density map of single macromolecule and merge them based on packing result, then convert to cryo-ET.
 
-###### 3. simu_subtomo.py: packing and obtain cryo-ET of several macromolecules, then get the subtomogram of the target macromolecule.
+# how to use
+###### 1. activate python2 environment and run generate_map.py. Need to prepare pdb files as input. Need to modify the I/O path before running.
 
-###### 4. generate_simu_subtomo.py: generate a set of simulated subtomogram automatically.
+###### 2. activate python3 environment and run generate_tomo.py. Need to use gpu0/gpu1 server and import aitom_core package.
+
+# reference
+###### [1] Liu S, Ma Y, Ban X, Zeng X, Nallapareddy V, Chaudhari A, Xu M. Efficient Cryo-Electron Tomogram Simulation of Macromolecular Crowding with Application to SARS-CoV-2[C]. 2020 IEEE International Conference on Bioinformatics and Biomedicine (BIBM). IEEE. 2020.
