@@ -11,40 +11,49 @@ import gc
 from numba import jit
 from scipy.spatial.distance import cdist
 from scipy import signal
+import mrcfile
 
 
-'''
-saliency detection
-parameters:     
-a: volume data      gaussian_sigma: sigma for de-noise      gabor_sigma/gabor_lambda: sigma/lambda for Gabor filter   
-cluster_center_number: initial number of cluster centers        save_flag: set True to save results
-pick_num: the number of particles to pick out
+def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_center_number,
+                       pick_num=None, multiprocessing_num=0, save_flag=False):
+    """
+    saliency detection
 
-return:     saliency map, the same shape as a
-'''
-def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_center_number, pick_num=None, multiprocessing_num=0, save_flag=False):
-    # Step 1
-    # Data Pre-processing
+    @param:
+        a: volume data
+        gaussian_sigma: sigma for de-noise
+        gabor_sigma/gabor_lambda: sigma/lambda for Gabor filter
+        cluster_center_number: initial number of cluster centers
+        ave_flag: set True to save results
+        pick_num: the number of particles to pick out
+
+    @return:
+        saliency map, the same shape as a
+    """
+    # Step 1 Data Pre-processing
     b_time = time.time()
-    a = SN.gaussian_filter(input=a, sigma=gaussian_sigma)  # de-noise
+    # de-noise
+    a = SN.gaussian_filter(input=a, sigma=gaussian_sigma)
     end_time = time.time()
     print('de-noise takes', end_time - b_time, 's', ' sigma=', gaussian_sigma)
+    original_tom = a
     if save_flag:
         img = (a[:, :, int(a.shape[2] / 2)]).copy()
-        plt.imsave('./result/original.png', img, cmap='gray')
+        plt.imsave('/tmp/result/original.png', img, cmap='gray')
 
-    # Step 2
-    # Supervoxel over-segmentation
+    # Step 2 Supervoxel over-segmentation
     N = a.shape[0] * a.shape[1] * a.shape[2]
     n = cluster_center_number
-    ck = []  # cluster center [x y z g]
+    # cluster center [x y z g]
+    ck = []
     interval = int(math.pow(N / n, 1.0 / 3))
     x = int(interval / 2)
     y = int(interval / 2)
     z = int(interval / 2)
     print('interval=%d' % interval)
 
-    while (x < a.shape[0]) and (y < a.shape[1]) and (z < a.shape[2]):  # Initialization
+    # Initialization
+    while (x < a.shape[0]) and (y < a.shape[1]) and (z < a.shape[2]):
         ck.append([x, y, z, a[x][y][z]])
         if x + interval < a.shape[0]:
             x = x + interval
@@ -65,12 +74,14 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
     ck = np.array(ck)
     redundant_flag = np.array([False] * len(ck))
 
-    for number in range(10):  # 10 iterations suffices for most images
+    # 10 iterations suffices for most images
+    for number in range(10):
         b_time = time.time()
         print('\n%d of 10 iterations' % number)
         distance, label, ck, redundant_flag = fast_SLIC(distance, label, ck, a, interval, redundant_flag)
         # merge cluster centers
-        ck_dist_min = interval / 2  # merge two cluster centers if the distance between them is less than ck_dist_min
+        # merge two cluster centers if the distance between them is less than ck_dist_min
+        ck_dist_min = interval / 2
         for ck_i in range(len(ck)):
             if redundant_flag[ck_i]:
                 continue
@@ -89,13 +100,13 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
 
     cluster_center_number = int(len(ck) - sum(redundant_flag))
     # renumber cluster center index
-    label = renumber(redundant_flag=redundant_flag,label=label)
+    label = renumber(redundant_flag=redundant_flag, label=label)
     assert np.max(label) == cluster_center_number - 1
     end_time = time.time()
     print('Supervoxel over-segmentation done,', end_time - start_time, 's')
 
     if save_flag:
-        np.save('./result/label', label)
+        np.save('Desktop/result/label', label)
         img = (a[:, :, int(a.shape[2] / 2)]).copy()
         k = int(a.shape[2] / 2)
         draw_color = np.min(a)
@@ -104,7 +115,7 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
                 if label[i][j][k] != label[i - 1][j][k] or label[i][j][k] != label[i + 1][j][k] or label[i][j][k] != \
                         label[i][j - 1][k] or label[i][j][k] != label[i][j + 1][k]:
                     img[i][j] = draw_color
-        plt.imsave('./result/SLIC.png', img, cmap='gray')
+        plt.imsave('Desktop/result/SLIC.png', img, cmap='gray')
     del distance
     gc.collect()
 
@@ -118,12 +129,14 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
     # filters2 = filter_bank_gb3d(sigma=s2, Lambda=Lambda,psi=0,gamma=1)
     # filters = filters1 + filters2
     filters_num = len(filters)
-    feature_matrix = np.zeros((len(filters) + 6, cluster_center_number))  # Gabor features and 6 density features
+    # Gabor features and 6 density features
+    feature_matrix = np.zeros((len(filters) + 6, cluster_center_number))
     print('%d Gabor based features' % filters_num)
 
     print('Feature extraction begins')
     # 3D Gabor filter based features
     res_pool = []
+    label = np.load('Desktop/result/label.npy')
     if multiprocessing_num > 1:
         pool = multiprocessing.Pool(processes=min(multiprocessing_num, multiprocessing.cpu_count()))
     else:
@@ -134,6 +147,9 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
             res_pool.append(pool.apply_async(func=gabor_feature_single_job,
                                              kwds={'a': a, 'filters': filters, 'fm_i': fm_i, 'label': label,
                                                    'cluster_center_number': cluster_center_number, 'save_flag': False}))
+            # res_pool.append(pool.apply_async(func=gabor_feature_single_job,
+            # kwds={'a': a, 'filters': filters, 'fm_i': fm_i, 'label': np.load('Desktop/result/label.npy'),
+            # 'cluster_center_number': cluster_center_number, 'save_flag': False}))
         pool.close()
         pool.join()
         del pool
@@ -141,21 +157,22 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
             feature_matrix[pool_i.get()[0], :] = pool_i.get()[1]
     else:
         for fm_i in range(len(filters)):
-            _, feature_matrix[fm_i,:]=gabor_feature_single_job(a=a, filters=filters, fm_i=fm_i, label=label, cluster_center_number=cluster_center_number, save_flag=False)
+            _, feature_matrix[fm_i, :] = gabor_feature_single_job(a=a, filters=filters, fm_i=fm_i, label=label,
+                                                                  cluster_center_number=cluster_center_number,
+                                                                  save_flag=False)
     print('3D Gabor filter based features done')
 
     # density features
-    feature_matrix = density_feature(a=a,feature_matrix=feature_matrix,label=label,filters_num=filters_num)
+    feature_matrix = density_feature(a=a, feature_matrix=feature_matrix, label=label, filters_num=filters_num)
     print('Density features done')
 
     if save_flag:
-        np.save('./result/feature_matrix', feature_matrix)
+        np.save('Desktop/result/feature_matrix', feature_matrix)
 
     etime = time.time()
     print('Feature extraction done,', etime - stime, 's')
 
-    # Step 4
-    # RPCA
+    # Step 4 RPCA
     start_time = time.time()
     print('RPCA begins')
     L, S = robust_pca(feature_matrix)
@@ -163,18 +180,24 @@ def saliency_detection(a, gaussian_sigma, gabor_sigma, gabor_lambda, cluster_cen
     print('RPCA done, ', end_time - start_time, 's')
     supervoxel_saliency = np.sum(S, axis=0) / S.shape[0]
     if save_flag:
-        np.save('./result/supervoxel_saliency', supervoxel_saliency)
+        np.save('Desktop/result/supervoxel_saliency', supervoxel_saliency)
 
-    # Step 5
-    # Generate Saliency Map
-    a = generate_saliency_map(a=a,label=label,supervoxel_saliency=supervoxel_saliency,pick_num=pick_num)
+    # Step 5 Generate Saliency Map
+    saliency_map = generate_saliency_map(a=a, label=label, supervoxel_saliency=supervoxel_saliency, pick_num=pick_num)
     if save_flag:
         img = a[:, :, int(a.shape[2] / 2)].copy()
-        plt.imsave('./result/saliency_map.png', img, cmap='gray')
+        plt.imsave('Desktop/result/saliency_map.png', img, cmap='gray')
         # io_file.put_mrc_data(a, './saliency_map.mrc')
         print('saliency map saved')
 
-    return a
+    # return saliency_map
+
+    # Step 6 Save subtomograms
+    max_saliency = np.max(supervoxel_saliency)
+    min_saliency = np.min(supervoxel_saliency)
+    particle_picking(a=original_tom, saliency_map=saliency_map, ref_saliency_max=max_saliency,
+                     ref_saliency_min=min_saliency)
+    print('subtomograms saved')
 
 
 def gabor_fn(sigma, theta, Lambda, psi, gamma, size):
@@ -215,7 +238,7 @@ def gabor_fn(sigma, theta, Lambda, psi, gamma, size):
 
 def filter_bank_gb3d(sigma, Lambda, psi=0, gamma=1, truncate=4.0):
     filters = []
-    size = int(truncate*sigma + 0.5)
+    size = int(truncate * sigma + 0.5)
     '''
     for theta_x in np.arange(0, np.pi, np.pi / 4):
         for theta_y in np.arange(0, np.pi, np.pi / 4):
@@ -340,7 +363,7 @@ def converged(M, L, S, initial_error):
     In practice, a fixed error may cause problems
     """
     error = frobeniusNorm(M - L - S) / frobeniusNorm(M)
-    print("error =", error)
+    # print("error =", error)
     return error <= initial_error * 10e-4
 
 
@@ -364,22 +387,22 @@ def fast_SLIC(distance, label, ck, a, interval, redundant_flag):
                         label[ix][iy][iz] = i
 
     # update cluster center
-    sum_ck = np.zeros((len(ck),5))
+    sum_ck = np.zeros((len(ck), 5))
     for i in range(0, a.shape[0]):
         for j in range(0, a.shape[1]):
             for k in range(0, a.shape[2]):
-                sum_ck[label[i][j][k]][4]=sum_ck[label[i][j][k]][4]+1
-                sum_ck[label[i][j][k]][:4]=sum_ck[label[i][j][k]][:4]+np.array([i, j, k, a[i][j][k]])
+                sum_ck[label[i][j][k]][4] = sum_ck[label[i][j][k]][4] + 1
+                sum_ck[label[i][j][k]][:4] = sum_ck[label[i][j][k]][:4] + np.array([i, j, k, a[i][j][k]])
     for i in range(len(ck)):
         if redundant_flag[i]:
             continue
         if sum_ck[i][4] == 0:
             redundant_flag[i] = True
             continue
-        assert sum_ck[i][4]>0
-        sum_ck[i][:4]=sum_ck[i][:4]/sum_ck[i][4]
-        ck[i]=sum_ck[i][:4]
-    return distance,label,ck,redundant_flag
+        assert sum_ck[i][4] > 0
+        sum_ck[i][:4] = sum_ck[i][:4] / sum_ck[i][4]
+        ck[i] = sum_ck[i][:4]
+    return distance, label, ck, redundant_flag
 
 
 @jit(nopython=True)
@@ -431,6 +454,49 @@ def generate_saliency_map(a, label, supervoxel_saliency, pick_num):
     return a
 
 
+def particle_picking(a, saliency_map, ref_saliency_max, ref_saliency_min):
+    """
+    a : the original tomogram
+    saliency_map: the modified output volume data a from step 5
+    ref_saliency_max: the maximum saliency value
+    ref_saliency_min: the minimun salienct value
+    """
+    n = 0  # subtom number iterator
+
+    dif = 8  # half of the frame size
+
+    for i in range(saliency_map.shape[0]):
+        for j in range(saliency_map.shape[1]):
+            for k in range(saliency_map.shape[2]):
+                # finding the saliency value that is greater or above 90% of the max saliency value
+                if saliency_map[i][j][k] >= 0.9 * ref_saliency_max:
+                    # pass if it is on the edge
+                    # TODO: edge case handle
+                    if (i - dif < 0 or i + dif > saliency_map.shape[0] or
+                            j - dif < 0 or j + dif > saliency_map.shape[1] or
+                            k - dif < 0 or k + dif > saliency_map.shape[2]):
+                        pass
+                    else:
+                        # frame the 3d subarray from the original tomogram
+                        subtom = a[i - dif:i + dif, j - dif:j + dif, k - dif:k + dif]
+
+                        print('x axis starting and end:', i - dif, "and", i + dif)
+                        print('y axis starting and end:', j - dif, "and", j + dif)
+                        print('z axis starting and end:', k - dif, "and", k + dif)
+                        print("the dimension of subtom is", subtom.shape[0], "by", subtom.shape[1], "by",
+                              subtom.shape[2])
+
+                        n += 1
+                        namemrc = "Desktop/result/saliency_map_subtomograms" + str(n) + ".mrc"
+                        namepng = "Desktop/result/saliency_map_subtomograms" + str(n) + ".png"
+                        io_file.put_mrc_data(subtom, namemrc)  # save as the mrc file
+                        img = (subtom[:, :, int(subtom.shape[2] / 2)]).copy()
+                        plt.imsave(namepng, img, cmap='gray')
+
+                        # update the saliency map by filling the "cut" subtomogram matrices with minimum saliency value
+                        saliency_map[i - dif:i + dif][j - dif:j + dif][k - dif:k + dif] = ref_saliency_min
+
+
 def gabor_feature_single_job(a, filters, fm_i, label, cluster_center_number, save_flag):
     # convolution
     start_time = time.time()
@@ -442,7 +508,8 @@ def gabor_feature_single_job(a, filters, fm_i, label, cluster_center_number, sav
     # show Gabor filter output
     if save_flag:
         img = (b[:, :, int(a.shape[2] / 2)]).copy()
-        plt.imsave('./result/gabor_output(%d).png' % fm_i, img, cmap='gray')  # save fig
+        # save fig
+        plt.imsave('Desktop/result/gabor_output(%d).png' % fm_i, img, cmap='gray')
 
     # generate feature vector
     start_time = time.time()
@@ -454,8 +521,8 @@ def gabor_feature_single_job(a, filters, fm_i, label, cluster_center_number, sav
 
 @jit(nopython=True)
 def generate_feature_vector(b, label, cluster_center_number):
-    result = np.array([0]*cluster_center_number)
-    #sum_f = np.array((cluster_center_number, 2), 0)
+    result = np.array([0] * cluster_center_number)
+    # sum_f = np.array((cluster_center_number, 2), 0)
     sum_f = np.array([[0 for i in range(2)] for j in range(cluster_center_number)])
     for i in range(0, b.shape[0]):
         for j in range(0, b.shape[1]):
@@ -469,13 +536,14 @@ def generate_feature_vector(b, label, cluster_center_number):
 
 
 if __name__ == "__main__":
-    path = './aitom_demo_single_particle_tomogram.mrc'  # file path
-    mrc_header = io_file.read_mrc_header(path)
-    a = io_file.read_mrc_data(path)  # volume data
-    assert a.shape[0] > 0
-    a = a.astype(np.float32)
+    # file path
+    path = input("Enter data path: ")
+    from aitom.io import mrcfile_proxy
+
+    a = mrcfile_proxy.read_data(path)
     print("file has been read, shape is", a.shape)
     start_time = time.time()
-    saliency_detection(a=a, gaussian_sigma=2.5, gabor_sigma=14.0, gabor_lambda=13.0, cluster_center_number=10000, multiprocessing_num=0, pick_num=1000, save_flag=True)
+    saliency_detection(a=a, gaussian_sigma=2.5, gabor_sigma=14.0, gabor_lambda=13.0, cluster_center_number=10000,
+                       multiprocessing_num=0, pick_num=1000, save_flag=True)
     end_time = time.time()
-    print('saliency detection takes', end_time-start_time,'s')
+    print('saliency detection takes', end_time - start_time, 's')

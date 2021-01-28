@@ -6,9 +6,13 @@ AITom is an open-source platform for AI driven cellular electron cryo-tomography
 AITom is originated from the tomominer library, adapted from an [extended version](http://web.cmb.usc.edu/people/alber/Software/mpp/) of the [tomominer library](https://github.com/alberlab/tomominer), developed at [Alber Lab](http://web.cmb.usc.edu/people/alber/).
 
 
-## [Tutorials](https://github.com/xulabs/aitom_doc/tree/master/tutorials)
+## [Tutorials](https://github.com/xulabs/aitom/tree/master/doc/tutorials)
 
-## [Install](https://github.com/xulabs/aitom/blob/master/doc/install.md)
+## [Install](https://github.com/xulabs/aitom/blob/master/doc/install/install.md)
+
+## [Question & Answer](https://github.com/xulabs/aitom/blob/master/doc/iQ_A.md)
+
+## [Publications](https://github.com/xulabs/aitom/blob/master/doc/publications.md)
 
 ## [Question & Answer](https://github.com/xulabs/aitom/blob/master/doc/iQ_A.md)
 

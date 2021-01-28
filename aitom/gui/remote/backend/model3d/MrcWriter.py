@@ -3,6 +3,7 @@ import numpy as np
 from .config import SCALE_BASE
 from tqdm import tqdm
 
+
 class MrcWriter:
     @staticmethod
     def scale(origin_path, new_path, scale_rate=1):
@@ -25,9 +26,9 @@ class MrcWriter:
                 for y in range(ny):
                     sy = y * scale
                     new_mrc.data[z, x, y] = np.mean(origin_mrc.data[sz: min(sz + scale, oz),
-                                                                   sx: min(sx + scale, ox),
-                                                                   sy: min(sy + scale, oy)
-                                                                   ])
+                                                    sx: min(sx + scale, ox),
+                                                    sy: min(sy + scale, oy)
+                                                    ])
         print('updating header')
         new_mrc.update_header_stats()
         print('header updated')
@@ -38,6 +39,6 @@ class MrcWriter:
     def write(path, data):
         raise NotImplementedError
 
+
 if __name__ == '__main__':
     MrcWriter.scale('t2.mrc', 't3.mrc')
-

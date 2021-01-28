@@ -6,22 +6,23 @@ import pprint
 import sys
 import math
 
-# get atom coord as an array
-def get_coord_array (path, file_name):
-    '''
 
+def get_coord_array(path, file_name):
+    """
+    get atom coord as an array
     Function: get coord array of all atoms in a pdb file
 
-    :param path: the path of pdb file of all proteins
-    :param file_name: the file name of ****.pdb
+    :param
+        path: the path of pdb file of all proteins
+        file_name: the file name of ****.pdb
 
-    :return: atom coord array
-
-                [[x0,y0,z0],
-                 [x1,y1,z1],
-                    ... ,
-                 [xn,yn,zn]]
-    '''
+    :return:
+        atom coord array
+        [[x0,y0,z0],
+        [x1,y1,z1],
+        ... ,
+        [xn,yn,zn]]
+    """
     parser = PDBParser(PERMISSIVE=1)
     structure_id = file_name.split('.')[0]
     path_file_name = path + file_name
@@ -39,42 +40,41 @@ def get_coord_array (path, file_name):
     # print('get_coord_array DONE!\t', path, ": ", file_name)
     return atom_coord_array
 
-def dist_Eur(vecA,vecB):
-    return np.sqrt(sum(np.power((vecA - vecB),2)))
 
-def dist_Eur_array(array,origin):
+def dist_Eur(vecA, vecB):
+    return np.sqrt(sum(np.power((vecA - vecB), 2)))
+
+
+def dist_Eur_array(array, origin):
     power_result = np.power((array - origin), 2)
-    sum_power = power_result.sum(axis=1) # axis = 1 row; axis = 0 column
+    sum_power = power_result.sum(axis=1)  # axis = 1 row; axis = 0 column
     dist_array = np.sqrt(sum_power)
     maxdist = dist_array.max()
-    dist_Eur_dic = {}
-    dist_Eur_dic['dist_array'] = dist_array
-    dist_Eur_dic['maxdist'] = round(maxdist, 4)
+    dist_Eur_dic = {'dist_array': dist_array,
+                    'maxdist': round(maxdist, 4)}
     return dist_Eur_dic
-
 
 
 # PDB_ori_path = './pdbfile/'
 
-def pdb2ball_single(PDB_ori_path = '../IOfile/pdbfile/', show_log = 0):
+def pdb2ball_single(PDB_ori_path='../IOfile/pdbfile/', show_log=0):
+    """
+    :param
+        PDB_ori_path: this is the path that save all the original pdb file
+
+    :return:
+        return a dictionary 'pdb_dict', format as follows:
+        {'pdb_id':
+            {'pdb_id': ****, 'atom_number': ****, 'center': ****, 'radius': ****}
+            'pdb_id':  {'pdb_id': ****, 'atom_number': ****, 'center': ****, 'radius': ****}
+            ...}
+    """
     if show_log != 0:
         print('start convert pdb file to single ball')
-    '''
 
-    :param PDB_ori_path: this is the path that save all the original pdb file
-    :return: return a dictionary 'pdb_dict', format as follows:
-
-            {
-                'pdb_id':  {'pdb_id': ****, 'atom_number': ****, 'center': ****, 'radius': ****}
-                'pdb_id':  {'pdb_id': ****, 'atom_number': ****, 'center': ****, 'radius': ****}
-                ...
-            }
-
-    '''
     pdb_dict = {}
     for file in os.listdir(PDB_ori_path):
         if file != '.DS_Store':
-
             # get pdb id of each protein
             # print(file)
             pdb_id = file[0:4]
@@ -84,6 +84,14 @@ def pdb2ball_single(PDB_ori_path = '../IOfile/pdbfile/', show_log = 0):
             atom_number = len(atom_coord_array[0])
 
             # get center coordinate of each protein, this is the center of the boundary ball
+            '''
+            atom_coord_array              xyz_coord_array
+
+            [[x0,y0,z0],               [[x0,x1,x2, ... , xn],
+             [x1,y1,z1],       TO       [y0,y1,y2, ... , yn],
+                 ... ,                  [z0,z1,z2, ... , zn]]
+             [xn,yn,zn]]
+            '''
             xyz_coord_array = atom_coord_array.T
             xyz_coord_min = np.min(xyz_coord_array, axis=1)
             xyz_coord_max = np.max(xyz_coord_array, axis=1)
@@ -95,53 +103,23 @@ def pdb2ball_single(PDB_ori_path = '../IOfile/pdbfile/', show_log = 0):
             xcenter = round(xcenter, 4)
             ycenter = round(ycenter, 4)
             zcenter = round(ycenter, 4)
-            center_box =[xcenter,ycenter,zcenter]
+            center_box = [xcenter, ycenter, zcenter]
             # print (center_box)
-
-            # center = np.mean(xyz_coord_array, axis=1) # this center is not accurate
-
-            '''
-            atom_coord_array              xyz_coord_array
-
-            [[x0,y0,z0],               [[x0,x1,x2, ... , xn],
-             [x1,y1,z1],       TO       [y0,y1,y2, ... , yn],
-                 ... ,                  [z0,z1,z2, ... , zn]]
-             [xn,yn,zn]]
-
-            '''
+            # center = np.mean(xyz_coord_array, axis=1)  # this center is not accurate
 
             # get radius of the boundary ball
             radius = dist_Eur_array(atom_coord_array, center_box)['maxdist']
 
-            tmp_dict = {}
-            tmp_dict['pdb_id'] = pdb_id
-            tmp_dict['atom_number'] = atom_number
-            tmp_dict['center'] = center_box,4
-            tmp_dict['radius'] = radius,4
-            '''
-            tmp_dict format:
+            tmp_dict = {'pdb_id': pdb_id,
+                        'atom_number': atom_number,
+                        'center': (center_box, 4),
+                        'radius': (radius, 4)}
 
-            {   'pdb_id': ****, 
-                'atom_number': ****, 
-                'center': ****, 
-                'radius': ****
-            }
-            '''
             # print('pdb 2 single ball: DONE!\t', tmp_dict)
             # print('==========================================\n\n\n')
 
             # save in a pdb_dict
             pdb_dict[file[0:4]] = tmp_dict
-            '''
-            pdb_dict format:
-
-            {
-                'pdb_id':  {'pdb_id': ****, 'atom_number': ****, 'center': ****, 'radius': ****}
-                'pdb_id':  {'pdb_id': ****, 'atom_number': ****, 'center': ****, 'radius': ****}
-                ...
-            }
-            '''
-
         else:
             pass
     if show_log != 0:

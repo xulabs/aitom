@@ -1,7 +1,7 @@
 from __future__ import division
 import numpy as np
 import math, pickle, os, pdb
-from model import FCN8, FCN1, FCN_aspp, FCN_ed, FCN_ed2
+from .model import FCN8, FCN1, FCN_aspp, FCN_ed, FCN_ed2
 import tensorflow as tf
 
 import keras
@@ -10,8 +10,8 @@ from keras.models import Sequential, Model, load_model
 
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 import keras.backend as K
-#####################################################33
-### Performance test
+
+
 def loader(snr):
     path = 'dataset/'
 
@@ -35,6 +35,7 @@ def loader(snr):
     testY = keras.utils.to_categorical(testY, num_classes=2)
     return trainX, trainY, testX, testY
 
+
 def iou(y_true, y_pred):
     # any tensorflow metric
     value, update_op = tf.metrics.mean_iou(y_true, y_pred, 2)
@@ -52,6 +53,7 @@ def iou(y_true, y_pred):
         value = tf.identity(value)
         return value
 
+
 def meanIoU(y_pred, y_true):
     iou = np.zeros(2)
     y_pred = np.argmax(y_pred, axis=-1).astype(bool)
@@ -60,19 +62,21 @@ def meanIoU(y_pred, y_true):
     al = y_pred.shape[1]
     pos = np.sum(y_pred * y_true, axis=1)
     neg = np.sum((~y_pred) * (~y_true), axis=1)
-    # pos=float(np.sum(y_pred*y_true))
-    # neg=float(np.sum((~y_pred)*(~y_true)))
+    # pos=float(np.sum(y_pred * y_true))
+    # neg=float(np.sum((~y_pred) * (~y_true)))
 
     iou[0] = np.mean(neg / (al - pos))
     iou[1] = np.mean(pos / (al - neg))
 
     return np.mean(iou)
 
+
 # (NONE, 40^3, 2) -->(NONE,40,40,40)
 def prediction_reshape(prediction):
     y_pred = np.argmax(prediction, axis=-1)
     out = np.reshape(y_pred, (y_pred.shape[0], 40, 40, 40))
     return out
+
 
 if __name__ == '__main__':
     name = 'v2FCN_ed_snr100'
@@ -107,7 +111,7 @@ mIoU = meanIoU(prediction, testY)
 result = np.append(score, mIoU)
 print('name, loss, accuracy, mIoU =  ', name, result)
 
-## visualization
+# visualization
 # path2=os.path.join('y_pred_'+name+'.npy')
 # y_pred=prediction_reshape(prediction)
 # np.save(path2,y_pred)

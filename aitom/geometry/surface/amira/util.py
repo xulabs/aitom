@@ -1,24 +1,25 @@
-'''
+"""
 functions for parsing amira surf ascii file
-
-import aitom.geometry.surface.amira.util as TGSAU
-'''
-
+"""
 
 import copy
 import numpy as N
+
 
 def surf_parse(fo):
     vertice_num = None
     triangle_num = None
 
-    v = []  # vertices
-    t = []  # triangles,  IMPORTANT: the indicis in triangels starts from 1 not 0!!!
+    # vertices
+    v = []
+    # triangles,  IMPORTANT: the indicis in triangels starts from 1 not 0!!!
+    t = []
 
     import time
     while True:
         line = fo.readline()
-        if not line:    break
+        if not line:
+            break
         line = line.strip()
 
         if line.startswith('Vertices '):
@@ -36,7 +37,8 @@ def surf_parse(fo):
 
         if line.startswith('Triangles '):
             assert vertice_num is not None
-            # assert  triangle_num is None        # for simplificity, current we only process one set of triangles
+            # for simplificity, current we only process one set of triangles
+            # assert triangle_num is None
             ss = line.split(' ')
             triangle_num = int(ss[1])
 
@@ -51,37 +53,25 @@ def surf_parse(fo):
     return {'vertices': N.array(v, dtype=N.float), 'faces': N.array(t, dtype=N.int)}
 
 
-'''
-# test code
-
-
-
-import aitom.geometry.surface.amira as GFA
-with open('/tmp/t.surf') as f:  s = GFA.surf_parse(f)
-
-
-s['vertices'].shape
-[s['faces'].min(), s['faces'].max()]
-
-
-'''
-
-
-# written according to Amira.export_surf_ascii_simple()
-# parameters: s: surface structure,     f: file object
 def export_surf_ascii_simple(s, f):
-    print >> f, '# HyperSurface 0.1 ASCII '
-    print >> f, 'Vertices %d' % (s['vertices'].shape[0],)
+    """
+    written according to Amira.export_surf_ascii_simple()
+    parameters:
+        s: surface structure
+        f: file object
+    """
+    print('# HyperSurface 0.1 ASCII ')
+    print('Vertices %d' % (s['vertices'].shape[0],))
 
     for i in range(s['vertices'].shape[0]):
         x = s['vertices'][i, :].flatten().tolist()
-        print >> f, '        %f %f %f ' % (x[0], x[1], x[2])
+        print('%f %f %f ' % (x[0], x[1], x[2]))
 
-    print >> f, 'Patches 1'
-    print >> f, '{ '
+    print('Patches 1')
+    print('{ ')
 
-    print >> f, 'InnerRegion Inside '
-    print >> f, 'Triangles %d ' % (s['faces'].shape[0],)
+    print('InnerRegion Inside ')
+    print('Triangles %d ' % (s['faces'].shape[0],))
 
     faces = copy.deepcopy(s['faces'])
     if faces.min() < 1:
@@ -91,14 +81,18 @@ def export_surf_ascii_simple(s, f):
 
     for i in range(faces.shape[0]):
         j = faces[i, :].flatten().tolist()
-        print >> f, '        %d %d %d ' % (j[0], j[1], j[2])
+        print('%d %d %d ' % (j[0], j[1], j[2]))
 
-    print >> f, '} '
+    print('} ')
 
 
-# transform the vertex location info from voxel grid space to original tomogram space defined in MRC
-# parameters:   x: location         mrc: MRC header
 def vertice_location_transform(x, mrc):
+    """
+    transform the vertex location info from voxel grid space to original tomogram space defined in MRC
+    parameters:
+        x: location
+        mrc: MRC header
+    """
     xt = N.zeros(x.shape, dtype=N.float)
 
     xt[:, 0] = (x[:, 0] / mrc['nx']) * mrc['xlen'] + mrc['xorg']
@@ -108,9 +102,13 @@ def vertice_location_transform(x, mrc):
     return xt
 
 
-# transform the vertex location info from original tomogram space defined in MRC to voxel grid space
-# parameters:   x: location         mrc: MRC header
 def vertice_location_transform__amira_to_vol(x, mrc):
+    """
+    transform the vertex location info from original tomogram space defined in MRC to voxel grid space
+    parameters:
+        x: location
+        mrc: MRC header
+    """
     xt = N.zeros(x.shape, dtype=N.float)
 
     xt[:, 0] = mrc['nx'] * (x[:, 0] - mrc['xorg']) / mrc['xlen']
@@ -120,3 +118,7 @@ def vertice_location_transform__amira_to_vol(x, mrc):
     return xt
 
 
+if __name__ == "__main__":
+    with open('/tmp/t.surf') as f:
+        s = surf_parse(f)
+        res = s['vertices'].shape[s['faces'].min(), s['faces'].max()]
