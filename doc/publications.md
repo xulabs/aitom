@@ -13,6 +13,7 @@
 2. Liu C, Zeng X, Wang K, Guo Q, Xu M. Multi-task learning for macromolecule classification, segmentation and coarse structural recovery in cryo-tomography. 2018, arXiv preprint arXiv:1805.06332 [code](https://github.com/xulabs/aitom/tree/master/aitom/classify/deep/supervised/cnn/mult_task) (liu2018multi)
 3. Lin R, Zeng X, Kitani K, Xu M. Adversarial domain adaptation for cross data source macromolecule *in situ* structural classification in cellular electron cryo-tomograms [code](https://github.com/xulabs/aitom/tree/master/aitom/classify/deep/supervised/cnn/domain_adaptation_adversarial) (lin2019adversarial)
 4. Che C, Xian Z, Zeng X, Gao X, Xu M. Domain Randomization for Macromolecule Structure Classification and Segmentation in Electron Cyro-tomograms, 2019 IEEE International Conference on Bioinformatics and Biomedicine (BIBM). IEEE, 2019: 6-11. [code](https://github.com/xulabs/aitom/tree/master/aitom/classify/deep/supervised/cnn/domain_randomization) (che2019domain)
+5. Zhou B, Yu H, Zeng X, Yang X, Zhang J, Xu M. One-shot Learning with Attention-guided Segmentation in Cryo-Electron Tomography. Frontiers in Molecular Biosciences. [doi:10.3389/fmolb.2020.613347](https://doi.org/10.3389/fmolb.2020.613347) [code](https://github.com/xulabs/aitom/tree/master/aitom/classify/deep/supervised/cnn/one_shot) (zhou2020one)
 
 **Subtomogram Segmentation**
 
