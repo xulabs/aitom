@@ -28,16 +28,13 @@ import aitom.image.io as AIIO
 import aitom.image.vol.util as AIVU
 import aitom.io.file as AIF
 
-# from . import autoencoder as FEE
-
 
 def encoder_simple_conv(img_shape, encoding_dim=32, NUM_CHANNELS=1):
     # workaround for Dropout to work
     # import tensorflow as tf
     # tf.python.control_flow_ops = tf
 
-    # from seg_util import conv_block
-    from aitom.classify.deep.unsupervised.autoencoder.seg_util import conv_block
+    from .seg_util import conv_block
     from keras.layers import Input, Dense, Convolution3D, MaxPooling3D, UpSampling3D, Reshape, Flatten
     from keras.models import Sequential, Model
     from keras import regularizers
@@ -260,7 +257,8 @@ def kmeans_centers_plot(clus_center_dir):
             auto.dsp_cub(ccents[i])
     else:
         clus_center_figure_dir = op_join(clus_center_dir, 'fig')
-        if os.path.isdir(clus_center_figure_dir): shutil.rmtree(clus_center_figure_dir)
+        if os.path.isdir(clus_center_figure_dir):
+            shutil.rmtree(clus_center_figure_dir)
         os.makedirs(clus_center_figure_dir)
 
         # normalize across all images
@@ -280,17 +278,12 @@ def kmeans_centers_plot(clus_center_dir):
 
 if __name__ == "__main__":
     d = AIF.pickle_load(sys.argv[1])
-
     img_org_file = sys.argv[2]
-
     pose = eval(sys.argv[3])
-
     clus_num = int(sys.argv[4])
-
     encoder_simple_conv_test(d=d,
                              pose=pose,
                              img_org_file=img_org_file,
                              out_dir=os.getcwd(),
                              clus_num=clus_num)
-
     kmeans_centers_plot(op_join(os.getcwd(), 'clus-center'))

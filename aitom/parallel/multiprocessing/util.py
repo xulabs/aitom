@@ -97,6 +97,6 @@ def run_batch_test():
 #ipython --pdb
 
 %reset -f
-import tomominer.parallel.multiprocessing.util as TPMU;         reload(TPMU);
+import aitom.parallel.multiprocessing.util as TPMU;         reload(TPMU);
 TPMU.run_batch_test()
 """

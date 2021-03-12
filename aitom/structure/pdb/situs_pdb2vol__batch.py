@@ -1,5 +1,6 @@
 import uuid
 from . import situs_pdb2vol as SP
+from six.moves import input as raw_input
 
 
 def batch_processing(op):
@@ -16,7 +17,7 @@ def batch_processing(op):
             if not file_t.endswith(extension):
                 continue
 
-            pdb_id = file_t[: len(file_t) - len(extension)]
+            pdb_id = file_t[:-4]
 
             assert (pdb_id + extension) == file_t
             assert pdb_id not in pdb_path  # the pdb_id must be unique
@@ -38,9 +39,9 @@ def batch_processing(op):
                 op_t['pdb_id'] = pdb_id
                 op_t['pdb_file'] = pdb_path[pdb_id]
 
-                assert 'resolution' not in op_t;
+                assert 'resolution' not in op_t
                 op_t['resolution'] = resolution
-                assert 'spacing' not in op_t;
+                assert 'spacing' not in op_t
                 op_t['spacing'] = spacing
 
                 ts[uuid.uuid4()] = {'func': SP.convert, 'kwargs': {'op': op_t}}
@@ -85,12 +86,13 @@ def display(path):
 
 
 def test0():
-    from . import situs_pdb2vol__batch as TSPS
+    op = {'situs_pdb2vol_program': '/opt/local/img/em/et/util/situs/Situs_2.7.2/bin/pdb2vol',
+          'spacing_s': [10.0],
+          'resolution_s': [10.0],
+          'pdb_dir': './pdb',
+          'out_file': 'situs_maps.pickle'}
 
-    op = {'situs_pdb2vol_program': '/opt/local/img/em/et/util/situs/Situs_2.7.2/bin/pdb2vol', 'spacing_s': [10.0],
-          'resolution_s': [10.0], 'pdb_dir': './pdb', 'out_file': 'situs_maps.pickle'}
-
-    re = TSPS.batch_processing(op)
+    re = batch_processing(op)
 
     import pickle
     with open(op['out_file'], 'wb') as f:   pickle.dump(re, f, protocol=-1)
