@@ -13,7 +13,7 @@ These instructions will help you to run AITOM GUI on your own system
 python3
 numpy==1.18.5
 mrcfile==1.1.2
-Django==3.0.8
+Django
 mayavi==4.7.1 (needs a system with a display)
 django2_resumable
 matplotlib
