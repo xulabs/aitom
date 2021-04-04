@@ -68,6 +68,14 @@ run_batch = run_iterator
 
 
 def call_func(t):
+    '''
+    Generate random seeds for numpy, so that different cores have different random seeds, see
+    https://discuss.pytorch.org/t/why-does-numpy-random-rand-produce-the-same-values-in-different-cores/12005
+    '''
+    import numpy as N
+    N.random.seed(random.randint(0,123456789))
+    
+    # call the function
     if 'func' in t:
         assert 'module' not in t
         assert 'method' not in t
