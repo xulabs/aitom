@@ -38,6 +38,13 @@ pip install -r requirements.txt
 
 Please refer to [Install_for_Google_Colab.ipynb](https://github.com/xulabs/aitom/blob/master/doc/install/Install_for_Google_Colab.ipynb)
 
+## Docker
+
+```bash
+cd doc/install/
+docker build -t aitom .
+```
+
 ## Remarks
 
 For using the deep learning functions based on GPU, we recommend to use CUDA version 10 and up, together with cudaNN
