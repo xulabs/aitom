@@ -43,7 +43,7 @@ def save_png(m, name, normalize=True, verbose=False):
 
 
 def save_cub_img(v, name, view_dir=2):
-    from . import util as TIVU
+    import aitom.image.vol.util as TIVU
     m = TIVU.cub_img(v=v, view_dir=view_dir)['im']
     save_png(m=m, name=name)
 
