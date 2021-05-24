@@ -35,8 +35,7 @@ def put_mrc_data(mrc, path, overwrite=False):
 
 def pickle_load(path):
     with open(path, 'rb') as f:
-        o = pickle.load(f, encoding='iso-8859-1')
-    return o
+        return pickle.load(f, encoding='iso-8859-1')
 
 
 def pickle_dump(o, path, protocol=-1):
