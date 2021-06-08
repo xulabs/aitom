@@ -1,4 +1,5 @@
 import numpy as np
+import tensorflow as tf
 from keras.optimizers import Adam
 from keras.layers import Input, Conv3D, Dense, Flatten, Concatenate, Activation
 from keras.models import Model, load_model
@@ -13,6 +14,9 @@ from aitom.align.deep.gum.FeatureL2Norm import FeatureL2Norm
 from aitom.align.deep.gum.RigidTransformation3DImputation import RigidTransformation3DImputation
 from aitom.align.deep.gum.SpectralPooling import SpectralPooling
 
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+K.set_session(tf.Session(config=config))
 
 def GUM(img_shape=None):
     if img_shape is None:
