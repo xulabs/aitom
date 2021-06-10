@@ -1,5 +1,5 @@
 numpy==1.18.5
 mrcfile==1.1.2
-Django==3.1.9
+Django==3.1.10
 mayavi==4.7.1
 django2_resumable
