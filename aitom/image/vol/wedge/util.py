@@ -6,7 +6,7 @@ tilt_axis is tilt axis
 
 import warnings
 import numpy as N
-from . import util as AIVU
+import aitom.image.vol.util as AIVU
 import aitom.model.util as MU
 
 

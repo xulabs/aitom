@@ -7,6 +7,7 @@ import multiprocessing
 import sys
 import time
 from multiprocessing.pool import Pool
+import random
 
 
 def run_iterator(tasks, worker_num=multiprocessing.cpu_count(), verbose=False):
