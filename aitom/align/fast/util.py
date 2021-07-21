@@ -2,7 +2,7 @@
 Functions for subtomogram alignment
 """
 
-import aitom.tomominer.core.core as core
+import aitom.tomominer.core.cython.core as core
 import traceback
 import sys
 import numpy as N

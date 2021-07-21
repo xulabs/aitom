@@ -7,6 +7,7 @@ import multiprocessing
 import sys
 import time
 from multiprocessing.pool import Pool
+import random
 
 
 def run_iterator(tasks, worker_num=multiprocessing.cpu_count(), verbose=False):
@@ -73,6 +74,7 @@ def call_func(t):
     https://discuss.pytorch.org/t/why-does-numpy-random-rand-produce-the-same-values-in-different-cores/12005
     '''
     import numpy as N
+    import random
     N.random.seed(random.randint(0,123456789))
     
     # call the function
