@@ -45,7 +45,7 @@ The [model](https://cmu.box.com/s/ymjit1ta5svqb8hyegwf5rqk2m46ouz7) is trained o
 The training code finetunes the trained model (from SNR 100 dataset) on the demo dataset (SNR 0.1) for 20 iterations. 
 
 ```
-python Gum-Net.py
+python train_demo.py
 ```
 
 Output:
