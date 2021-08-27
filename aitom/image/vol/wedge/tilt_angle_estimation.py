@@ -13,7 +13,7 @@ import numpy as N
 from scipy.stats.stats import pearsonr
 
 import aitom.model.util as MU
-from .. import util as IVU
+from aitom.image.vol import util as IVU
 
 
 def wedge_mask_cor(v_abs, ops):
