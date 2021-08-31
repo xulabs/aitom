@@ -50,7 +50,7 @@ def align_cluster_index(ref_cluster, map_cluster):
 
 
     
-def DDBI(features, labels):
+def DDBI(features, labels, reg_covar):
 
     means_init = np.array([np.mean(features[labels == i], 0) for i in np.unique(labels)])
     precisions_init = np.array([np.linalg.inv(np.cov(features[labels == i].T) + reg_covar * np.eye(features.shape[1])) for i in np.unique(labels)])
