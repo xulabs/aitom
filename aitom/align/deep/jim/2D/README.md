@@ -18,13 +18,11 @@ Use the `test_jim_net.sh` script to evaluate Jim-Net on PF-Pascal test set.
 
 This code was built ontop of the code provided in
 ````
-@inproceedings{rocco2018end,
-  title={End-to-end weakly-supervised semantic alignment},
-  author={Rocco, Ignacio and Arandjelovi{\'c}, Relja and Sivic, Josef},
-  booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
-  pages={6917--6925},
-  year={2018}
-}
+@article{Rocco18,
+        author       = "Rocco, I. and Arandjelovi\'c, R. and Sivic, J.",
+        title        = "End-to-end weakly-supervised semantic alignment",
+        journal={arXiv preprint arXiv:1712.06861},
+         }
 ````
 
 
