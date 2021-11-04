@@ -21,7 +21,7 @@ Zeng, Xiangrui, Howe, Gregory, and Xu, Min. "End-to-End Robust Joint Unsupervise
 
 
 ## Installation 
-We are organizing the training and testing code and will release it soon by Oct 2021.
+We have uploaded the code for 2D data. Please see the corresponding folder. We are organizing code for 3D data and will upload it soon.
 
 
 ### BibTeX
