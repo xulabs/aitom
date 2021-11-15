@@ -7,7 +7,7 @@ from aitom.align.deep.gum.models.Gum_Net import *
 from aitom.align.deep.gum.opt import opt
 
 def main(opt):
-    initial_model = opt.init_model
+    build_model = opt.build_model
     initial_lr = opt.initial_lr
 
     # 1. load demo data
@@ -17,7 +17,7 @@ def main(opt):
     image_size = x_test[0].shape[0]
 
     # 2. load or build model
-    if initial_model:
+    if not build_model:
         model = load_model(opt.model_path,
                            custom_objects={
                                'SpectralPooling': SpectralPooling,
