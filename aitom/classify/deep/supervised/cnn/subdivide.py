@@ -14,7 +14,7 @@ License: ACADEMIC OR NON-PROFIT ORGANIZATION NONCOMMERCIAL RESEARCH USE ONLY
 
 import numpy as N
 
-from keras.layers import Input, Dense, Convolution3D, MaxPooling3D,\
+from keras.layers import Input, Dense, Conv3D, MaxPooling3D,\
     merge, ZeroPadding3D, AveragePooling3D, Dropout, Flatten, Activation
 import keras.models as KM
 
@@ -23,30 +23,29 @@ def inception3D(image_size, num_labels):
     num_channels = 1
     inputs = Input(shape=(image_size, image_size, image_size, num_channels))
 
-    m = Convolution3D(32, 5, 5, 5, subsample=(1, 1, 1), activation='relu',
-                      border_mode='valid', input_shape=())(inputs)
-    m = MaxPooling3D(pool_size=(2, 2, 2), strides=None, border_mode='same')(m)
+    m = Conv3D(32, kernel_size=(5, 5, 5), strides=(1, 1, 1), activation='relu',
+                      padding='valid', input_shape=())(inputs)
+    m = MaxPooling3D(pool_size=(2, 2, 2), strides=None, padding='same')(m)
 
     # inception module 0
-    branch1x1 = Convolution3D(32, 1, 1, 1, subsample=(1, 1, 1), activation='relu',
-                              border_mode='same')(m)
-    branch3x3_reduce = Convolution3D(32, 1, 1, 1, subsample=(1, 1, 1), activation='relu',
-                                     border_mode='same')(m)
-    branch3x3 = Convolution3D(64, 3, 3, 3, subsample=(1, 1, 1), activation='relu',
-                              border_mode='same')(branch3x3_reduce)
-    branch5x5_reduce = Convolution3D(16, 1, 1, 1, subsample=(1, 1, 1), activation='relu',
-                                     border_mode='same')(m)
-    branch5x5 = Convolution3D(32, 5, 5, 5, subsample=(1, 1, 1), activation='relu',
-                              border_mode='same')(branch5x5_reduce)
-    branch_pool = MaxPooling3D(pool_size=(2, 2, 2), strides=(1, 1, 1),
-                               border_mode='same')(m)
-    branch_pool_proj = Convolution3D(32, 1, 1, 1, subsample=(1, 1, 1), activation='relu',
-                                     border_mode='same')(branch_pool)
+    branch1x1 = Conv3D(32, kernel_size=(1, 1, 1), strides=(1, 1, 1), activation='relu',
+                              padding='same')(m)
+    branch3x3_reduce = Conv3D(32, kernel_size=(1, 1, 1), strides=(1, 1, 1), activation='relu',
+                                     padding='same')(m)
+    branch3x3 = Conv3D(64, kernel_size=(3, 3, 3), strides=(1, 1, 1), activation='relu',
+                              padding='same')(branch3x3_reduce)
+    branch5x5_reduce = Conv3D(16, kernel_size=(1, 1, 1), strides=(1, 1, 1), activation='relu',
+                                     padding='same')(m)
+    branch5x5 = Conv3D(32, kernel_size=(5, 5, 5), strides=(1, 1, 1), activation='relu',
+                              padding='same')(branch5x5_reduce)
+    branch_pool = MaxPooling3D(pool_size=(2, 2, 2), strides=(1, 1, 1), padding='same')(m)
+    branch_pool_proj = Conv3D(32, kernel_size=(1, 1, 1), strides=(1, 1, 1), activation='relu',
+                                     padding='same')(branch_pool)
     # m = merge([branch1x1, branch3x3, branch5x5, branch_pool_proj], mode='concat', concat_axis=-1)
     from keras.layers import concatenate
     m = concatenate([branch1x1, branch3x3, branch5x5, branch_pool_proj], axis=-1)
 
-    m = AveragePooling3D(pool_size=(2, 2, 2), strides=(1, 1, 1), border_mode='valid')(m)
+    m = AveragePooling3D(pool_size=(2, 2, 2), strides=(1, 1, 1), padding='valid')(m)
     m = Flatten()(m)
     m = Dropout(0.7)(m)
 
@@ -54,7 +53,7 @@ def inception3D(image_size, num_labels):
     m = Dense(num_labels, activation='linear')(m)
     m = Activation('softmax')(m)
 
-    mod = KM.Model(input=inputs, output=m)
+    mod = KM.Model(inputs=inputs, outputs=m)
 
     return mod
 
@@ -65,12 +64,12 @@ def dsrff3D(image_size, num_labels):
 
     # modified VGG19 architecture
     bn_axis = 3
-    m = Convolution3D(32, 3, 3, 3, activation='relu', border_mode='same')(inputs)
-    m = Convolution3D(32, 3, 3, 3, activation='relu', border_mode='same')(m)
+    m = Conv3D(32, kernel_size=(3, 3, 3), activation='relu', padding='same')(inputs)
+    m = Conv3D(32, kernel_size=(3, 3, 3), activation='relu', padding='same')(m)
     m = MaxPooling3D(pool_size=(2, 2, 2), strides=(2, 2, 2))(m)
 
-    m = Convolution3D(64, 3, 3, 3, activation='relu', border_mode='same')(m)
-    m = Convolution3D(64, 3, 3, 3, activation='relu', border_mode='same')(m)
+    m = Conv3D(64, kernel_size=(3, 3, 3), activation='relu', padding='same')(m)
+    m = Conv3D(64, kernel_size=(3, 3, 3), activation='relu', padding='same')(m)
     m = MaxPooling3D(pool_size=(2, 2, 2), strides=(2, 2, 2))(m)
 
     m = Flatten(name='flatten')(m)
@@ -88,8 +87,8 @@ def compile(model, num_gpus=1):
         import keras_extras.utils.multi_gpu as KUM
         model = KUM.make_parallel(model, num_gpus)
 
-    import keras.optimizers as KOP
-    kop = KOP.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+    import tensorflow.keras.optimizers as KOP
+    kop = KOP.SGD(learning_rate=0.01, decay=1e-6, momentum=0.9, nesterov=True)
     model.compile(optimizer=kop, loss='categorical_crossentropy', metrics=['accuracy'])
 
     return model
