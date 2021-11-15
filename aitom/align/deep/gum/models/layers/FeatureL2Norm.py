@@ -7,7 +7,7 @@ def _featurenorm(feature):
     epsilon = 1e-6
     norm = tf.pow(tf.reduce_sum(tf.pow(feature, 2), 4) + epsilon, 0.5)
     norm = tf.expand_dims(norm, 4)
-    norm = tf.tile(norm, [1, 1, 1, 1, feature.get_shape().as_list()[1]])
+    norm = tf.tile(norm, [1, 1, 1, 1, feature.get_shape().as_list()[-1]])
     norm = tf.divide(feature, norm)
 
     return norm
