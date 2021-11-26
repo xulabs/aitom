@@ -78,7 +78,7 @@ def tilt_mask(size, tilt_ang1, tilt_ang2=None, tilt_axis=1, light_axis=2, sphere
     tilt_ang1 = (tilt_ang1 / 180.0) * N.pi
     tilt_ang2 = (tilt_ang2 / 180.0) * N.pi
 
-    g = AIVU.grid_displacement_to_center(size=size, mid_co=IVU.fft_mid_co(siz=size))
+    g = AIVU.grid_displacement_to_center(size=size, mid_co=AIVU.fft_mid_co(siz=size))
 
     plane_axis = set([0, 1, 2])
     plane_axis.difference_update([light_axis, tilt_axis])
