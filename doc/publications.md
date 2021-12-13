@@ -37,3 +37,7 @@
 1. Xu M, Singla J, Tocheva E, Chang Y, Stevens R, Jensen G, Alber F.  De novo structural pattern mining in cellular electron cryo-tomograms.  Structure. 2019 Apr 2;27(4):679-691.e14.[code](https://github.com/xulabs/aitom/tree/master/aitom/tomominer) (xu2019novo)
 2. Frazier Z, Xu M, Alber F. Tomominer and tomominer cloud: A software platform for large-scale subtomogram structural analysis. Structure, Volume 25, Issue 6, p951–961.e2, 6 June 2017  [code](https://github.com/xulabs/aitom/tree/master/aitom/tomominer) (frazier2017tomominer)
 
+**Machine Learning and Computer Vision**
+
+1. Wang T, Li X, Yang P, Hu G, Zeng X, Huang S, Xu C, Xu M. Boosting Active Learning via Improving Test Performance. arXiv: 2112.05683. Thirty-Sixth AAAI Conference on Artificial Intelligence, AAAI 2022. [code](https://github.com/xulabs/aitom/tree/master/aitom/ml/active_learning/al_gradnorm) (wang2022boosting)
+
