@@ -1,20 +1,17 @@
 import torch
 from torch import nn
 from torch.nn import functional as F
-
+import numbers
+import math
 from gaussian import gaussian3D
-from utils import deform, Conv_block, decoder_general
+from utils import deform, Conv_block_T, Conv_block, decoder_general
 
-# bottle = 64
-# bottle=125
+import numpy as np
 
 ns_lim = 0.1
 alpha_m = 1
-ds_lim = 0.01  ##Change carefully....Very sensitive
+ds_lim = 0.01  
 kernel = 7
-bl_lim = 0.5
-
-# ns_lim=0.0
 
 
 device = "cuda"
@@ -39,8 +36,6 @@ class decoder_ds(nn.Module):
         def_, mask = deform(orig.shape, kernel_size=kernel, device=device).to(device)(
             x, orig, alpha, mask, ds_lim=ds_lim
         )
-        # def_ = def_.repeat(1, 3, 1, 1)
-        # print(def_.shape)
         return def_, mask
 
 
@@ -67,41 +62,6 @@ class decoder_ns(nn.Module):
         return x
 
 
-class decoder_bl(nn.Module):
-    def __init__(self, channels=1):
-        super(decoder_bl, self).__init__()
-        global device, bl_lim
-        self.bl_lim = bl_lim
-        channel_list_ns = [128, 128, 128, 128, 128, 128, 128, 64, 64, 64, 32, 1]
-        self.dec = nn.Sequential(
-            decoder_general(channel_list_ns, name="bl"),
-            nn.Sigmoid(),
-        )
-        kernel_size = 5
-        self.padding = (kernel_size - 1) // 2
-        self.stride = 1
-        kernel = torch.tensor(gaussian3D(1, 0, 1, kernel_size)).to(device)
-        self.device = device
-        kernel = kernel.view(1, 1, *kernel.size()).to(device)
-        kernel = kernel.repeat(channels, *[1] * (kernel.dim() - 1)).to(device).float()
-        # print(kernel.shape)
-        # self.register_buffer('weight', kernel)
-        self.weight = kernel
-        self.conv = F.conv3d
-
-    def forward(self, x, orig):
-
-        x = self.dec(x)
-        x = x * self.bl_lim
-
-        dx = self.conv(
-            orig.to(device),
-            weight=self.weight,
-            stride=self.stride,
-            padding=self.padding,
-        )
-        return orig * (1 - x) + (dx * (x))
-
 
 class encoder(nn.Module):
     def __init__(self):
@@ -122,7 +82,7 @@ class encoder(nn.Module):
         )
 
         self.d3 = nn.Sequential(
-            nn.MaxPool3d(kernel_size=2, stride=2), Conv_block(128, 128 * 3)
+            nn.MaxPool3d(kernel_size=2, stride=2), Conv_block(128, 128 * 2)
         )
 
     def forward(self, x):
@@ -133,11 +93,8 @@ class encoder(nn.Module):
 
         len_ = x_3.shape[1]
         store = {
-            "encode_ds": x_3[:, : len_ // 3, :, :, :],
-            "encode_ns": x_3[:, len_ // 3 : len_ * 2 // 3, :, :, :],
-            "encode_bl": x_3[:, len_ * 2 // 3 :, :, :, :],
-            # "encode_ds": x_3[:, : len_ // 2, :, :, :],
-            # "encode_ns": x_3[:, len_// 2 :, :, :, :],
+            "encode_ds": x_3[:, : len_ // 2, :, :, :],
+            "encode_ns": x_3[:, len_ // 2 : , :, :, :],
             "0": x_0,
             "1": x_1,
             "2": x_2,
@@ -150,47 +107,18 @@ class encode_warp(nn.Module):
     def __init__(self, shape=False):
         super(encode_warp, self).__init__()
         self.encoder = encoder()
-        # channel_list_ns = [256, 128, 128, 128, 128, 128, 128, 64, 64, 64, 64, 1]
         if not shape:
             self.decoder_1 = decoder_ds()
         else:
             self.decoder_1 = decoder_ds(bottle=64)
 
-        self.decoder_3 = decoder_bl()
         self.decoder_2 = decoder_ns()
-        self.re = nn.Hardtanh(0, 1)
+        self.re = nn.Hardtanh(0.0, 1.0)
 
     def forward(self, x, mask):
-        # print(x.size())
+        
         x_en = self.encoder(x)  ## [2,128,5,5,5]
-        dec0 = self.decoder_3(x_en, x)
-        dec2 = self.re(self.decoder_2(x_en) + x)
-        dec1, mask = self.decoder_1(x_en, dec2, mask)
-        return dec1, mask
-        # return out_avg,dec2['loss'],dec2
-        # return dec2
+        x = self.re(self.decoder_2(x_en) + x)
+        x, mask = self.decoder_1(x_en, x, mask)
+        return x, mask
 
-
-if __name__ == "__main__":
-    from sim_Demo import get_sample_data
-
-    from mrc_np import wrap
-
-    ar, ar_2 = get_sample_data(1)
-    from scipy.ndimage import zoom
-
-    # print(ar.shape)
-    # ar=zoom(ar,(1,0.8,0.8,0.8))
-    # ar_2=zoom(ar_2,(0.8,0.8,0.8))
-    in_ = torch.tensor(ar).repeat(2, 1, 1, 1).unsqueeze(1).float().to(device)
-
-    mask_ = torch.tensor(ar_2).repeat(2, 1, 1, 1).float().to(device)
-    enc = encode_warp().to(device)
-
-    encoded, mask = enc(in_, mask_)
-
-    # wrap(encoded[0][0].detach().cpu().numpy(), "out.jpg")
-    # wrap(mask_[0].detach().cpu().numpy(), "in_mask.jpg")
-    # wrap(in_[0][0].detach().cpu().numpy(), "in.jpg")
-    # wrap(mask[0][0].detach().cpu().numpy(), "out_mask.jpg")
-    print(encoded.shape, mask.shape)

@@ -66,12 +66,8 @@ sys.path.append("../../")
 sys.path.append("../")
 
 import pickle
-import tomominer.simulation.reconstruction__simple_convolution as recon
-import tomominer.image.io as TIIO
-import tomominer.image.vol.util as TIVU
-import tomominer.config as config
+
 import shutil
-from sklearn.metrics import classification_report
 from torch.utils.data import TensorDataset
 import sys
 from torch import nn
