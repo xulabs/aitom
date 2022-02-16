@@ -1,9 +1,9 @@
 ## Supplementary Material for the paper "Deep Active Learning for Cryo-Electron Tomography Classification"
 
-\*\*\* This repository includes the ***Appendix*** and the sample ***Code***.
+This repository includes the ***Appendix*** and the sample ***Code***.
 
 
-This code is for the simulated cryo-ET dataset of 50 classes with a SNR of 0.05.
+The code is for the simulated cryo-ET dataset of 50 classes with a SNR of 0.05.
 
 ## Environments:
 
