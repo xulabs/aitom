@@ -18,6 +18,8 @@
 3. Go to config.py to setup hyper-parameters if needed. For example, the experiment 
    currently runs for 3 trials on a single GPU. The 'TRIAL' can be changed to 1 if
    running the experiment with 3 GPUs concurrently. 
+   
+4. python main.py 
 
 
 
