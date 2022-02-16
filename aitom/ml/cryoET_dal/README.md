@@ -23,11 +23,7 @@
 
 ## Data availability:
 
-We refer readers to [1] for data preparations. 
-
-
-
-[1] 
+We refer readers to the following paper for data preparations. 
 
 ```
 @inproceedings{liu2020efficient,
@@ -39,3 +35,8 @@ We refer readers to [1] for data preparations.
   organization={IEEE}
 }
 ```
+
+## Contact
+[Tianyang Wang](https://tianyangwang.org/)
+
+toseattle@siu.edu
