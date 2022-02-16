@@ -1,0 +1,21 @@
+
+#setting for 50 classes of SNR005
+
+NUM_TRAIN = 24000  # N
+NUM_VAL = 24000 - NUM_TRAIN
+BATCH = 128 # B
+SUBSET = 12000  # M
+ADDENDUM = 1200  # K
+
+
+TRIALS = 3
+CYCLES = 7
+
+EPOCH = 100
+LR = 0.1
+MILESTONES = [80]
+
+MOMENTUM = 0.9
+WDECAY = 5e-4
+
+
