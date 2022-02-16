@@ -1,13 +1,13 @@
 \*\*\* This sample code is for the simulated cryo-ET dataset of 50 classes with a SNR of 0.05 \*\*\*
 
 
-Environments:
+## Environments:
 
 1. Python 3.8   2. Pytorch 1.7   3. mrcfile 1.3
 
 
 
-How to use the code:
+## How to use the code:
 
 1. Specify the data path in line 28 of the main.py 
 
@@ -21,7 +21,7 @@ How to use the code:
 
 
 
-Data availability:
+## Data availability:
 
 We refer readers to [1] for data preparations. 
 
@@ -29,6 +29,7 @@ We refer readers to [1] for data preparations.
 
 [1] 
 
+```
 @inproceedings{liu2020efficient,
   title={Efficient cryo-electron tomogram simulation of macromolecular crowding with application to SARS-CoV-2},
   author={Liu, Sinuo and Ma, Yan and Ban, Xiaojuan and Zeng, Xiangrui and Nallapareddy, Vamsi and Chaudhari, Ajinkya and Xu, Min},
@@ -37,4 +38,4 @@ We refer readers to [1] for data preparations.
   year={2020},
   organization={IEEE}
 }
-
+```
