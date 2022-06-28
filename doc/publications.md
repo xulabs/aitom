@@ -28,6 +28,9 @@
 1. Xu M, Martin B, Frank A. High-throughput subtomogram alignment and classification by Fourier space constrained fast volumetric matching. Journal of structural biology 178, no. 2 (2012): 152-164. [code](https://github.com/xulabs/aitom/tree/master/aitom/align/fast) (xu2012high-throughput)
 2. Zeng X, Xu M. Gum-Net: Unsupervised geometric matching for fast and accurate 3D subtomogram image alignment and averaging. In Proceedings of the IEEE conference on computer vision and pattern recognition (CVPR 2020). [code](https://github.com/xulabs/aitom/tree/master/aitom/align/deep/gum) (zeng2020gum)
 
+**Simulation**
+1. Wu X, Zeng X, Li C, Wei H, Deng H, Zhang J, Xu M. CryoETGAN: Cryo-electron Tomography Image Synthesis Via Unpaired Image Translation. Frontiers Physiology. [doi:10.3389/fphys.2022.760404](https://doi.org/10.3389/fphys.2022.760404) [code](https://github.com/xulabs/aitom/tree/master/aitom/simulation/subtomogram/deep/cryoetgan)
+
 **Tomogram Segmentation and Object Detection**
 1. Zhou B, Guo Q, Zeng X, Gao X, Xu M. Feature Decomposition Based Saliency Detection in Electron Cryo-Tomograms. arXiv:1801.10562. IEEE International Conference on Bioinformatics & Biomedicine, Workshop on Machine Learning in High Resolution Microscopy (BIBM-MLHRM 2018) [code](https://github.com/xulabs/aitom/tree/master/aitom/segmentation/saliency/feature_decomposition) (zhou2018feature)
 2. Li R, Zeng X, Siegmund S, Lin R, Zhou B, Liu C, Wang K, Jiang R, Freyberg Z, Lv H, Xu M. Automatic Localization and Identification of Mitochondria in Cellular Electron Cryo-Tomography using Faster-RCNN. BMC Bioinformatics. 201920 (Suppl 3) :132 doi:10.1186/s12859-019-2650-7. [code](https://github.com/xulabs/aitom/tree/master/aitom/segmentation/detection/organelle/frcnn) (li2019automatic)
