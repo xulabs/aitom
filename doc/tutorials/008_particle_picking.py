@@ -58,8 +58,8 @@ def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessin
     M = peaks[0]['val'] # max val of all peaks
     m = peaks[len(peaks)-1]['val'] # min val of all peaks
     T = m+t*(M-m)/20
-    peak_vals_neg = [-peak['val']*find_maxima for peak in peaks]
-    res = peaks[:bisect(peak_vals_neg, -T*find_maxima)-1]
+    peak_vals_neg = [-peak['val'] for peak in peaks]
+    res = peaks[:(len(peak_vals_neg)-bisect(peak_vals_neg, -T)+1)]
     assert res[-1]['val'] >= T
     print("%d particles detected, containing redundant peaks" % len(res))
     result = do_filter(pp=res, peak_dist_min=s1, op=None)  # remove redundant peaks
@@ -67,10 +67,10 @@ def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessin
     if pick_num is None:
         pass
     elif pick_num < len(res):
-        res = res[:pick_num]
+        result = result[:pick_num]
 
     print("T=m+t*(M-m)/20 \nT=%f m=%f t=%f M=%f" %(T,m,t,M))
-    return res
+    return result
     
 def main():
     # Download from: https://cmu.box.com/s/9hn3qqtqmivauus3kgtasg5uzlj53wxp
