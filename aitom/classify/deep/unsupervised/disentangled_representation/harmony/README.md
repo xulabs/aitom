@@ -4,7 +4,7 @@ Harmony, A Generic Unsupervised Approach for Disentangling Semantic Content From
 
 
 <p align="center">
-<img src="img/Harmony-model-image.png" width="600">
+<img src="https://user-images.githubusercontent.com/14123565/180104959-46ecb2b6-03c6-49de-b296-b6546d62c98a.png" width="600">
 </p>
 
 Please refer to our paper for more details:

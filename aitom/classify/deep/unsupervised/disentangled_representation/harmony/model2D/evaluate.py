@@ -1,5 +1,5 @@
 from data import data_loader, loadpickle
-from utils import save_latent_variables, generate_manifold_images, plot_sample_images  # , save_output_images
+from utils import *
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier

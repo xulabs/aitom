@@ -1,7 +1,6 @@
 import torch
-from utils import loss_fn
+from utils import loss_fn, plot_loss
 from model import save_ckp, load_ckp
-from utils import plot_loss
 
 
 def train_model(dataset_name, siamese, optimizer, train_loader, test_loader, device,
