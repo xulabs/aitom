@@ -59,6 +59,7 @@ def picking(path, s1, s2, t, find_maxima=True, partition_op=None, multiprocessin
     m = peaks[len(peaks)-1]['val'] # min val of all peaks
     T = m+t*(M-m)/20
     peak_vals_neg = [-peak['val'] for peak in peaks]
+    peak_vals_neg.reverse()
     res = peaks[:(len(peak_vals_neg)-bisect(peak_vals_neg, -T)+1)]
     assert res[-1]['val'] >= T
     print("%d particles detected, containing redundant peaks" % len(res))
