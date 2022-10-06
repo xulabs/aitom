@@ -14,7 +14,7 @@ html5lib==1.0.1
 idna==2.8      
 imageio==2.9.0    
 ipaddr==2.2.0    
-joblib==0.14.1   
+joblib==1.2.0   
 kiwisolver==1.1.0    
 lockfile==0.12.2   
 matplotlib==3.3.2    
