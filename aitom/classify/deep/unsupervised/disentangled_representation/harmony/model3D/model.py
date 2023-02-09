@@ -4,7 +4,6 @@ import kornia
 from torch import nn
 from torch.autograd import Variable
 import torch.nn.functional as F
-from Transform import rotate, rotate_pad_zero, rotate_pad_mean, translate3d_zyz
 
 
 class ConvEncoder(nn.Module):
@@ -18,7 +17,6 @@ class ConvEncoder(nn.Module):
         self.conv5 = nn.Conv3d(512, 2 * latent_dims + 6, kernel_size=1, stride=1, padding=0)
 
     def forward(self, x):
-        x = self.drop(x)
         x = F.tanh(self.conv1(x))
         x = F.tanh(self.conv2(x))
         x = F.tanh(self.conv3(x))
