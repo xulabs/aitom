@@ -48,4 +48,4 @@ torch==1.6.0
 torchvision==0.7.0    
 urllib3==1.26.5   
 webencodings==0.5.1    
-wheel==0.34.2
+wheel==0.38.1
