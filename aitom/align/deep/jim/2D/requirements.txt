@@ -9,7 +9,7 @@ cycler==0.10.0
 decorator==4.4.2    
 distlib==0.3.0    
 distro==1.4.0    
-future==0.18.2   
+future==0.18.3   
 html5lib==1.0.1    
 idna==2.8      
 imageio==2.9.0    
