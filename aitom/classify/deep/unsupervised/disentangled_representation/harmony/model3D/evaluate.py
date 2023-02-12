@@ -1,5 +1,5 @@
-from data import data_loader, loadpickle
-from utils import *
+from .data import data_loader, loadpickle
+from .utils import *
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier

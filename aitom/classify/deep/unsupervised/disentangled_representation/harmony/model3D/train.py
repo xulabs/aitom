@@ -1,6 +1,6 @@
 import torch
-from utils import *
-from model import save_ckp, load_ckp
+from .utils import *
+from .model import save_ckp, load_ckp
 
 
 def train_model(dataset_name, siamese, optimizer, train_loader, test_loader, device,

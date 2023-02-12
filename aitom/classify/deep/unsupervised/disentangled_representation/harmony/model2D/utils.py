@@ -3,7 +3,7 @@ import torch.nn.functional as F
 import matplotlib.pyplot as plt
 import pickle
 import numpy as np
-from model import load_ckp
+from .model import load_ckp
 from scipy.stats import norm
 
 
