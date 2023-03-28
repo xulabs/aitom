@@ -2,7 +2,7 @@
 DISCA is a high-throughput template-and-label-free deep learning approach that automatically discovers subsets of homogeneous structures by learning and modeling 3D structural features and their distributions. The training is fully unsupervised.
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/31047726/84725693-2ec78800-af59-11ea-94a3-fdd6b5242645.png" width="600">
+<img src="https://user-images.githubusercontent.com/31047726/228112212-f1ed62f5-5c7d-4c34-8614-37ee4f58f045.png" width="600">
 </p>
 
 Please refer to our paper for more details:
