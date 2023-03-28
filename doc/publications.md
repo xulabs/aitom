@@ -15,6 +15,9 @@
 7. Zhou B, Yu H, Zeng X, Yang X, Zhang J, Xu M. One-shot Learning with Attention-guided Segmentation in Cryo-Electron Tomography. Frontiers in Molecular Biosciences. [doi:10.3389/fmolb.2020.613347](https://doi.org/10.3389/fmolb.2020.613347) [code](https://github.com/xulabs/aitom/tree/master/aitom/classify/deep/supervised/cnn/one_shot) (zhou2020one)
 8. Du X, Wang H, Zhu Z, Zeng X, Chang Y, Zhang J, Xing E, Xu M. Active learning to classify macromolecular structures in situ for less supervision in cryo-electron tomography. Bioinformatics. [doi:10.1093/bioinformatics/btab123](https://doi.org/10.1093/bioinformatics/btab123) [arXiv:2102.12040](https://arxiv.org/abs/2102.12040) [code](https://github.com/xulabs/aitom/tree/master/aitom/classify/deep/supervised/cnn/active/hal) 
 9. Uddin M, Howe G, Zeng X, Xu M. Harmony: A Generic Unsupervised Approach for Disentangling Semantic Content from Parameterized Transformations. IEEE conference on computer vision and pattern recognition (CVPR 2022). [Paper](https://openaccess.thecvf.com/content/CVPR2022/papers/Uddin_Harmony_A_Generic_Unsupervised_Approach_for_Disentangling_Semantic_Content_From_CVPR_2022_paper.pdf) [code](https://github.com/xulabs/aitom/tree/master/aitom/classify/deep/unsupervised/disentangled_representation/harmony) 
+
+10. Zeng X, Kahng A, Xue L, Mahamid J, Chang YW, Xu M. High-throughput cryo-et structural pattern mining by deep iterative unsupervised clustering (PNAS 2023). [Paper](https://www.biorxiv.org/content/10.1101/2021.05.16.444381v1) [code](https://github.com/xulabs/aitom/tree/master/aitom/classify/deep/unsupervised/disca) 
+
 **Subtomogram Segmentation**
 
 1. Xu M, and Frank A. Automated target segmentation and real space fast alignment methods for high-throughput classification and averaging of crowded cryo-electron subtomograms. Bioinformatics 29, no. 13 (2013): i274-i282 [code](https://github.com/xulabs/aitom/tree/master/aitom/segmentation) (xu2013automated)
