@@ -7,7 +7,7 @@ DISCA is a high-throughput template-and-label-free deep learning approach that a
 
 Please refer to our paper for more details:
 
-Zeng, X., Kahng, A., Xue, L., Mahamid, J., Chang, Y.W., and Xu, M. "High-throughput cryo-et structural pattern mining by deep iterative unsupervised clustering." 
+Zeng, X., Kahng, A., Xue, L., Mahamid, J., Chang, Y.W., and Xu, M. "High-throughput cryo-et structural pattern mining by deep iterative unsupervised clustering." [[PNAS (direct submission)](https://www.pnas.org/doi/abs/10.1073/pnas.2213149120)]
 
 
 ## Package versions
@@ -39,13 +39,15 @@ The training code is available in DISCA.py.
 
 If you use or modify the code from this project in your project, please cite:
 ```bibtex
-@article{zeng2021disca,
-  title={DISCA: high-throughput cryo-ET structural pattern mining by deep unsupervised clustering},
+@article{zeng2023high,
+  title={High-throughput cryo-ET structural pattern mining by unsupervised deep iterative subtomogram clustering},
   author={Zeng, Xiangrui and Kahng, Anson and Xue, Liang and Mahamid, Julia and Chang, Yi-Wei and Xu, Min},
-  journal={bioRxiv},
-  pages={2021--05},
-  year={2021},
-  publisher={Cold Spring Harbor Laboratory}
+  journal={Proceedings of the National Academy of Sciences},
+  volume={120},
+  number={15},
+  pages={e2213149120},
+  year={2023},
+  publisher={National Acad Sciences}
 }
 ```
 Thank you!
