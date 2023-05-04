@@ -34,8 +34,9 @@ The subtomogram dataset can be prepared using the Difference of Gaussians partic
 
 The training code is available in DISCA.py.
 
+## Subtomogram averages
 
-### BibTeX
+## BibTeX
 
 If you use or modify the code from this project in your project, please cite:
 ```bibtex
