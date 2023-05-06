@@ -195,12 +195,11 @@ def one_hot(a, num_classes):
 def smooth_labels(labels, factor=0.1):
     """
     label smoothing. 
-    """
+    """                                                                                                                                                     
 	labels *= (1 - factor)
 	labels += (factor / labels.shape[1])
 
-	return labels                                                                                                                                                                
-
+	return labels 
 
 
 def remove_empty_cluster(labels):
