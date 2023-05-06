@@ -36,7 +36,7 @@ The training code is available in DISCA.py.
 
 ## Subtomogram averages
 
-The subtomogram average of macromolecular complexes from the *Rattus* neuron dataset and the *Mycoplasma pneumoniae* dataset have been deposited in the EM Data Bank with accession numbers EMD-40043, -40087, -40089, and -40090. The subtomogram average of macromolecular complexes from the *Synechocystis* cell dataset, the *Cercopithecus aethiops* kidney dataset, and the *Murinae* embryonic fibroblast are available [here](https://github.com/xulabs/aitom/files/11392586/DISCA_subtomogram_averages.zip) as .mrc files.
+The subtomogram average of macromolecular complexes (Fig. 4 and 5 of the manuscript) from the *Rattus* neuron dataset and the *Mycoplasma pneumoniae* dataset have been deposited in the EM Data Bank with accession numbers EMD-40043, -40087, -40089, and -40090. The subtomogram average of macromolecular complexes from the *Synechocystis* cell dataset, the *Cercopithecus aethiops* kidney dataset, and the *Murinae* embryonic fibroblast are available [here](https://github.com/xulabs/aitom/files/11392586/DISCA_subtomogram_averages.zip) as .mrc files.
 
 ## BibTeX
 
