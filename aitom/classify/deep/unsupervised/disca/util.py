@@ -198,7 +198,7 @@ def smooth_labels(labels, factor=0.1):
     """
 	labels *= (1 - factor)
 	labels += (factor / labels.shape[1])
- 
+
 	return labels                                                                                                                                                                
 
 
