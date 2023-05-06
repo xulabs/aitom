@@ -226,7 +226,7 @@ def YOPO_classification(num_labels, vector_size = 1024):
     
     m = Dense(num_labels, activation='softmax')(main_input)
 
-    mod = keras.models.Model(input=main_input, output=m)                                     
+    mod = keras.models.Model(inputs=main_input, outputs=m)                                     
                                                                                
     return mod 
 
@@ -323,7 +323,7 @@ def update_output_layer(K, label_one_hot, batch_size, model_feature, features, l
     model_classification.fit(features, label_one_hot, epochs=10, batch_size=batch_size, shuffle=True, verbose = 0) 
      
     ### New YOPO ### 
-    model = keras.models.Model(model_feature.get_input_at(0), model_classification(model_feature.get_output_at(0))) 
+    model = keras.models.Model(model_feature.layers[0].get_input_at(0), model_classification(model_feature.layers[-1].get_output_at(0))) 
     optimizer = keras.optimizers.Nadam(lr=lr, beta_1=0.9, beta_2=0.999, epsilon=1e-08) 
 
     model.compile(optimizer= optimizer, loss='categorical_hinge',  metrics=['accuracy'])
