@@ -135,7 +135,7 @@ def YOPO_feature(image_size):
 
     out = Dense(1024, name='fc2', kernel_initializer=kernel_initializer, bias_initializer=bias_initializer)(m)    
 
-    mod = keras.models.Model(input=main_input, output=out)                                     
+    mod = keras.models.Model(inputs=main_input, outputs=out)                                     
                                                                                
     return mod                                                                 
 
