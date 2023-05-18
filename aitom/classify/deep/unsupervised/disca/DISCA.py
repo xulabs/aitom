@@ -207,7 +207,7 @@ if __name__ == '__main__':
          
     ### Feature Clustering ###                              
              
-        labels_temp, K, same_K, features_pca = statistical_fitting(features = features, labels = labels, candidateKs = candidateKs, K = K, reg_covar = reg_covar) 
+        labels_temp, K, same_K, features_pca = statistical_fitting(features = features, labels = labels, candidateKs = candidateKs, K = K, reg_covar = reg_covar, i = i) 
          
     ### Matching Clusters by Hungarian Algorithm ### 
         if same_K: 
@@ -251,7 +251,7 @@ if __name__ == '__main__':
          
     ### Finetune new model with current estimated K ### 
         if not same_K: 
-            model = update_output_layer(K = K, label_one_hot = label_one_hot, batch_size = batch_size, model_feature = model_feature)
+            model = update_output_layer(K = K, label_one_hot = label_one_hot, batch_size = batch_size, model_feature = model_feature, features = features, lr = lr)
  
              
     ### CNN Training ###           
