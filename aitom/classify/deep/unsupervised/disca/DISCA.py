@@ -207,7 +207,7 @@ if __name__ == '__main__':
          
     ### Feature Clustering ###                              
              
-        labels_temp, K, same_K, features_pca = statistical_fitting(features = features, labels = labels, candidateKs = candidateKs, K = K, reg_covar = reg_covar) 
+        labels_temp, K, same_K, features_pca = statistical_fitting(features = features, labels = labels, candidateKs = candidateKs, K = K, reg_covar = reg_covar, i = i) 
          
     ### Matching Clusters by Hungarian Algorithm ### 
         if same_K: 
