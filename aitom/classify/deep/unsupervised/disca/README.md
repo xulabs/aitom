@@ -11,11 +11,19 @@ Zeng, X., Kahng, A., Xue, L., Mahamid, J., Chang, Y.W., and Xu, M. "High-through
 
 
 ## Package versions
+For keras version (DISCA.py)
 * keras==2.9.0
 * tensorflow-gpu==2.9.0
 * scikit-learn==1.1.3
 * scipy==1.4.1
 
+For pytorch version (torch_disca.py)
+* scikit-learn==1.1.3
+* numpy==1.23.5
+* torch==2.0.1
+* tqdm==4.64.1
+* scipy==1.8.1
+* torchvision==0.15.2
 
 
 ## Installation 
