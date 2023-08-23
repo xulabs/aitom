@@ -9,7 +9,7 @@ Harmony, A Generic Unsupervised Approach for Disentangling Semantic Content From
 
 Please refer to our paper for more details:
 
-Uddin, Mostofa Rafid, Gregory Howe, Xiangrui Zeng, and Min Xu. "Harmony: A Generic Unsupervised Approach for Disentangling Semantic Content From Parameterized Transformations." In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 20646-20655, 2022. [[CVPR 2022 open access](https://openaccess.thecvf.com/content/CVPR2022/papers/Uddin_Harmony_A_Generic_Unsupervised_Approach_for_Disentangling_Semantic_Content_From_CVPR_2022_paper.html)]
+Uddin, Mostofa Rafid, Gregory Howe, Xiangrui Zeng, and Min Xu. "Harmony: A Generic Unsupervised Approach for Disentangling Semantic Content From Parameterized Transformations." In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 20646-20655, 2022. [[CVPR 2022 open access](https://openaccess.thecvf.com/content/CVPR2022/html/Uddin_Harmony_A_Generic_Unsupervised_Approach_for_Disentangling_Semantic_Content_From_CVPR_2022_paper.html)]
 
 ## Usage
 
