@@ -14,6 +14,9 @@ from multiprocessing.pool import Pool
 from tqdm.auto import tqdm
 from torchvision.transforms import Normalize
 
+from aitom.classify.deep.unsupervised.disca.util import *
+
+
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -24,14 +27,14 @@ class Config:
     candidateKs = [5]  ### candidate number of clusters to test, it is also possible to set just one large K that overpartites the data
 
     batch_size = 64
-    M = 20  ### number of iterations ###
-    lr = 1e-5  ### CNN learning rate ###
+    M = 80  ### number of iterations ###
+    lr = 1e-4  ### Original CNN learning rate ###
 
     label_smoothing_factor = 0.2  ### label smoothing factor ###
     reg_covar = 0.00001
 
-    model_path = '/shared/home/c_mru/disca/model_torch.pth'  ### path for saving torch model, should be a pth file ###
-    label_path = '/shared/home/c_mru/disca/label_path_torch.pickle'  ### path for saving labels, should be a .pickle file ###
+    model_path = './model/model_torch.pth'  ### path for saving torch model, should be a pth file ###
+    label_path = './model/label_path_torch.pickle'  ### path for saving labels, should be a .pickle file ###
 
     device = torch.device('cuda:2') if torch.cuda.is_available() else torch.device('cpu')
 
@@ -112,7 +115,7 @@ class YOPOFeatureModel(nn.Module):
         super(YOPOFeatureModel, self).__init__()
 
         self.dropout = nn.Dropout(0.5)
-        self.m1 = self.get_block(1, 64)
+        self.m1 = self.get_block(32, 64)
         self.m2 = self.get_block(64, 80)
         self.m3 = self.get_block(80, 96)
         self.m4 = self.get_block(96, 112)
@@ -143,7 +146,7 @@ class YOPOFeatureModel(nn.Module):
             torch.nn.Conv3d(in_channels=input_channel_size,
                             out_channels=output_channel_size,
                             kernel_size=(3, 3, 3),
-                            padding=0,
+                            padding='same',
                             dilation=(1, 1, 1)),  
             torch.nn.BatchNorm3d(output_channel_size),
             torch.nn.ELU(inplace=True),
@@ -186,7 +189,6 @@ class YOPOFeatureModel(nn.Module):
         o9 = F.max_pool3d(output, kernel_size=output.size()[2:])
         output = self.m10(output)
         o10 = F.max_pool3d(output, kernel_size=output.size()[2:])
-        # print(output.size())
         """
 		output = self.m11(output)
 		o11 = F.max_pool3d(output, kernel_size=output.size()[2:])
@@ -196,7 +198,6 @@ class YOPOFeatureModel(nn.Module):
 		o13 = F.max_pool3d(output, kernel_size=output.size()[2:])
 		"""
         m = torch.cat((o1, o2, o3, o4, o5, o6, o7, o8, o9, o10), dim=1)
-        # print(m.size())
         m = self.batchnorm(m)
         m = nn.Flatten()(m)
         m = self.linear(m)
@@ -280,7 +281,7 @@ def statistical_fitting(features, labels, candidateKs, K, reg_covar, i):
 
 
 def convergence_check(i, M, labels_temp, labels, done):
-    if i > 0:
+    if i > 75:
         if np.sum(labels_temp == labels) / float(len(labels)) > 0.999:
             done = True
 
@@ -400,7 +401,6 @@ def rotate3d_zyz(data, Inv_R, center=None, order=2):
     
     from scipy import mgrid
     grid = mgrid[-cx:data.shape[0]-cx, -cy:data.shape[1]-cy, -cz:data.shape[2]-cz]
-    # temp = grid.reshape((3, np.int(grid.size / 3)))
     temp = grid.reshape((3, int(grid.size / 3)))
     temp = np.dot(Inv_R, temp)
     grid = np.reshape(temp, grid.shape)
@@ -416,7 +416,7 @@ def rotate3d_zyz(data, Inv_R, center=None, order=2):
 
 
 
-def data_augmentation(x_train, factor = 2):
+def data_augmentation(x_train, factor = 1):
     """
     data augmentation given the training subtomogram data.
     if factor = 1, this function will return the unaugmented subtomogram data.
@@ -437,7 +437,6 @@ def data_augmentation(x_train, factor = 2):
                                                       
                 # prepare keyword arguments                                                                                                               
                 args_t = {}                                                                                                                               
-                # args_t['data'] = x_train[i,:,:,:,0]   
                 args_t['data'] = x_train[i,0,:,:,:]                                                                                                                 
                 args_t['Inv_R'] = random_rotation_matrix()                                                   
                                                                                                                                                                                                                                            
@@ -445,7 +444,6 @@ def data_augmentation(x_train, factor = 2):
                 ts[i] = t                                                       
                                                                       
             rs = run_batch(ts, worker_num=48)
-            # x_train_f = np.expand_dims(np.array([_['result'] for _ in rs]), -1)
             x_train_f = np.expand_dims(np.array([_['result'] for _ in rs]), 1)
             
             x_train_augmented.append(x_train_f)
@@ -499,12 +497,13 @@ def prepare_training_data(x_train, labels, label_smoothing_factor):
     """
 
     label_one_hot = one_hot(labels, len(np.unique(labels))) 
-     
-    index = np.array(range(x_train.shape[0] * 2)) 
+    
+    factor_use = 1
+    index = np.array(range(x_train.shape[0] * factor_use)) 
 
     np.random.shuffle(index)         
      
-    x_train_augmented = data_augmentation(x_train, 2) 
+    x_train_augmented = data_augmentation(x_train, factor_use) 
     
     x_train_permute = x_train_augmented[index].copy() 
 
@@ -569,9 +568,6 @@ def update_output_layer(K, label_one_hot, batch_size, model_feature, features, l
             labels = labels.to(Config.device)
 
             pred = model_classification(features)
-            
-            # print(pred.shape)
-            # time.sleep(5)
 
             optim.zero_grad()
 
@@ -591,24 +587,15 @@ def update_output_layer(K, label_one_hot, batch_size, model_feature, features, l
         model_loss.append(epoch_loss)
         
         # calculate accuracy
-        # print(train_correct, train_total)
         accuracy = train_correct / train_total
         
         if verbose:
             print('Epoch: {}/{} Loss: {:.4f} accuracy: {:.4f} In: {:.4f}s'.format(epoch + 1, 10, epoch_loss, accuracy, exec_time))
-    
-    ### New YOPO ### 
-    # model = nn.Sequential(
-    #     *list(model_feature.children())[:-1],  # Use all layers of model_feature except the last one
-    #     model_classification
-    # )
 
     model = YOPO_Final_Model(model_feature, model_classification)
     optimizer = torch.optim.NAdam(model.parameters(), lr=lr, betas=(0.9, 0.999), eps=1e-08)
     criterion = nn.MultiMarginLoss()
     
-    # print(model)
-
     print('Output layer updated')
     return model, optimizer, criterion
 
@@ -630,17 +617,18 @@ def image_normalization(img_list):
 
 if __name__ == '__main__':  
 
-    ### Load Dataset Here ###     
-    with open('filename.pkl', 'rb') as f:
-        data = pickle.load(f)
-    # print(data)
-    data_array_normalized = []
-    for i in range(data.shape[0]):
-        x = data[i]
-        x = (x - np.mean(x))/np.std(x)
-        data_array_normalized.append(x)
-    data_array_normalized = np.array(data_array_normalized).reshape(data.shape[0],1,data.shape[1],data.shape[2], data.shape[3])
-    print(data_array_normalized.shape)
+    x_train = ''  ### load the x_train data, should be shape (n, shape_1, shape_2, shape_3, 1)
+
+    gt =   '' ### load or define label ground truth here, if for simulated data 
+
+    ### Load Dataset Here ###    
+    data_sv = pickle_load(x_train)
+    x_keys = [_ for _ in data_sv['vs'] if data_sv['vs'][_]['v'] is not None]
+
+    x_train = [np.expand_dims(data_sv['vs'][_]['v'], -1) for _ in x_keys]
+    data_array_normalized = np.array(x_train)
+    print('x_train.shape:',data_array_normalized.shape)
+    
     
     x_train = torch.tensor(data_array_normalized, dtype=torch.float32)  ### load the x_train data, should be shape (n, 1, shape_1, shape_2, shape_3)
     
@@ -655,6 +643,13 @@ if __name__ == '__main__':
     i = 0
 
     total_loss = []
+
+    iterations = []
+    losses = []
+    accuracies = []
+    execution_times = []
+    learning_rate = []
+
 
     while not done:
         print('Iteration:', i)
@@ -701,6 +696,7 @@ if __name__ == '__main__':
         if DBI < DBI_best:
             if i > 1:
                 torch.save(model, Config.model_path)  ### save model here ###
+                print(f'Best Model Saved to: {Config.model_path}')
 
                 pickle_dump(labels, Config.label_path)
 
@@ -733,6 +729,11 @@ if __name__ == '__main__':
         train_correct = 0.0
         train_total = 0.0
         start_time = time.time()
+
+        for epoch in range(10):  # Loop for training epochs
+            scheduler.step()  # Update learning rate at milestones
+            print(f'Epoch {epoch + 1}, Learning Rate: {scheduler.get_last_lr()}')
+
         
         pbar = tqdm(train_loader, desc='Iterating over train data, Iteration: {}/{}'.format(i - 1, Config.M))
         for train, label in pbar:
@@ -756,7 +757,6 @@ if __name__ == '__main__':
             predicted = torch.argmax(pred, 1)
             train_correct += (predicted == label_1).sum().float().item()
             train_total += label.size(0)
-        scheduler.step()
         total_loss.append(iteration_loss)
 
         # calculate accuracy
@@ -764,3 +764,12 @@ if __name__ == '__main__':
 
         exec_time = time.time() - start_time
         print('Loss: {:.4f} Accuracy: {:.4f}  In: {:.4f}s'.format(iteration_loss, accuracy, exec_time))
+
+        # Inside your loop
+        iterations.append(i)
+        losses.append(iteration_loss)
+        accuracies.append(accuracy)
+        execution_times.append(exec_time)
+        learning_rate.append(scheduler.get_last_lr()[0])
+
+
