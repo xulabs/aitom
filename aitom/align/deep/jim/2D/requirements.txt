@@ -11,7 +11,7 @@ distlib==0.3.0
 distro==1.4.0    
 future==0.18.3   
 html5lib==1.0.1    
-idna==2.8      
+idna==3.7      
 imageio==2.9.0    
 ipaddr==2.2.0    
 joblib==1.2.0   
