@@ -46,6 +46,6 @@ tifffile==2020.10.1
 torch==1.13.1
 -f https://download.pytorch.org/whl/torch_stable.html
 torchvision==0.7.0    
-urllib3==1.26.18   
+urllib3==1.26.19   
 webencodings==0.5.1    
 wheel==0.38.1
