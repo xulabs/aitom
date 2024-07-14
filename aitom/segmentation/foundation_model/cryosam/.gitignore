@@ -1,0 +1,9 @@
+.idea/
+*__pycache__/
+data
+cache
+model
+output
+*.mrc
+*.npz
+*.out

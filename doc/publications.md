@@ -37,6 +37,7 @@
 **Tomogram Segmentation and Object Detection**
 1. Zhou B, Guo Q, Zeng X, Gao X, Xu M. Feature Decomposition Based Saliency Detection in Electron Cryo-Tomograms. arXiv:1801.10562. IEEE International Conference on Bioinformatics & Biomedicine, Workshop on Machine Learning in High Resolution Microscopy (BIBM-MLHRM 2018) [code](https://github.com/xulabs/aitom/tree/master/aitom/segmentation/saliency/feature_decomposition) (zhou2018feature)
 2. Li R, Zeng X, Siegmund S, Lin R, Zhou B, Liu C, Wang K, Jiang R, Freyberg Z, Lv H, Xu M. Automatic Localization and Identification of Mitochondria in Cellular Electron Cryo-Tomography using Faster-RCNN. BMC Bioinformatics. 201920 (Suppl 3) :132 doi:10.1186/s12859-019-2650-7. [code](https://github.com/xulabs/aitom/tree/master/aitom/segmentation/detection/organelle/frcnn) (li2019automatic)
+3. Zhao Y, Bian H, Mu M, Uddin M, Li Z, Li X, Wang T, Xu M. Training-free CryoET Tomogram Segmentation. arxiv:2407.06833. [code](../aitom/segmentation/foundation_model/cryosam) (zhao2024training)
 
 **Tomominer**
 
