@@ -1,6 +1,6 @@
 # Training-free CryoET Tomogram Segmentation
 
-![](assets/pipeline.png)
+![](https://private-user-images.githubusercontent.com/36667905/348603926-b2ec6fc3-e812-4d29-9d51-4e56930f6d74.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjEwMjA2NDEsIm5iZiI6MTcyMTAyMDM0MSwicGF0aCI6Ii8zNjY2NzkwNS8zNDg2MDM5MjYtYjJlYzZmYzMtZTgxMi00ZDI5LTlkNTEtNGU1NjkzMGY2ZDc0LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA3MTUlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwNzE1VDA1MTIyMVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTcwNmQ1MzU3NTE3YjFkNWFkMWYwYjgxZmVhMDY2ODMwMTdmY2FmOGQwMzE5ZGViYzQ2ZjllNWYzMTk5NDE5ZGUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.zqICPnNvJ9oacQKrawjeCbaTwCitRVp7TFvsvCN2fmA)
 
 > [**Training-free CryoET Tomogram Segmentation**](https://www.arxiv.org/abs/2407.06833),  
 > Yizhou Zhao, Hengwei Bian, Michael Mu, Mostofa Rafid Uddin, Zhenyang Li, Xiang Li, Tianyang Wang, Min Xu,  
