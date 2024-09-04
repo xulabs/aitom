@@ -12,7 +12,7 @@ simulated data to your model from memory.
 import aitom.io.file as IF
 import numpy as N
 # Please Note that `aitom_core` module is in the server, not public for now
-import aitom_core.simulation.reconstruction.reconstruction__simple_convolution as TSRSC
+import aitom.simulation.reconstruction.reconstruction__simple_convolution as TSRSC
 import aitom.model.util as MU
 import aitom.geometry.ang_loc as GAL
 import aitom.geometry.rotate as GR
