@@ -3,7 +3,7 @@ sys.path.append("..")
 # import tomominer.simulation.reconstruction__simple_convolution as TSRSC # if use 171 server
 # import aitom_core.simulation.reconstruction.reconstruction__simple_convolution as TSRSC
 sys.path.append('/shared/src/aitom_core')      #if use gpu0 server
-import aitom_core.simulation.reconstruction.reconstruction__simple_convolution as TSRSC #if use gpu0 server
+import aitom.simulation.reconstruction.reconstruction__simple_convolution as TSRSC #if use gpu0 server
 a
 op = {'model':{'missing_wedge_angle':30, 'SNR':0.4},
       'ctf':{'pix_size':1.0, 'Dz':-5.0, 'voltage':300, 'Cs':2.0, 'sigma':0.4}}
