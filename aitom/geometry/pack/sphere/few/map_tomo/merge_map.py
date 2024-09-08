@@ -48,9 +48,9 @@ def angle_rotate(v, angle):
 def merge_map(v, protein_name, x, y, z, box_size):
     def add_map(hugemap, map, center):
         assert (center.shape == (3,))
-        x0 = int(center[0]) - map.shape[0] / 2
-        y0 = int(center[1]) - map.shape[1] / 2
-        z0 = int(center[2]) - map.shape[2] / 2
+        x0 = int(center[0]) - map.shape[0] // 2
+        y0 = int(center[1]) - map.shape[1] // 2
+        z0 = int(center[2]) - map.shape[2] // 2
         for i in range(map.shape[0]):
             x = x0 + i
             if x < 0 or x >= hugemap.shape[0]:
