@@ -79,9 +79,9 @@ def merge_map(v, protein_name, x, y, z, box_size):
 def trim_margin(hugemap):
     def pad_to_cub(a, pad_value=0):
         padded = pad_value * np.ones(3 * [max(a.shape)], dtype=a.dtype)
-        x_begin = (padded.shape[0] - a.shape[0]) / 2
-        y_begin = (padded.shape[1] - a.shape[1]) / 2
-        z_begin = (padded.shape[2] - a.shape[2]) / 2
+        x_begin = (padded.shape[0] - a.shape[0]) // 2
+        y_begin = (padded.shape[1] - a.shape[1]) // 2
+        z_begin = (padded.shape[2] - a.shape[2]) // 2
         padded[x_begin:x_begin + a.shape[0], y_begin:y_begin + a.shape[1], z_begin:z_begin + a.shape[2]] = a
         return padded
 
@@ -109,9 +109,9 @@ def trim_target(hugemap, target_center, target_size=32, loc_r=None):
     loc_r = loc_r.astype(np.int16)
     target_center = target_center.astype(np.int16)
     trim_center = target_center + (-loc_r)
-    x_begin = max(trim_center[0] - side / 2, 0)
-    y_begin = max(trim_center[1] - side / 2, 0)
-    z_begin = max(trim_center[2] - side / 2, 0)
+    x_begin = max(trim_center[0] - side // 2, 0)
+    y_begin = max(trim_center[1] - side // 2, 0)
+    z_begin = max(trim_center[2] - side // 2, 0)
     targetmap = hugemap[x_begin: x_begin + side, y_begin: y_begin + side, z_begin: z_begin + side]
     return targetmap, loc_r
 
