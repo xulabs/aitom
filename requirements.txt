@@ -6,7 +6,7 @@ mrcfile
 matplotlib
 pypng
 tensorflow
-keras==2.1.0
+keras==2.13.1
 lsm-db
 numba
 six
