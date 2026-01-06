@@ -1,0 +1,14 @@
+matplotlib
+pandas
+mrcfile
+scikit-image
+pillow==8.3.2
+pycm
+scikit-plot
+pyqtgraph==0.12.1
+PyQt5==5.15.4
+batchgenerators==0.21
+tinyaes
+pytorch_lightning==1.1.0
+opencv-python==4.2.0.34
+numpy==1.24.0
