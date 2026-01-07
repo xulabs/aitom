@@ -88,5 +88,6 @@ setup(name='aitom',
           'console_scripts': [
               'picking = aitom.bin.picking:main',
               'disca = aitom.bin.disca:main',
+              'faml = aitom.bin.faml:main',
           ]}
       )
