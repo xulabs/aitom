@@ -1,7 +1,7 @@
 # TomoPicker: PU Learning-based Macromolecule Picking in Cryo-Electron Tomograms
 
 **Localization of macromolecules in crowded cellular cryo-electron tomograms from extremely sparse labels**  
-*Mostofa Rafid Uddin, Ajmain Yasar Ahmed<sup>*</sup>, H M Shadman Tabib<sup>*</sup>, Md Toki Tahmid, Md Zarif Ul Alam, Zachary Freyberg, Min Xu*  
+*Mostofa Rafid Uddin, Ajmain Yasar Ahmed, H M Shadman Tabib, Md Toki Tahmid, Md Zarif Ul Alam, Zachary Freyberg, Min Xu*  
 Published in *Briefings in Bioinformatics*, Volume 26, Issue 6, November 2025  
 [Paper](https://academic.oup.com/bib/article/26/6/bbaf630/8351049)
 
