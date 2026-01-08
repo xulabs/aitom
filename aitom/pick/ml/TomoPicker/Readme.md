@@ -2,7 +2,6 @@
 
 **Localization of macromolecules in crowded cellular cryo-electron tomograms from extremely sparse labels**  
 *Mostofa Rafid Uddin, Ajmain Yasar Ahmed<sup>*</sup>, H M Shadman Tabib<sup>*</sup>, Md Toki Tahmid, Md Zarif Ul Alam, Zachary Freyberg, Min Xu*  
-<sup>*</sup>These authors contributed equally to this work.  
 Published in *Briefings in Bioinformatics*, Volume 26, Issue 6, November 2025  
 [Paper](https://academic.oup.com/bib/article/26/6/bbaf630/8351049)
 
@@ -17,11 +16,6 @@ Place the downloaded model checkpoint in a `Model/` folder and the tomogram in a
 
 ## Installation
 
-We tested our code using:
-
-- CentOS 7
-- CUDA 11.0
-- 1 x Nvidia GPU
 
 To install the environment:
 
