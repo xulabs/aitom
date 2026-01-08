@@ -1,0 +1,34 @@
+# Model checkpoints
+Model/
+*.pt
+
+# Data files
+Data/*.mrc
+Data/*.MRC
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+env/
+venv/
+ENV/
+tomopicker/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Estimation outputs (optional - comment out if you want to track these)
+# estimations/
+
