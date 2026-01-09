@@ -3,6 +3,7 @@
 **Particle Picking**
 
 1. Pei L, Xu M, Frazier Z, Alber F. Simulating Cryo-Electron Tomograms of Crowded Mixtures of Macromolecular Complexes and Assessment of Particle Picking. BMC Bioinformatics. 2016; 17: 405 [code](https://github.com/xulabs/aitom/tree/master/aitom/simulation/tomogram/single_bounding_sphere) (pei2016simulating)
+2. Uddin M, Ahmed A, Tabib H, Tahmid M, Alam M, Freyberg Z, Xu M. Localization of macromolecules in crowded cellular cryo-electron tomograms from extremely sparse labels. Briefings in Bioinformatics. 2025; 26(6): bbaf630. [doi:10.1093/bib/bbaf630](https://doi.org/10.1093/bib/bbaf630) [code](https://github.com/xulabs/aitom/tree/master/aitom/pick/ml/TomoPicker) (uddin2025localization)
 
 **Subtomogram Classification**
 
