@@ -11,6 +11,7 @@ Before getting started, download the following resources:
 
 - **Model Checkpoint**: [pombe_vpp_ribosome_unet_GE_KL.pt](https://zenodo.org/records/18187955/files/pombe_vpp_ribosome_unet_GE_KL.pt?download=1)
 - **Dataset (Tomogram)**: [TS_0003.mrc](https://drive.google.com/file/d/1_EYWWb5PFBNXyJRSiWPabegV1UJTRcUj/view?usp=sharing)
+- **Inference Results (Example)**: [Download inference results](https://drive.google.com/file/d/16N70Skjhhec00YO0Dkdnc8osY63ooukH/view?usp=drive_link)
 
 Place the downloaded model checkpoint in a `Model/` folder and the tomogram in a `Data/` folder (these folders will be created automatically if they don't exist).
 
