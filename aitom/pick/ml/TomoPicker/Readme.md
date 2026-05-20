@@ -111,8 +111,7 @@ If you find this project helpful for your research, please consider citing the f
 ```bibtex
 @article{uddin2025localization,
   title={Localization of macromolecules in crowded cellular cryo-electron tomograms from extremely sparse labels},
-  author={Uddin, Mostofa Rafid and Ahmed, Ajmain Yasar and Tabib, H M Shadman and Tahmid, Md Toki and Alam, Md Zarif Ul and Freyberg, Zachary and Xu, Min},
-  note={*These authors contributed equally to this work.},
+  author={Uddin, Mostofa Rafid and Ahmed, Ajmain Yasar and Tabib, HM Shadman and Tahmid, Md Toki and Alam, Md Zarif Ul and Freyberg, Zachary and Xu, Min},
   journal={Briefings in Bioinformatics},
   volume={26},
   number={6},
