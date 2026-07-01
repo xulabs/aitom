@@ -1,0 +1,82 @@
+{
+  "description": "Denoising with score function for GaussianMap noise model.",
+  "running_config": {
+    "model_type": "GaussianMap",
+    "max_train_step": 50,
+    "max_train_epoch": 50.0,
+    "save_interval": 10,
+    "log_interval": 10,
+    "seed": 1111
+  },
+  "model_config": {
+    "train_batch_size": 4,
+    "poisson_alpha": 50,
+    "gaussian_sigma": 0.05,
+    "additional_sigmas": [
+      0.2,
+      0.1,
+      0.05,
+      0.01,
+      1e-06
+    ],
+    "clean_sigma": 1.0,
+    "clean_mu": 0.0,
+    "similarity": 0.0,
+    "bg_sim_threshold": 0.8,
+    "max_clean": 312,
+    "patch_size": 256,
+    "patches_per_image": 32,
+    "milestones": [
+      0,
+      4950,
+      5000
+    ],
+    "milestones_intervals": [
+      50,
+      1
+    ],
+    "a": 0.3,
+    "b": 0.01,
+    "num_iteration": 5,
+    "network_config": {
+      "image_size": 256,
+      "image_type": "mrc",
+      "model_channels": 128,
+      "num_res_blocks": 2,
+      "attention_resolutions": "",
+      "dropout": 0.0,
+      "channel_mult": "1,2,2,4",
+      "use_checkpoint": true,
+      "num_heads": 4,
+      "num_head_channels": -1,
+      "num_heads_upsample": -1,
+      "resblock_updown": true,
+      "use_new_attention_order": false
+    },
+    "postprocess_step_size": 0.7,
+    "w_t_threshold": 0.93,
+    "alpha_tsm": 0.08
+  },
+  "optimizer_config": {
+    "name": "Adam",
+    "params": {
+      "lr": 5e-05,
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "eps": 1e-08,
+      "weight_decay": 0.0
+    },
+    "learning_rate_anneal_steps": null
+  },
+  "opt_scheduler_config": {
+    "name": "MultiStepLR",
+    "params": {
+      "milestones": [
+        4000
+      ],
+      "gamma": 0.1
+    }
+  }
+}
