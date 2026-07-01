@@ -1,0 +1,12 @@
+easydict
+matplotlib
+mrcfile
+numpy
+pandas
+Pillow
+scikit-image
+scikit-learn
+seaborn
+torch
+torchvision
+tqdm

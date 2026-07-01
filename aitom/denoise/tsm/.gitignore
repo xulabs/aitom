@@ -1,0 +1,8 @@
+*.pth
+*.ckpt
+*.mrc
+*.map
+__pycache__/
+*.pyc
+data/
+checkpoints/
