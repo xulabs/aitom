@@ -87,5 +87,6 @@ setup(name='aitom',
       entry_points={
           'console_scripts': [
               'picking = aitom.bin.picking:main',
+              'disca = aitom.bin.disca:main',
           ]}
       )
